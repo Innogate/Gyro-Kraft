@@ -1,4 +1,4 @@
 <?php
 Router::register("POST", "/login", function () {
-    echo $_POS["passwd"];
+    echo $_POST["passwd"];
 });
