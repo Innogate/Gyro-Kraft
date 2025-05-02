@@ -1,0 +1,11 @@
+@apiUrl = http://localhost:8080
+
+
+### ? Login with the created user
+POST {{ apiUrl }}/login
+Content-Type: application/json
+
+{
+    "id": "1234567890",
+    "passwd": "pass@1234"
+}

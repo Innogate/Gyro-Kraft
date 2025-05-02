@@ -1,5 +1,6 @@
 <?php
 
+print_r($_POST);
 require_once __DIR__ . "/core/Router.php";
 
 // Autoload all handlers
