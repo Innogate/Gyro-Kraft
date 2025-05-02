@@ -1,0 +1,25 @@
+services:
+  php:
+    build:
+      context: .
+      dockerfile: docker/php.dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/dotfiles/php:/home/vscode
+    depends_on:
+      - db
+
+  db:
+    image: mariadb:11
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_test
+      MYSQL_DATABASE: test
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+    volumes:
+      - ./db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
