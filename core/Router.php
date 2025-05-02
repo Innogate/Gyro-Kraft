@@ -12,7 +12,7 @@ class Router {
 
         // Serve HTML files if available
         $htmlFile = __DIR__ . "/../views" . $path . ".html";
-        if (file_exists($htmlFile)) {
+        if ($method == "GET" && file_exists($htmlFile)) {
             header("Content-Type: text/html");
             readfile($htmlFile);
             return;
