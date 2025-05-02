@@ -1,8 +1,4 @@
-# Enable mod_rewrite
 RewriteEngine On
-
-# Serve requests to /cdn/* from the cdn directory
-RewriteRule ^cdn/(.*)$ /path/to/cdn/$1 [L]
 
 # If the requested file or directory exists, serve it directly
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -10,8 +6,3 @@ RewriteCond %{REQUEST_FILENAME} !-d
 
 # Otherwise, redirect all requests to index.php
 RewriteRule ^ index.php [QSA,L]
-
-# Set Cache-Control headers for CDN resources
-<FilesMatch "\.(jpg|jpeg|png|gif|css|js|woff|woff2|eot|ttf|otf)$">
-    Header set Cache-Control "public, max-age=31536000, immutable"
-</FilesMatch>
