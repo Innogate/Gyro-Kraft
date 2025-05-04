@@ -1,4 +1,29 @@
 <?php
 Router::register("POST", "/login", function () {
-    echo $_POST["passwd"];
+    if (isset($_POST['mobile']) && isset($_POST['password'])) {
+        $mobile = sanitize($_POST['mobile']);
+        $password = sanitize($_POST['password']);
+
+        $dbInstance = new Database();
+        $conn = $dbInstance->pdo;
+
+        $sql = "SELECT * FROM users WHERE phone_no = :mobile";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(":mobile", $mobile);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user) {
+            if (($password == $user['password_hash'])) {
+                $_SESSION['user'] = $user;
+                response(true, "Login successful.");
+            } else {
+                response(false, "Invalid credentials.");
+            }
+        } else {
+            response(false, "User not found.");
+        }
+    }else{
+        response(false, "Invalid request.");
+    }
 });

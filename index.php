@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . "/core/Router.php";
-
+require_once __DIR__ . "/core/Database.php";
+require_once __DIR__ . "/core/function.php";
 // Autoload all handlers
 foreach (glob(__DIR__ . "/handlers/*.php") as $file) {
     require_once $file;

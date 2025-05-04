@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 // check uri / or not
 if (parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) == '/') {
     // check it login or not
