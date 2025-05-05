@@ -1,16 +1,15 @@
 <?php
 $cookie_lifetime = 3 * 24 * 60 * 60; // 3 days in seconds
 
-// Set session cookie params before starting the session
-session_set_cookie_params([
-    'lifetime' => $cookie_lifetime,
-    'path' => '/',
-    'httponly' => true,
-    'secure' => isset($_SERVER['HTTPS']), // secure if HTTPS
-    'samesite' => 'Lax' // or 'Strict'
-]);
-
 if (session_status() === PHP_SESSION_NONE) {
+    // Set session cookie params before starting the session
+    session_set_cookie_params([
+        'lifetime' => $cookie_lifetime,
+        'path' => '/',
+        'httponly' => true,
+        'secure' => isset($_SERVER['HTTPS']), // secure if HTTPS
+        'samesite' => 'Lax' // or 'Strict'
+    ]);
     session_start();
 }
 

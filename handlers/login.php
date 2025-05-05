@@ -15,7 +15,8 @@ Router::register("POST", "/login", function () {
 
         if ($user) {
             if (($password == $user['password_hash'])) {
-                $_SESSION['user'] = $user;
+                $_SESSION['otp_data'] = $user;
+                $_SESSION["otp"] = generateAlphaNumeric(6);
                 response(true, "Login successful.");
             } else {
                 response(false, "Invalid credentials.");
@@ -25,5 +26,20 @@ Router::register("POST", "/login", function () {
         }
     }else{
         response(false, "Invalid request.");
+    }
+});
+
+Router::register("POST", "/login/otp", function () {
+    if (isset($_POST['otp'])) {
+        $otp = sanitize($_POST['otp']);
+        if ($otp == $_SESSION["otp"]) {
+            $user = $_SESSION['otp_data'];
+            $_SESSION['user'] = $user;
+            response(true, "Login successful.");
+        } else {
+            response(false, "Invalid OTP.");
+        }
+    }else{
+        response(false, "Invalid request.", $_POST);
     }
 });
