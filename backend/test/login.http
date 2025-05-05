@@ -1,0 +1,39 @@
+@apiUrl = http://localhost:8000
+@otp_id = {{login.response.body.body.otp_id}}
+@token = {{otp.response.body.body.token}}
+### VERSION AND CHECK SERVER CONNECTION
+GET {{apiUrl}}/version
+Content-Type: application/json
+
+### ? Login with the created user
+# @name login
+POST {{ apiUrl }}/users/login
+Content-Type: application/json
+
+{
+    "mobile": "1234567890",
+    "password": "1234567890"
+}
+
+### GET OTP
+POST {{apiUrl}}/users/login/otp_get
+Content-Type: application/json
+
+{
+    "otp_id": {{otp_id}}
+}
+
+### OTP verify
+# @name otp
+POST {{apiUrl}}/users/login/otp_verify
+Content-Type: application/json
+
+{
+    "otp_id": 7,
+    "otp": 429270
+}
+
+### VERIFY
+GET {{apiUrl}}/verify
+Content-Type: application/json
+Authorization: Bearer {{token}}

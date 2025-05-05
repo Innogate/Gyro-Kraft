@@ -1,26 +1,50 @@
 services:
-  php:
+  angular:
     build:
       context: .
-      dockerfile: docker/php.dockerfile
+      dockerfile: docker/build/Dockerfile.angular
+    container_name: angular
+    restart: unless-stopped
+    volumes:
+      - ./docker/containers/angular:/home/vscode
+      - ./mobile:/app
     ports:
-      - "8080:80"
-    volumes:
-      - .:/var/www/html
-      - ./docker/dotfiles/php:/home/vscode
-    depends_on:
-      - db
-
+      - "4200:4200"
+    working_dir: /app
+    # command:  bash start.sh
+    
   db:
-    image: mariadb:11
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root_test
-      MYSQL_DATABASE: test
-      MYSQL_USER: test
-      MYSQL_PASSWORD: test
-    volumes:
-      - ./db_data:/var/lib/mysql
-      - ./db:/docker-entrypoint-initdb.d
+    image: mariadb:latest
+    container_name: db-container
+    restart: unless-stopped
     ports:
       - "3306:3306"
+    environment:
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      PRODUCTION: ${PRODUCTION}
+    volumes:
+      - ./database/data:/var/lib/mysql
+      - ./database/template:/docker-entrypoint-initdb.d
+
+
+  php:
+    build:
+      context: docker/build
+      dockerfile: Dockerfile.php
+    container_name: php-container
+    restart: unless-stopped
+    command: "bash start.sh"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./docker/containers/php:/home/vscode
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
