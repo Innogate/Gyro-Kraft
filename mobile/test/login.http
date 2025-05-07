@@ -20,7 +20,7 @@ POST {{apiUrl}}/users/login/otp_get
 Content-Type: application/json
 
 {
-    "otp_id": {{otp_id}}
+    "otp_id": 6
 }
 
 ### OTP verify
@@ -29,8 +29,8 @@ POST {{apiUrl}}/users/login/otp_verify
 Content-Type: application/json
 
 {
-    "otp_id": 7,
-    "otp": 429270
+    "otp_id": 10,
+    "otp": 555865
 }
 
 ### VERIFY

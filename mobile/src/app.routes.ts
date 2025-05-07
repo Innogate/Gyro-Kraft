@@ -16,7 +16,7 @@ export const appRoutes: Routes = [
         ]
     },
     { path: 'login', component: LoginComponent },
-    { path: 'otp', component: LoginOtpComponent },
+    { path: 'otp/:OTPid', component: LoginOtpComponent },
     { path: 'landing', component: Landing },
     { path: 'notfound', component: Notfound },
     { path: '**', redirectTo: '/notfound' }

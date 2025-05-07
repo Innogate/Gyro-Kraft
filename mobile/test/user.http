@@ -1,0 +1,115 @@
+@apiUrl = http://localhost:8000
+@otp_id = {{login.response.body.body.otp_id}}
+# @token = {{otp.response.body.body.token}}
+
+@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwibmFtZSI6IlN1cGVyIEFkbWluIiwiYWRkcmVzcyI6Ik5vbmUiLCJwaG9uZV9ubyI6IjEyMzQ1Njc4OTAiLCJ3aGF0c2FwcF9ubyI6IjEyMzQ1Njc4OTAiLCJlbWFpbCI6ImVtYWlsQGUuY29tIiwicGhvdG8iOm51bGwsInBhc3N3b3JkX2hhc2giOiIxMjM0NTY3ODkwIiwicm9sZSI6IlN1cGVyIEFkbWluIiwiY3JlYXRlZF9hdCI6IjIwMjUtMDUtMDIgMTM6NTU6MTcifQ.iRKBbTVNfCB1Nf1ZNy2rqpz7foPp_eJfvfDiT55I9XI
+### VERSION AND CHECK SERVER CONNECTION
+GET {{apiUrl}}/version
+Content-Type: application/json
+
+### ? Login with the created user
+# @name login
+POST {{ apiUrl }}/users/login
+Content-Type: application/json
+
+{
+    "mobile": "1234567890",
+    "password": "1234567890"
+}
+
+### GET OTP
+POST {{apiUrl}}/users/login/otp_get
+Content-Type: application/json
+
+{
+    "otp_id": {{otp_id}}
+}
+
+### OTP verify
+# @name otp
+POST {{apiUrl}}/users/login/otp_verify
+Content-Type: application/json
+
+{
+    "otp_id": 8,
+    "otp": 307630
+}
+
+### VERIFY
+GET {{apiUrl}}/verify
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+
+}
+
+### CREATE USER
+POST {{apiUrl}}/master/users/create
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "User Name",
+    "address": "24 len kulga6ia",
+    "phone_no": 2345678901,
+    "whatsapp_no": 2345678901, "email": "user@email.com",
+    "photo": "string of image",
+    "password_hash": 1234,
+    "role": "Manager"
+}
+
+
+### GET ALL USERS
+POST {{apiUrl}}/master/users
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "max": 10,
+    "current": 0
+}
+
+### Disabled Users
+POST {{apiUrl}}/master/users/disable
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "user_id": 1
+}
+
+### Enable Users
+POST {{apiUrl}}/master/users/enable
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "user_id": 1
+}
+
+### Update User
+POST {{apiUrl}}/master/users/update
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "id": 1,
+  "name": "John Doe",
+  "email": "john@example.com",
+  "address": "123 Main Street",
+  "phone_no": "1234567890",
+  "whatsapp_no": "1234567890",
+  "photo": "profile.jpg",
+  "disabled": 0,
+  "role": "Normal user"
+}
+
+### Search Users
+POST {{apiUrl}}/master/users/search
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "query": "john"
+}

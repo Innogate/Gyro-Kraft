@@ -1,73 +1,124 @@
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
+import { firstValueFrom, tap } from 'rxjs';
+import { UserService } from '../../services/user.service';
+import { SweetAlertService } from '../../utility/sweet-alert.service';
+import { debug } from '../../utility/function';
 
 @Component({
   selector: 'app-login-otp',
-  imports: [CommonModule, InputTextModule, FormsModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule, InputTextModule],
   templateUrl: './login-otp.component.html',
   styleUrls: ['./login-otp.component.scss'],
-  standalone: true
 })
-export class LoginOtpComponent {
-  otpDigits: string[] = ['', '', '', '', '', '']; // 6 OTP digits
+export class LoginOtpComponent implements OnInit {
+  otpDigits: string[] = ['', '', '', '', '', '']; // 6-digit OTP
   errorMessage: string = '';
   loading: boolean = false;
+  otp_id: string | null = null;
+
+  cooldown: number = 0; // seconds remaining
+  cooldownDuration: number = 30; // change this to any seconds you want
+  cooldownInterval: any;
+
+  constructor(
+    private route: ActivatedRoute,
+    private service: UserService,
+    private alert: SweetAlertService,
+    private router: Router
+) {}
+
+    ngOnInit() {
+        this.startCooldown();
+        this.otp_id = this.route.snapshot.paramMap.get('OTPid');
+
+        // Optional: Focus first field
+        setTimeout(() => {
+        const firstInput = document.getElementById('otp-0');
+        if (firstInput) (firstInput as HTMLInputElement).focus();
+        });
+  }
 
   get isOtpIncomplete(): boolean {
     return this.otpDigits.some(d => !d);
   }
 
-  // Handle OTP change
   onOtpChange(event: Event, index: number): void {
-    const inputElement = event.target as HTMLInputElement;
-    let value = inputElement.value;
+    const input = event.target as HTMLInputElement;
+    const value = input.value;
 
-    if (/[^0-9]/.test(value)) {
-      // Allow only numbers
-      inputElement.value = '';
+    if (!/^\d$/.test(value)) {
+      input.value = '';
       return;
     }
 
-    // Update OTP digits directly
     this.otpDigits[index] = value;
 
-    // Move focus to next field when a value is entered
+    // Move to next
     if (value && index < 5) {
-      document.getElementById(`otp-${index + 1}`)?.focus();
+      const next = document.getElementById(`otp-${index + 1}`);
+      if (next) (next as HTMLInputElement).focus();
     }
   }
 
-  // Handle keydown events for the OTP input fields
   onKeyDown(event: KeyboardEvent, index: number): void {
-    const inputElement = event.target as HTMLInputElement;
+    const input = event.target as HTMLInputElement;
 
-    if (event.key === 'Backspace' && !this.otpDigits[index]) {
-      // Move focus to previous field if backspace is pressed and current field is empty
-      if (index > 0) {
-        document.getElementById(`otp-${index - 1}`)?.focus();
-      }
-    } else if (event.key !== 'Backspace' && inputElement.value.length === 1) {
-      // Move focus to next field when current field is filled
-      if (index < 5) {
-        document.getElementById(`otp-${index + 1}`)?.focus();
-      }
+    if (event.key === 'Backspace' && !this.otpDigits[index] && index > 0) {
+      const prev = document.getElementById(`otp-${index - 1}`);
+      if (prev) (prev as HTMLInputElement).focus();
     }
   }
 
-  // Submit OTP
-  submitOtp(): void {
+  async submitOtp() {
     if (this.isOtpIncomplete) {
       this.errorMessage = 'Please enter all 6 digits of OTP.';
       return;
     }
 
+    this.errorMessage = '';
     this.loading = true;
-    // Simulate OTP verification
-    setTimeout(() => {
-      this.loading = false;
-      alert('OTP verified successfully!');
-    }, 2000);
+
+    const fullOtp = this.otpDigits.join('');
+
+   if (this.otp_id) {
+    await firstValueFrom(this.service.loginOTPVerify({ otp_id: this.otp_id, otp: fullOtp }).pipe(
+       tap(
+         (response) => {
+             debug(response);
+             if (response.status == 200 && response.body.token) {
+                 localStorage.setItem('token', response.body.token);
+                 this.router.navigate(['/']);
+             }
+         },
+         (error) => {
+           this.alert.errorAlert(error.error.message, error.error.body);
+         }
+       )
+    ));
+   }
+  }
+
+  resendOtp(): void {
+    if (this.cooldown > 0) return;
+    this.otpDigits = ['', '', '', '', '', ''];
+    this.errorMessage = '';
+    this.startCooldown();
+  }
+
+  startCooldown(): void {
+    this.cooldown = this.cooldownDuration;
+    clearInterval(this.cooldownInterval);
+
+    this.cooldownInterval = setInterval(() => {
+      this.cooldown -= 1;
+      if (this.cooldown <= 0) {
+        clearInterval(this.cooldownInterval);
+      }
+    }, 1000);
   }
 }

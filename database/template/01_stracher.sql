@@ -7,6 +7,7 @@ CREATE TABLE users (
     email VARCHAR(100) UNIQUE,
     photo VARCHAR(255),
     password_hash VARCHAR(255),
+    disabled BOOLEAN DEFAULT FALSE,
     role ENUM('Super Admin', 'Manager', 'Normal user'),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
