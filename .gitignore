@@ -1,2 +1,12 @@
-db_data
-docker/dotfiles/php
+docker/containers/react-native/*
+docker/containers/angular/*
+database/data/*
+database/data
+database/data/.*
+.env
+composer.lock
+.android
+mobile/android
+.git_backup
+TODO.md
+android/app/src/main/assets

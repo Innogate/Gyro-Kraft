@@ -1,8 +1,13 @@
 RewriteEngine On
 
-# If the requested file or directory exists, serve it directly
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+# Exclude existing files and directories
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
 
-# Otherwise, redirect all requests to index.php
-RewriteRule ^ index.php [QSA,L]
+# If request starts with /controler/, route to controler/index.php
+RewriteCond %{REQUEST_URI} ^/controler/
+RewriteRule ^controler/.*$ controler/index.php [L]
+
+# Otherwise, redirect all other requests to index.html
+RewriteRule ^ index.html [L]
