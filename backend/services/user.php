@@ -145,24 +145,36 @@ $router->add('POST', '/master/users/create', function () {
     $dbInstance = new Database();
     $conn = $dbInstance->pdo;
 
-    $sql = "INSERT INTO users (name, address, phone_no, whatsapp_no, email, photo, password_hash, role) VALUES (:name, :address, :phone_no, :whatsapp_no, :email, :photo, :password_hash, :role)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(":name", $name);
-    $stmt->bindParam(":address", $address);
-    $stmt->bindParam(":phone_no", $phone_no);
-    $stmt->bindParam(":whatsapp_no", $whatsapp_no);
-    $stmt->bindParam(":email", $email);
-    $stmt->bindParam(":photo", $photo);
-    $stmt->bindParam(":password_hash", $password_hash);
-    $stmt->bindParam(":role", $role);
-    $stmt->execute();
+    try{
+        $sql = "INSERT INTO users (name, address, phone_no, whatsapp_no, email, photo, password_hash, role) VALUES (:name, :address, :phone_no, :whatsapp_no, :email, :photo, :password_hash, :role)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(":name", $name);
+        $stmt->bindParam(":address", $address);
+        $stmt->bindParam(":phone_no", $phone_no);
+        $stmt->bindParam(":whatsapp_no", $whatsapp_no);
+        $stmt->bindParam(":email", $email);
+        $stmt->bindParam(":photo", $photo);
+        $stmt->bindParam(":password_hash", $password_hash);
+        $stmt->bindParam(":role", $role);
+        $stmt->execute();
+    } catch (Exception $e) {
+        (new ApiResponse(500, "Error", $e->getMessage()))->toJson();
+        return;
 
-    $id = $conn->lastInsertId();
-    $sql = "SELECT * FROM users WHERE id = :id";
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(":id", $id);
-    $stmt->execute();
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    try {
+        $id = $conn->lastInsertId();
+        $sql = "SELECT * FROM users WHERE id = :id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        (new ApiResponse(500, "Error", $e->getMessage()))->toJson();
+        return;
+    }
+
     (new ApiResponse(200, "Success", ["user"=>$user]))->toJson();
 });
 

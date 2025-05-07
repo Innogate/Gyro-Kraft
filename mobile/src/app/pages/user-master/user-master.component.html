@@ -1,0 +1,9 @@
+<div class="p-6 flex  justify-start relative">
+    <!-- Wrapper for cards -->
+    <div class="flex flex-wrap justify-start">
+        <!-- User Card -->
+         <ng-container *ngFor="let user of users?.users">
+            <app-user-card class="card-inview" [users]="user"></app-user-card>
+         </ng-container>
+    </div>
+</div>

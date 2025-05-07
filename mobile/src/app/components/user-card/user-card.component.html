@@ -1,0 +1,78 @@
+<div *ngIf="users" class="relative bg-gradient-to-r from-white via-gray-200 to-gray-300 p-4 sm:p-6 rounded-2xl shadow-xl border border-gray-300 flex flex-col space-y-4 m-4 max-w-xs sm:max-w-sm">
+
+    <!-- Date -->
+    <div class="absolute top-4 right-4 text-xs text-gray-600">
+        <span class="font-semibold text-lg text-gray-900">Date:</span>
+        <span class="text-sm text-gray-700">{{users.created_at | date : 'dd-MM-yyyy'}}</span>
+    </div>
+
+    <!-- Profile Info -->
+    <div class="flex flex-col space-y-4">
+
+        <!-- Profile Image and Name -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center border-4 border-white shadow-xl mb-4 sm:mb-0">
+                <img src="{{users.photo ? users.photo : '/img/profile.png'}}" alt="Profile" class="object-cover w-full h-full">
+            </div>
+            <div class="text-sm space-y-1">
+                <div class="text-2xl font-semibold text-gray-800">{{users.name}}</div>
+                <div class="flex items-center text-gray-600">
+                    <i class="pi pi-id-card w-4 h-4 mr-2 text-blue-500"></i>
+                    <span class="text-sm text-gray-500">ejj46i4te4k</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="space-y-3 text-sm text-gray-700">
+            <div class="flex items-center space-x-2">
+                <i class="pi pi-map-marker w-4 h-4 mr-2 text-green-500"></i>
+                <span class="w-16 font-semibold text-gray-500">Address:</span>
+                <span class="text-gray-500">{{users.address}}</span>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <i class="pi pi-user w-4 h-4 mr-2 text-purple-500"></i>
+                <span class="w-16 font-semibold text-gray-500">Role:</span>
+                <span class="text-gray-500">{{users.role}}</span>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <i class="pi pi-phone w-4 h-4 mr-2 text-yellow-500"></i>
+                <span class="w-16 font-semibold text-gray-500">Phone:</span>
+                <span class="text-gray-500">{{users.phone_no}}</span>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <i class="pi pi-whatsapp w-4 h-4 mr-2 text-green-600"></i>
+                <span class="w-16 font-semibold text-gray-500">Whatsapp:</span>
+                <span class="text-gray-500">{{users.whatsapp_no}}</span>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <i class="pi pi-envelope w-4 h-4 mr-2 text-blue-600"></i>
+                <span class="w-16 font-semibold text-gray-500">Email:</span>
+                <span class="text-gray-500">{{users.email}}</span>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row justify-between mt-6 space-y-4 sm:space-y-0 sm:space-x-4">
+            <!-- Change Password Button -->
+            <button class="group px-4 py-2 text-white bg-blue-600 border-2 border-blue-600 rounded-full shadow-2xl hover:shadow-2xl hover:shadow-blue-500/60 hover:bg-blue-700 hover:border-blue-700 transition-all duration-300 ease-in-out text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto">
+                <i class="pi pi-lock mr-2"></i>
+                <span class="group-hover:inline-block hidden text-sm">Change Password</span>
+            </button>
+            <!-- Update Button -->
+            <button (click)="updateInfo()" class="group flex items-center gap-2 px-4 py-2 text-white bg-green-600 border-2 border-green-600 rounded-full shadow-2xl hover:shadow-2xl hover:shadow-green-500/60 hover:bg-green-700 hover:border-green-700 transition-all duration-300 ease-in-out text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-green-500 w-full sm:w-auto">
+                <i class="pi pi-pencil"></i>
+                <span class="group-hover:inline-block hidden text-sm">Update Info</span>
+            </button>
+            <!-- Rights Button -->
+            <button class="group flex items-center gap-2 px-4 py-2 text-white bg-purple-600 border-2 border-purple-600 rounded-full shadow-2xl hover:shadow-2xl hover:shadow-purple-500/60 hover:bg-purple-700 hover:border-purple-700 transition-all duration-300 ease-in-out text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500 w-full sm:w-auto">
+                <i class="pi pi-key"></i>
+                <span class="group-hover:inline-block hidden text-sm">Manage Rights</span>
+            </button>
+        </div>
+    </div>
+</div>
