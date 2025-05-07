@@ -1,0 +1,55 @@
+<div
+  class="relative min-h-screen bg-gradient-to-tr from-white via-blue-100 to-blue-200 flex items-center justify-center px-6 py-12">
+  <!-- Login Card -->
+  <div class="relative z-10 w-full max-w-md bg-white rounded-2xl shadow-lg p-8 md:p-10 border border-blue-100">
+    <!-- Logo -->
+    <div class="flex flex-col items-center mb-6">
+      <img src="/img/logo.png" alt="Logo" class="w-16 h-16 mb-2" />
+      <h1 class="text-3xl font-bold text-blue-700">Gyro Kraft</h1>
+      <p class="text-sm text-blue-500">Log in to continue</p>
+    </div>
+
+    <!-- Login Form -->
+    <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)" class="space-y-5">
+
+      <!-- Mobile Number -->
+      <div class="p-float-label">
+        <input id="mobile" type="text" name="mobile" pInputText [(ngModel)]="mobile" #mobileRef="ngModel"
+          required class="w-full border border-blue-200 focus:ring-2 focus:ring-blue-400" />
+        <label for="mobile">Mobile Number</label>
+        <small *ngIf="mobileRef.invalid && mobileRef.touched" class="p-error block mt-1 text-red-500">
+          Please enter your mobile number.
+        </small>
+      </div>
+
+      <!-- Password -->
+      <div class="p-float-label">
+        <input id="password" type="password" name="password" pPassword [(ngModel)]="password"
+          #passwordRef="ngModel" required minlength="6"
+          class="w-full border border-blue-200 focus:ring-2 focus:ring-blue-400" />
+        <label for="password">Password</label>
+        <small *ngIf="passwordRef.invalid && passwordRef.touched" class="p-error block mt-1 text-red-500">
+          Password must be at least 6 characters.
+        </small>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit"
+        pButton
+        class="w-full mt-4 bg-blue-600 text-white font-semibold py-3 rounded-xl shadow-md hover:bg-blue-700 transition"
+        [disabled]="!loginForm.valid">
+        Login
+      </button>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="text-red-500 text-center text-sm mt-2">
+        {{ errorMessage }}
+      </div>
+    </form>
+
+    <!-- Optional Footer -->
+    <div class="text-center text-xs text-blue-400 mt-6">
+      &copy; 2025 Gyro Kraft. All rights reserved.
+    </div>
+  </div>
+</div>

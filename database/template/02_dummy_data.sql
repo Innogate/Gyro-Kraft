@@ -1,0 +1,2 @@
+INSERT INTO `users`(name, address, phone_no, whatsapp_no, email, photo, password_hash, role, created_at) VALUES
+('Super Admin','None','1234567890','1234567890','email@e.com',NULL,'1234567890','Super Admin','2025-05-02 13:55:17');
