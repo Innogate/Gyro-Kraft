@@ -54,13 +54,12 @@ export class AppMenu {
                                 routerLink: ['/masters/age-group']
                             },
                             {
-                                label: 'Cutter Name',
+                                label: 'Cutter Master',
                                 icon: 'pi pi-fw pi-cut',
                                 items: [
-                                    { label: 'Name', icon: 'pi pi-fw pi-id-card' },
-                                    { label: 'Address', icon: 'pi pi-fw pi-map-marker' },
-                                    { label: 'Phone No', icon: 'pi pi-fw pi-phone' },
-                                    { label: 'Whatsapp No', icon: 'pi pi-fw pi-whatsapp' }
+                                    { label: 'Show all ', icon: 'pi pi-fw pi pi-user', routerLink: ['/pages/cutter-name']},
+                                    { label: 'Add', icon: 'pi pi-fw pi-user-plus' },
+                                    
                                 ]
                             },
                             {
