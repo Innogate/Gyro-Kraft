@@ -73,7 +73,7 @@ export class AppMenu {
                     {
                         label: 'Order Sheet',
                         icon: 'pi pi-fw pi-file',
-                        routerLink: ['/order-sheet']
+                        routerLink: ['pages/order-sheet']
                     },
                     {
                         label: 'Cutting',
