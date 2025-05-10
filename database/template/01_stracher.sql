@@ -5,7 +5,7 @@ CREATE TABLE users (
     phone_no VARCHAR(20),
     whatsapp_no VARCHAR(20),
     email VARCHAR(100) UNIQUE,
-    photo VARCHAR(255),
+    photo LONGTEXT,
     password_hash VARCHAR(255),
     disabled BOOLEAN DEFAULT FALSE,
     role ENUM('Super Admin', 'Manager', 'Normal user'),

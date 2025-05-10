@@ -28,9 +28,21 @@ export class AppMenu {
                 label: 'Production Process',
                 items: [
                     {
-                        label: 'Users Master / User Rights',
+                        label: 'Users Master',
                         icon: 'pi pi-fw pi-users',
-                        routerLink: ['/users-master']
+                        items: [
+                            {
+                                label: 'Users',
+                                icon: 'pi pi-fw pi-users',
+                                routerLink: ['/pages/user-master']
+                            },
+                            {
+                                label: 'Create User',
+                                icon: 'pi pi-fw pi-users',
+                                routerLink: ['/pages/create-user']
+                            }
+
+                        ]
                     },
                     {
                         label: 'Masters',
