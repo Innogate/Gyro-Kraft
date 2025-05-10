@@ -1,27 +1,41 @@
 <div class="card">
-    <div class=" container mx-auto py-4">
-        <h1 class="text-black font-bold mb-10 text-5xl flex items-center gap-2">
-            <i class="pi pi-align-justify" style="font-size: 32px;"></i>
-            Cutter Details
-        </h1>
+    <div class="container mx-auto py-4">
+        <div class="flex justify-between items-center mb-10">
+            <h1 class="text-black font-bold text-5xl flex items-center gap-2">
+                <i class="pi pi-align-justify" style="font-size: 32px;"></i>
+                Cutter Details
+            </h1>
+            <button (click)="toggleForm()" class="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-400 transition-colors duration-200">
+                + Add Cutter
+            </button>
+        </div>
+
+        <div *ngIf="showForm" class="mb-6 bg-gray-100 p-6 rounded-2xl shadow-lg border border-gray-300">
+            <h2 class="text-2xl font-semibold mb-4">Add New Cutter</h2>
+            
+            <div *ngIf="errorMessage" class="text-red-500 mb-4">{{ errorMessage }}</div>
+            
+            <input [(ngModel)]="newCutter.name" placeholder="Cutter Name" class="w-full mb-2 p-3 rounded-lg border" />
+            <input [(ngModel)]="newCutter.address" placeholder="Address" class="w-full mb-2 p-3 rounded-lg border" />
+            <input [(ngModel)]="newCutter.phone" placeholder="Phone Number" type="tel" class="w-full mb-2 p-3 rounded-lg border" (input)="filterNumbers($event, 'phone')" />
+            <input [(ngModel)]="newCutter.whatsapp" placeholder="WhatsApp Number" type="tel" class="w-full mb-4 p-3 rounded-lg border" (input)="filterNumbers($event, 'whatsapp')" />
+            
+            <button (click)="addCutter()" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-400 transition-colors duration-200 align-middle">
+                Save Cutter
+            </button>
+        </div>
+
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div *ngFor="let cutter of cutters"
-                class="bg-gray-100 p-6 rounded-2xl shadow-lg border border-gray-300 hover:shadow-2xl transition-shadow duration-300">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-2">{{ cutter.name
-                    }}</h2>
-                <p class="text-gray-600 mb-1"><i
-                        class="pi pi-map-marker mr-2"></i>{{ cutter.address }}</p>
-                <p class="text-gray-600 mb-1"><i class="pi pi-phone mr-2"></i>{{
-                    cutter.phone }}</p>
-                <p class="text-gray-600 mb-4"><i class="pi pi-whatsapp mr-2"></i>{{
-                    cutter.whatsapp }}</p>
+            <div *ngFor="let cutter of cutters" class="bg-gray-100 p-6 rounded-2xl shadow-lg border border-gray-300 hover:shadow-2xl transition-shadow duration-300">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-2">{{ cutter.name }}</h2>
+                <p class="text-gray-600 mb-1"><i class="pi pi-map-marker mr-2"></i>{{ cutter.address }}</p>
+                <p class="text-gray-600 mb-1"><i class="pi pi-phone mr-2"></i>{{ cutter.phone }}</p>
+                <p class="text-gray-600 mb-4"><i class="pi pi-whatsapp mr-2"></i>{{ cutter.whatsapp }}</p>
                 <div class="flex gap-4 flex-wrap">
-                    <button
-                        class="flex items-center bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-400 transition-colors duration-200 w-full sm:w-auto">
+                    <button class="flex items-center bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-400 transition-colors duration-200 w-full sm:w-auto">
                         <i class="pi pi-pencil mr-2"></i> Update
                     </button>
-                    <button
-                        class="flex items-center bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-400 transition-colors duration-200 w-full sm:w-auto">
+                    <button class="flex items-center bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-400 transition-colors duration-200 w-full sm:w-auto">
                         <i class="pi pi-trash mr-2"></i> Delete
                     </button>
                 </div>
@@ -29,4 +43,3 @@
         </div>
     </div>
 </div>
-
