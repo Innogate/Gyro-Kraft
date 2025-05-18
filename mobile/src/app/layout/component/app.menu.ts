@@ -55,12 +55,8 @@ export class AppMenu {
                             },
                             {
                                 label: 'Cutter Master',
-                                icon: 'pi pi-fw pi-cut',
-                                items: [
-                                    { label: 'Show all ', icon: 'pi pi-fw pi pi-user', routerLink: ['/pages/cutter-name']},
-                                    { label: 'Add', icon: 'pi pi-fw pi-user-plus' },
-                                    
-                                ]
+                                icon: 'pi pi-user',
+                                routerLink: ['/pages/cutter-name']
                             },
                             {
                                 label: 'Printer Master',
