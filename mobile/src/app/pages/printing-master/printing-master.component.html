@@ -1,0 +1,204 @@
+<div class="card">
+    <div class="container mx-auto py-4">
+        <div class="flex justify-between items-center mb-10 bg-gradient-to-r from-white via-gray-200 to-gray-300 p-6 rounded-xl shadow-lg">
+            <!-- Header with colorful printing icon -->
+            <h3 class="text-gray-800 font-extrabold text-5xl flex items-center gap-4">
+                <span class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-3 rounded-full shadow-lg">
+                    <i class="pi pi-print" style="font-size: 28px;"></i>
+                </span>
+                <span class="bg-clip-text text-3xl font-extrabold tracking-wide leading-tight ">
+                    Printing-Master
+                </span>
+            </h3>
+        
+            <!-- Creative Add Button -->
+            <button (click)="openForm()"
+                class="flex items-center gap-2 bg-gradient-to-r from-green-400 to-green-600 text-white py-3 px-5 rounded-full shadow-md hover:from-green-500 hover:to-green-700 transition-all duration-300 transform hover:scale-105">
+                <i class="pi pi-plus-circle text-white text-lg"></i>
+                <span class="font-semibold">Add Printing Master</span>
+            </button>
+        </div>
+        
+
+
+
+        <p-dialog header="Add Printing Entry" [(visible)]="showForm" [modal]="true" [closable]="true"
+            [style]="{width: '450px'}">
+
+            <div class="p-fluid bg-gradient-to-r from-white via-gray-200 to-gray-300" style="padding: 1rem;  border-radius: 8px;">
+
+                <!-- Date -->
+                <div class="p-field" style="margin-bottom: 1rem;">
+                    <label for="date"
+                        style="font-weight: bold; color: #2c3e50; display: inline-flex; align-items: center;">
+                        <i class="pi pi-calendar" style="margin-right: 5px; color: #007ad9;"></i> Date
+                    </label>
+                    <input id="date" type="date" pInputText [(ngModel)]="newPrinting.date"
+                        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" />
+                </div>
+
+                <!-- Challan No -->
+                <div class="p-field" style="margin-bottom: 1rem;">
+                    <label for="challanNo"
+                        style="font-weight: bold; color: #2c3e50; display: inline-flex; align-items: center;">
+                        <i class="pi pi-file" style="margin-right: 5px; color:  #16a085;; "></i> Challan No
+                    </label>
+                    <input id="challanNo" type="text" pInputText [(ngModel)]="newPrinting.challanNo"
+                        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" />
+                </div>
+
+                <!-- Printer Name -->
+                <div class="p-field" style="margin-bottom: 1rem;">
+                    <label for="printerName"
+                        style="font-weight: bold; color: #2c3e50; display: inline-flex; align-items: center;">
+                        <i class="pi pi-user" style="margin-right: 5px; color: #8e44ad;"></i> Printer Name
+                    </label>
+                    <input id="printerName" type="text" pInputText [(ngModel)]="newPrinting.printerName"
+                        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" />
+                </div>
+
+                <!-- Screen No -->
+                <div class="p-field" style="margin-bottom: 1rem;">
+                    <label for="screenNo"
+                        style="font-weight: bold; color: #2c3e50; display: inline-flex; align-items: center;">
+                        <i class="pi pi-desktop" style="margin-right: 5px; color: #f39c12;"></i> Screen No
+                    </label>
+                    <input id="screenNo" type="text" pInputText [(ngModel)]="newPrinting.screenNo"
+                        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" />
+                </div>
+
+                <!-- Screen Qty -->
+                <div class="p-field" style="margin-bottom: 1rem;">
+                    <label for="screenQty"
+                        style="font-weight: bold; color: #2c3e50; display: inline-flex; align-items: center;">
+                        <i class="pi pi-sort-numeric-up" style="margin-right: 5px; color: #6ae622;"></i> Screen Qty
+                    </label>
+                    <input id="screenQty" type="number" pInputText [(ngModel)]="newPrinting.screenQty"
+                        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" />
+                </div>
+
+                <!-- Delivery Date -->
+                <div class="p-field" style="margin-bottom: 1rem;">
+                    <label for="deliveryDate"
+                        style="font-weight: bold; color: #2c3e50; display: inline-flex; align-items: center;">
+                        <i class="pi pi-calendar-plus" style="margin-right: 5px; color: #2980b9;"></i> Delivery Date
+                    </label>
+                    <input id="deliveryDate" type="date" pInputText [(ngModel)]="newPrinting.deliveryDate"
+                        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" />
+                </div>
+
+                <!-- Received Qty -->
+                <div class="p-field" style="margin-bottom: 1rem;">
+                    <label for="receivedQty"
+                        style="font-weight: bold; color: #2c3e50; display: inline-flex; align-items: center;">
+                        <i class="pi pi-check-circle" style="margin-right: 5px; color: #4427ae;"></i> Received Qty
+                    </label>
+                    <input id="receivedQty" type="number" pInputText [(ngModel)]="newPrinting.receivedQty"
+                        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" />
+                </div>
+
+                <!-- Remark -->
+                <div class="p-field" style="margin-bottom: 1rem;">
+                    <label for="remark"
+                        style="font-weight: bold; color: #2c3e50; display: inline-flex; align-items: center;">
+                        <i class="pi pi-comment" style="margin-right: 5px; color: #df07f3;"></i> Remark
+                    </label>
+                    <textarea id="remark" rows="3" pInputTextarea [(ngModel)]="newPrinting.remark"
+                        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; resize: vertical;"></textarea>
+                </div>
+            </div>
+
+
+
+            <div class="flex justify-between items-center w-full mt-4">
+                <button pButton type="button" label="Save" icon="pi pi-check" (click)="saveForm()"
+                    class="p-button p-button-success"></button>
+
+                <button pButton type="button" label="Cancel" icon="pi pi-times" (click)="closeForm()"
+                    class="p-button p-button-secondary"></button>
+            </div>
+
+
+        </p-dialog>
+
+
+        <div *ngIf="printingMaster"
+            class="relative bg-gradient-to-r from-white via-gray-200 to-gray-300 p-4 sm:p-6 rounded-2xl shadow-xl border border-gray-300 flex flex-col space-y-4 m-4 max-w-xs sm:max-w-sm">
+
+            <!-- Date -->
+            <div class="absolute top-4 right-4 text-xs text-gray-600">
+                <span class="font-semibold text-lg text-gray-900">Date:</span>
+                <span class="text-sm text-gray-700">{{ printingMaster.date | date: 'dd-MM-yyyy' }}</span>
+            </div>
+
+            <!-- Info Section -->
+            <div class="flex flex-col space-y-4">
+
+                <!-- Main Fields -->
+                <div class="space-y-3 text-sm text-gray-700">
+                    <div class="flex items-center space-x-2">
+                        <i class="pi pi-hashtag w-4 h-4 mr-2 text-blue-500"></i>
+                        <span class="w-28 font-semibold text-gray-500">Challan No:</span>
+                        <span class="text-gray-500">{{ printingMaster.challanNo }}</span>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <i class="pi pi-user w-4 h-4 mr-2 text-purple-500"></i>
+                        <span class="w-28 font-semibold text-gray-500">Printer Name:</span>
+                        <span class="text-gray-500">{{ printingMaster.printerName }}</span>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <i class="pi pi-box w-4 h-4 mr-2 text-yellow-500"></i>
+                        <span class="w-28 font-semibold text-gray-500">Screen No:</span>
+                        <span class="text-gray-500">{{ printingMaster.screenNo }}</span>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <i class="pi pi-sort-numeric-up-alt w-4 h-4 mr-2 text-green-600"></i>
+                        <span class="w-28 font-semibold text-gray-500">Screen Qty:</span>
+                        <span class="text-gray-500">{{ printingMaster.screenQty }}</span>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <i class="pi pi-calendar w-4 h-4 mr-2 text-blue-600"></i>
+                        <span class="w-28 font-semibold text-gray-500">Delivery Date:</span>
+                        <span class="text-gray-500">{{ printingMaster.deliveryDate | date: 'dd-MM-yyyy' }}</span>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <i class="pi pi-check-circle w-4 h-4 mr-2 text-indigo-600"></i>
+                        <span class="w-28 font-semibold text-gray-500">Received Qty:</span>
+                        <span class="text-gray-500">{{ printingMaster.receivedQty }}</span>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <i class="pi pi-comment w-4 h-4 mr-2 text-pink-500"></i>
+                        <span class="w-28 font-semibold text-gray-500">Remark:</span>
+                        <span class="text-gray-500">{{ printingMaster.remark }}</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row justify-between mt-6 space-y-4 sm:space-y-0 sm:space-x-4">
+                    <!-- Edit Button -->
+                    <button (click)="editPrintingMaster()"
+                        class="group flex items-center gap-2 px-4 py-2 text-white bg-blue-600 border-2 border-blue-600 rounded-full shadow-2xl hover:shadow-blue-500/60 hover:bg-blue-700 hover:border-blue-700 transition-all duration-300 ease-in-out font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto">
+                        <i class="pi pi-pencil"></i>
+                        <span class="group-hover:inline-block hidden text-sm">Edit Entry</span>
+                    </button>
+
+                    <!-- Delete Button -->
+                    <button (click)="deletePrintingMaster()"
+                        class="group flex items-center gap-2 px-4 py-2 text-white bg-red-600 border-2 border-red-600 rounded-full shadow-2xl hover:shadow-red-500/60 hover:bg-red-700 hover:border-red-700 transition-all duration-300 ease-in-out font-semibold focus:outline-none focus:ring-2 focus:ring-red-500 w-full sm:w-auto">
+                        <i class="pi pi-trash"></i>
+                        <span class="group-hover:inline-block hidden text-sm">Delete</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        
+
+    </div>
+</div>

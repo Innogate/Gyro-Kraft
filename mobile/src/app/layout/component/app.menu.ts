@@ -61,12 +61,13 @@ export class AppMenu {
                             {
                                 label: 'Printer Master',
                                 icon: 'pi pi-fw pi-print',
-                                items: [
-                                    { label: 'Name', icon: 'pi pi-fw pi-id-card' },
-                                    { label: 'Address', icon: 'pi pi-fw pi-map-marker' },
-                                    { label: 'Phone No', icon: 'pi pi-fw pi-phone' },
-                                    { label: 'Whatsapp No', icon: 'pi pi-fw pi-whatsapp' }
-                                ]
+                                routerLink: ['/pages/printing-master']
+                                // items: [
+                                //     { label: 'Name', icon: 'pi pi-fw pi-id-card' },
+                                //     { label: 'Address', icon: 'pi pi-fw pi-map-marker' },
+                                //     { label: 'Phone No', icon: 'pi pi-fw pi-phone' },
+                                //     { label: 'Whatsapp No', icon: 'pi pi-fw pi-whatsapp' }
+                                // ]
                             }
                         ]
                     },
