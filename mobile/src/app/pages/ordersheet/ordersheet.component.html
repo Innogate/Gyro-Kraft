@@ -1,0 +1,225 @@
+<div class="max-w-4xl mx-auto shadow-2xl rounded-xl overflow-hidden">
+
+  <div
+    class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-10 py-6 shadow-2xl rounded-lg flex justify-between items-center">
+    <!-- Left: Icon + Heading -->
+    <div class="flex items-center gap-5">
+      <div class="bg-white bg-opacity-20 rounded-full p-4 shadow-md">
+        <i class="pi pi-shopping-cart text-white" style="font-size: 2rem;"></i>
+      </div>
+      <div>
+        <h3 class="text-3xl font-extrabold tracking-wide leading-tight">Create Order</h3>
+        <p class="text-sm text-white text-opacity-80 mt-1">Quickly generate a new order from here</p>
+      </div>
+    </div>
+
+    <!-- Right: Hover Button -->
+    <button
+      class="group flex items-center gap-2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-full transition-all duration-300">
+      <i class="pi pi-list" style="font-size: 1.2rem;"></i>
+      <span class="">Show All Order List</span>
+    </button>
+  </div>
+
+
+
+
+
+  <div class="bg-gradient-to-br from-slate-100 to-slate-300 p-10 space-y-8">
+    <form [formGroup]="productForm" class="space-y-6">
+
+
+      <!-- File Upload -->
+      <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Upload Documents</label>
+        <div
+          class="flex items-center bg-white rounded-xl border focus-within:border-green-600 transition-all duration-300">
+          <span class="p-3 text-green-600">
+            <i class="pi pi-upload"></i>
+          </span>
+          <input type="file" multiple (change)="onFilesSelected($event)" formControlName="documents"
+            class="w-full py-3 px-4 text-gray-600 rounded-r-xl outline-none bg-transparent" />
+        </div>
+
+        <!-- Display selected images -->
+        <div *ngIf="imageUrls.length > 0" class="overflow-x-auto mt-4">
+          <div class="flex space-x-4">
+            <div *ngFor="let imageUrl of imageUrls; let i = index" class="flex-shrink-0">
+              <img [src]="imageUrl" alt="Selected Image" class="w-24 h-24 object-cover rounded-xl" />
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Buyer -->
+        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Buyer</label>
+          <div
+            class="flex items-center bg-white rounded-xl  border  focus-within:border-blue-500 transition-all duration-300">
+            <span class="p-3 text-blue-500">
+              <i class="pi pi-user-plus"></i>
+            </span>
+            <input type="text" pInputText placeholder="Buyer" formControlName="buyer"
+              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
+          </div>
+        </div>
+
+
+
+
+
+
+        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Date</label>
+          <div
+            class="flex items-center bg-white rounded-xl  border  focus-within:border-green-500 transition-all duration-300">
+            <span class="p-3 text-green-500">
+              <i class="pi pi-calendar"></i>
+            </span>
+            <input type="date" pInputText formControlName="date"
+              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
+          </div>
+        </div>
+
+
+
+        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Style NO</label>
+          <div
+            class="flex items-center bg-white rounded-xl  border  focus-within:border-blue-500 transition-all duration-300">
+            <span class="p-3 text-blue-500">
+              <i class="pi pi-hashtag text-indigo-500"></i>
+            </span>
+            <input type="text" pInputText placeholder="Style No" formControlName="styleNo"
+              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
+          </div>
+        </div>
+
+        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Brand</label>
+          <div
+            class="flex items-center bg-white rounded-xl  border  focus-within:border-blue-500 transition-all duration-300">
+            <span class="p-3 text-blue-500">
+              <i class="pi pi-tag text-orange-500"></i>
+            </span>
+            <input type="text" pInputText placeholder="Brand" formControlName="brand"
+              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
+          </div>
+        </div>
+
+        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Season</label>
+          <div
+            class="flex items-center bg-white rounded-xl  border  focus-within:border-blue-500 transition-all duration-300">
+            <span class="p-3 text-blue-500">
+              <i class="pi pi-sun text-yellow-500"></i>
+            </span>
+            <input type="text" pInputText placeholder="season" formControlName="season"
+              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
+          </div>
+        </div>
+
+        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Age-Group</label>
+          <div
+            class="flex items-center bg-white rounded-xl  border  focus-within:border-blue-500 transition-all duration-300">
+            <span class="p-3 text-blue-500">
+              <i class="pi pi-users text-pink-500"></i>
+            </span>
+            <input type="text" pInputText placeholder="Age-Group" formControlName="ageGroup"
+              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
+          </div>
+        </div>
+
+
+        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Shipment Date</label>
+          <div
+            class="flex items-center bg-white rounded-xl  border  focus-within:border-blue-500 transition-all duration-300">
+            <span class="p-3 text-blue-500">
+              <i class="pi pi-truck text-red-500"></i>
+            </span>
+            <input type="date" pInputText placeholder="Shipment-Date" formControlName="shipmentDate"
+              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
+          </div>
+        </div>
+
+        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Deadline Date</label>
+          <div
+            class="flex items-center bg-white rounded-xl  border  focus-within:border-blue-500 transition-all duration-300">
+            <span class="p-3 text-blue-500">
+              <i class="pi pi-truck text-red-500"></i>
+            </span>
+            <input type="date" pInputText placeholder="Deadline-Date" formControlName="deadlineDate"
+              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
+          </div>
+        </div>
+
+        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Pattern</label>
+          <div
+            class="flex items-center bg-white rounded-xl  border  focus-within:border-blue-500 transition-all duration-300">
+            <span class="p-3 text-blue-500">
+              <i class="pi pi-palette text-purple-500"></i>
+            </span>
+            <input type="text" pInputText placeholder="pattern" formControlName="pattern"
+              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
+          </div>
+        </div>
+
+        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Printing</label>
+          <div
+            class="flex items-center bg-white rounded-xl border  focus-within:border-blue-500 transition-all duration-300">
+            <span class="p-3 text-blue-500">
+              <i class="pi pi-print text-blue-400"></i>
+            </span>
+            <input type="text" pInputText placeholder="printing" formControlName="printing"
+              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
+          </div>
+        </div>
+
+
+
+
+
+        <!-- Textarea (Steps Required) -->
+        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Steps Required</label>
+          <div class="flex bg-white rounded-xl  border  focus-within:border-indigo-600 transition-all duration-300">
+            <span class="p-3 text-indigo-600">
+              <i class="pi pi-list"></i>
+            </span>
+            <textarea pInputTextarea rows="3" placeholder="Steps Required" formControlName="stepsRequired"
+              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent resize-none"></textarea>
+          </div>
+        </div>
+
+        <!-- Remark -->
+        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Remark</label>
+          <div class="flex bg-white rounded-xl border  focus-within:border-gray-600 transition-all duration-300">
+            <span class="p-3 text-gray-600">
+              <i class="pi pi-comment"></i>
+            </span>
+            <textarea pInputTextarea rows="2" placeholder="Remark" formControlName="remark"
+              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent resize-none"></textarea>
+          </div>
+        </div>
+
+
+      </div>
+
+      <!-- Submit Button -->
+      <button pButton type="submit"
+        class="w-full py-3 bg-gradient-to-r from-emerald-400 to-emerald-600 text-white font-bold rounded-xl shadow-md hover:shadow-xl hover:scale-[1.01] transition-all duration-300">
+        <i class="pi pi-check mr-2"></i>Submit
+      </button>
+
+    </form>
+  </div>
+</div>
