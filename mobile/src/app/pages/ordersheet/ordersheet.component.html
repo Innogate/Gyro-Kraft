@@ -1,318 +1,643 @@
-<div class="max-w-4xl mx-auto shadow-2xl rounded-xl overflow-hidden">
+<form
+    [formGroup]="orderForm"
+    (ngSubmit)="submitOrder()"
+    class="p-6 max-w-7xl mx-auto space-y-6"
+    novalidate
+  >
+    <h2 class="text-2xl font-semibold mb-4">Order Sheet Form</h2>
 
-  <div
-    class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-10 py-6 shadow-2xl rounded-lg flex justify-between items-center">
-    <!-- Left: Icon + Heading -->
-    <div class="flex items-center gap-5">
-      <div class="bg-white bg-opacity-20 rounded-full p-4 shadow-md">
-        <i class="pi pi-shopping-cart text-white" style="font-size: 2rem;"></i>
-      </div>
+    <!-- Main Fields Grid -->
+    <div
+      class="grid grid-cols-1 md:grid-cols-3 gap-6"
+    >
+      <!-- Unique ID -->
       <div>
-        <h3 class="text-3xl font-extrabold tracking-wide leading-tight">Create Order</h3>
-        <p class="text-sm text-white text-opacity-80 mt-1">Quickly generate a new order from here</p>
+        <label class="block font-medium mb-1" for="uniqueId">Unique ID *</label>
+        <input
+          id="uniqueId"
+          pInputText
+          formControlName="uniqueId"
+          placeholder="Unique ID"
+          class="w-full"
+        />
+        <small
+          *ngIf="f['uniqueId'].invalid && f['uniqueId'].touched"
+          class="text-red-600"
+          >Unique ID is required.</small
+        >
+      </div>
+
+      <!-- Date -->
+      <div>
+        <label class="block font-medium mb-1" for="date">Date *</label>
+        <p-calendar
+          id="date"
+          formControlName="date"
+          dateFormat="yy-mm-dd"
+          showIcon="true"
+          class="w-full"
+          [showButtonBar]="true"
+        ></p-calendar>
+        <small
+          *ngIf="f['date'].invalid && f['date'].touched"
+          class="text-red-600"
+          >Date is required.</small
+        >
+      </div>
+
+      <!-- Buyer -->
+      <div>
+        <label class="block font-medium mb-1" for="buyer">Buyer *</label>
+        <input
+          id="buyer"
+          pInputText
+          formControlName="buyer"
+          placeholder="Buyer"
+          class="w-full"
+        />
+        <small
+          *ngIf="f['buyer'].invalid && f['buyer'].touched"
+          class="text-red-600"
+          >Buyer is required.</small
+        >
+      </div>
+
+      <!-- Style No -->
+      <div>
+        <label class="block font-medium mb-1" for="styleNo">Style No *</label>
+        <input
+          id="styleNo"
+          pInputText
+          formControlName="styleNo"
+          placeholder="Style No"
+          class="w-full"
+        />
+        <small
+          *ngIf="f['styleNo'].invalid && f['styleNo'].touched"
+          class="text-red-600"
+          >Style No is required.</small
+        >
+      </div>
+
+      <!-- Brand -->
+      <div>
+        <label class="block font-medium mb-1" for="brand">Brand *</label>
+        <input
+          id="brand"
+          pInputText
+          formControlName="brand"
+          placeholder="Brand"
+          class="w-full"
+        />
+        <small
+          *ngIf="f['brand'].invalid && f['brand'].touched"
+          class="text-red-600"
+          >Brand is required.</small
+        >
+      </div>
+
+      <!-- Season -->
+      <div>
+        <label class="block font-medium mb-1" for="season">Season *</label>
+        <input
+          id="season"
+          pInputText
+          formControlName="season"
+          placeholder="Season"
+          class="w-full"
+        />
+        <small
+          *ngIf="f['season'].invalid && f['season'].touched"
+          class="text-red-600"
+          >Season is required.</small
+        >
+      </div>
+
+      <!-- Age Group Dropdown -->
+      <div>
+        <label class="block font-medium mb-1" for="ageGroup">Age Group *</label>
+        <p-dropdown
+          id="ageGroup"
+          [options]="ageGroupOptions"
+          formControlName="ageGroup"
+          placeholder="Select Age Group"
+          class="w-full"
+        ></p-dropdown>
+        <small
+          *ngIf="f['ageGroup'].invalid && f['ageGroup'].touched"
+          class="text-red-600"
+          >Age Group is required.</small
+        >
+      </div>
+
+      <!-- Shipment Date -->
+      <div>
+        <label class="block font-medium mb-1" for="shipmentDate">Shipment Date</label>
+        <p-calendar
+          id="shipmentDate"
+          formControlName="shipmentDate"
+          dateFormat="yy-mm-dd"
+          showIcon="true"
+          class="w-full"
+          [showButtonBar]="true"
+        ></p-calendar>
+      </div>
+
+      <!-- Pattern -->
+      <div>
+        <label class="block font-medium mb-1" for="pattern">Pattern</label>
+        <input
+          id="pattern"
+          pInputText
+          formControlName="pattern"
+          placeholder="Pattern"
+          class="w-full"
+        />
+      </div>
+
+      <!-- Printing -->
+      <div>
+        <label class="block font-medium mb-1" for="printing">Printing</label>
+        <input
+          id="printing"
+          pInputText
+          formControlName="printing"
+          placeholder="Printing"
+          class="w-full"
+        />
+      </div>
+
+      <!-- Steps Required -->
+      <div>
+        <label class="block font-medium mb-1" for="steps">Steps Required for Product</label>
+        <input
+          id="steps"
+          pInputText
+          formControlName="steps"
+          placeholder="Steps Required"
+          class="w-full"
+        />
+      </div>
+
+      <!-- Deadline Date -->
+      <div>
+        <label class="block font-medium mb-1" for="deadlineDate">Deadline Date</label>
+        <p-calendar
+          id="deadlineDate"
+          formControlName="deadlineDate"
+          dateFormat="yy-mm-dd"
+          showIcon="true"
+          class="w-full"
+          [showButtonBar]="true"
+        ></p-calendar>
+      </div>
+
+      <!-- Remark -->
+      <div class="md:col-span-3">
+        <label class="block font-medium mb-1" for="remark">Remark</label>
+        <textarea
+          id="remark"
+          pInputTextarea
+          formControlName="remark"
+          rows="3"
+          placeholder="Remark"
+          class="w-full"
+        ></textarea>
+      </div>
+
+      <!-- Documents Upload -->
+      <div class="md:col-span-3">
+        <label class="block font-medium mb-1">Documents Upload</label>
+        <p-fileUpload
+          name="documents"
+          mode="advanced"
+          multiple="multiple"
+          customUpload="true"
+          (uploadHandler)="onDocUpload($event)"
+          chooseLabel="Choose Files"
+          uploadLabel="Upload"
+          cancelLabel="Cancel"
+          auto="false"
+          class="w-full"
+        ></p-fileUpload>
       </div>
     </div>
 
-    <!-- Right: Hover Button -->
+    <!-- PO Qty Section -->
+    <div>
+      <h3 class="text-xl font-semibold mt-6 mb-3">PO Quantity</h3>
+      <button
+        pButton
+        type="button"
+        label="Add PO Qty"
+        icon="pi pi-plus"
+        class="mb-3"
+        (click)="addPOQty()"
+      ></button>
+
+      <p-table
+        [value]="poQty.controls"
+        dataKey="combo"
+        [scrollable]="true"
+        scrollHeight="300px"
+        responsiveLayout="scroll"
+        [showGridlines]="true"
+        [style]="{ 'min-width': '100%' }"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Combo</th>
+            <th>Pro Color</th>
+            <th>Fabric Quality</th>
+            <th>Supplier</th>
+            <th>Preemie</th>
+            <th>NB</th>
+            <th>Total Qty</th>
+            <th>Articles</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-poQtyGroup let-ri="rowIndex">
+          <tr [formGroup]="poQtyGroup">
+            <td>
+              <input
+                pInputText
+                formControlName="combo"
+                placeholder="Combo"
+                class="w-full"
+              />
+            </td>
+            <td>
+              <input
+                pInputText
+                formControlName="proColor"
+                placeholder="Pro Color"
+                class="w-full"
+              />
+            </td>
+            <td>
+              <input
+                pInputText
+                formControlName="fabricQuality"
+                placeholder="Fabric Quality"
+                class="w-full"
+              />
+            </td>
+            <td>
+              <input
+                pInputText
+                formControlName="supplier"
+                placeholder="Supplier"
+                class="w-full"
+              />
+            </td>
+            <td>
+              <input
+                type="number"
+                pInputText
+                formControlName="preemie"
+                placeholder="Preemie"
+                class="w-full"
+                min="0"
+              />
+            </td>
+            <td>
+              <input
+                type="number"
+                pInputText
+                formControlName="nb"
+                placeholder="NB"
+                class="w-full"
+                min="0"
+              />
+            </td>
+            <td>
+              <input
+                type="number"
+                pInputText
+                formControlName="totalQty"
+                placeholder="Total Qty"
+                class="w-full"
+                min="0"
+              />
+            </td>
+            <td>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-eye"
+                class="p-button-text"
+                (click)="openArticleDialog(ri)"
+                label="Articles"
+              ></button>
+            </td>
+            <td>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-trash"
+                class="p-button-text p-button-danger"
+                (click)="removePOQty(ri)"
+                label="Remove"
+              ></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <!-- BOM Fabric Section -->
+    <div>
+      <h3 class="text-xl font-semibold mt-6 mb-3">Bill of Materials (Fabric)</h3>
+      <button
+        pButton
+        type="button"
+        label="Add Fabric"
+        icon="pi pi-plus"
+        class="mb-3"
+        (click)="addFabricBOM()"
+      ></button>
+
+      <p-table
+        [value]="fabricBOM.controls"
+        dataKey="description"
+        [scrollable]="true"
+        scrollHeight="300px"
+        responsiveLayout="scroll"
+        [showGridlines]="true"
+        [style]="{ 'min-width': '100%' }"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Description</th>
+            <th>Fabric</th>
+            <th>Colour</th>
+            <th>TPX</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-fabricGroup let-ri="rowIndex">
+          <tr [formGroup]="fabricGroup">
+            <td>
+              <input
+                pInputText
+                formControlName="description"
+                placeholder="Description"
+                class="w-full"
+              />
+            </td>
+            <td>
+              <input
+                pInputText
+                formControlName="fabric"
+                placeholder="Fabric"
+                class="w-full"
+              />
+            </td>
+            <td>
+              <input
+                pInputText
+                formControlName="colour"
+                placeholder="Colour"
+                class="w-full"
+              />
+            </td>
+            <td>
+              <input
+                pInputText
+                formControlName="tpx"
+                placeholder="TPX"
+                class="w-full"
+              />
+            </td>
+            <td>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-trash"
+                class="p-button-text p-button-danger"
+                (click)="removeFabricBOM(ri)"
+                label="Remove"
+              ></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <!-- BOM Accessories Section -->
+    <div>
+      <h3 class="text-xl font-semibold mt-6 mb-3">Bill of Materials (Accessories)</h3>
+      <button
+        pButton
+        type="button"
+        label="Add Accessory"
+        icon="pi pi-plus"
+        class="mb-3"
+        (click)="addAccessoryBOM()"
+      ></button>
+
+      <p-table
+        [value]="accessoriesBOM.controls"
+        dataKey="particular"
+        [scrollable]="true"
+        scrollHeight="300px"
+        responsiveLayout="scroll"
+        [showGridlines]="true"
+        [style]="{ 'min-width': '100%' }"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Particular</th>
+            <th>Specification</th>
+            <th>Shade No</th>
+            <th>Consumption</th>
+            <th>Supplier</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-accGroup let-ri="rowIndex">
+          <tr [formGroup]="accGroup">
+            <td>
+              <input
+                pInputText
+                formControlName="particular"
+                placeholder="Particular"
+                class="w-full"
+              />
+            </td>
+            <td>
+              <input
+                pInputText
+                formControlName="specification"
+                placeholder="Specification"
+                class="w-full"
+              />
+            </td>
+            <td>
+              <input
+                pInputText
+                formControlName="shadeNo"
+                placeholder="Shade No"
+                class="w-full"
+              />
+            </td>
+            <td>
+              <input
+                type="number"
+                pInputText
+                formControlName="consumption"
+                placeholder="Consumption"
+                class="w-full"
+                min="0"
+              />
+            </td>
+            <td>
+              <input
+                pInputText
+                formControlName="supplier"
+                placeholder="Supplier"
+                class="w-full"
+              />
+            </td>
+            <td>
+              <input
+                pInputText
+                formControlName="status"
+                placeholder="Status"
+                class="w-full"
+              />
+            </td>
+            <td>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-trash"
+                class="p-button-text p-button-danger"
+                (click)="removeAccessoryBOM(ri)"
+                label="Remove"
+              ></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
     <button
-      class="group flex items-center gap-2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-full transition-all duration-300">
-      <i class="pi pi-list" style="font-size: 1.2rem;"></i>
-      <span class="">Show All Order List</span>
-    </button>
-  </div>
+      pButton
+      type="submit"
+      label="Submit Order"
+      class="mt-6"
+      [disabled]="orderForm.invalid"
+    ></button>
+  </form>
 
+  <!-- Article Dialog -->
+  <p-dialog
+    header="Articles Details"
+    [(visible)]="articleDialogVisible"
+    [modal]="true"
+    [style]="{ width: '700px' }"
+    [breakpoints]="{ '960px': '90vw', '640px': '100vw' }"
+  >
+    <form [formGroup]="selectedPOArticlesGroup" class="space-y-4">
+      <p-table
+        [value]="articlesArray.controls"
+        dataKey="articleNo"
+        [showGridlines]="true"
+        responsiveLayout="scroll"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Age Group</th>
+            <th>Article No</th>
+            <th>Qty</th>
+            <th>Gender</th>
+            <th>Product Photos</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
 
-
-
-
-  <div class="bg-gradient-to-br from-slate-100 to-slate-300 p-10 space-y-8">
-    <form [formGroup]="productForm" class="space-y-6">
-
-
-      <!-- File Upload -->
-      <div class="p-6 bg-white rounded-xl shadow-md border border-gray-200">
-        <label class="block text-sm font-semibold text-gray-700 mb-2">Upload Documents</label>
-
-        <label for="file-upload"
-          class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-emerald-500 transition-all duration-300 bg-gray-50 text-gray-500 hover:bg-white">
-          <i class="pi pi-cloud-upload text-4xl mb-2 text-emerald-500"></i>
-          <span class="text-sm">Click to browse or drag & drop files here</span>
-          <input id="file-upload" type="file" multiple (change)="onFilesSelected($event)" class="hidden" />
-        </label>
-
-        <!-- Image Preview List with Remove -->
-        <div *ngIf="imageUrls.length > 0" class="overflow-x-auto mt-4">
-          <div class="flex gap-4">
-            <div *ngFor="let imageUrl of imageUrls; let i = index" class="relative group">
-              <img [src]="imageUrl" alt="Selected" class="w-24 h-24 object-cover rounded-xl border shadow" />
-              <button type="button" (click)="removeFile(i)"
-                class="absolute top-1 right-1 bg-white rounded-full shadow text-red-600 hover:bg-red-100 p-1 transition-all duration-200 opacity-0 group-hover:opacity-100">
-                <i class="pi pi-times text-sm"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <!-- Buyer -->
-        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
-          <label class="block text-sm font-semibold text-gray-700 mb-1">Buyer</label>
-          <div
-            class="flex items-center bg-white rounded-xl  border  focus-within:border-blue-500 transition-all duration-300">
-            <span class="p-3 text-blue-500">
-              <i class="pi pi-user-plus"></i>
-            </span>
-            <input type="text" pInputText placeholder="Buyer" formControlName="buyer"
-              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
-          </div>
-        </div>
-
-
-
-
-
-
-        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
-          <label class="block text-sm font-semibold text-gray-700 mb-1">Date</label>
-          <div
-            class="flex items-center bg-white rounded-xl  border  focus-within:border-green-500 transition-all duration-300">
-            <span class="p-3 text-green-500">
-              <i class="pi pi-calendar"></i>
-            </span>
-            <input type="date" pInputText formControlName="date"
-              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
-          </div>
-        </div>
-
-
-
-        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
-          <label class="block text-sm font-semibold text-gray-700 mb-1">Style NO</label>
-          <div
-            class="flex items-center bg-white rounded-xl  border  focus-within:border-blue-500 transition-all duration-300">
-            <span class="p-3 text-blue-500">
-              <i class="pi pi-hashtag text-indigo-500"></i>
-            </span>
-            <input type="text" pInputText placeholder="Style No" formControlName="styleNo"
-              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
-          </div>
-        </div>
-
-        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
-          <label class="block text-sm font-semibold text-gray-700 mb-1">Brand</label>
-          <div
-            class="flex items-center bg-white rounded-xl  border  focus-within:border-blue-500 transition-all duration-300">
-            <span class="p-3 text-blue-500">
-              <i class="pi pi-tag text-orange-500"></i>
-            </span>
-            <input type="text" pInputText placeholder="Brand" formControlName="brand"
-              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
-          </div>
-        </div>
-
-        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
-          <label class="block text-sm font-semibold text-gray-700 mb-1">Season</label>
-          <div
-            class="flex items-center bg-white rounded-xl  border  focus-within:border-blue-500 transition-all duration-300">
-            <span class="p-3 text-blue-500">
-              <i class="pi pi-sun text-yellow-500"></i>
-            </span>
-            <input type="text" pInputText placeholder="season" formControlName="season"
-              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
-          </div>
-        </div>
-
-        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
-          <label class="block text-sm font-semibold text-gray-700 mb-1">Age-Group</label>
-          <div
-            class="flex items-center bg-white rounded-xl  border  focus-within:border-blue-500 transition-all duration-300">
-            <span class="p-3 text-blue-500">
-              <i class="pi pi-users text-pink-500"></i>
-            </span>
-            <input type="text" pInputText placeholder="Age-Group" formControlName="ageGroup"
-              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
-          </div>
-        </div>
-
-
-        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
-          <label class="block text-sm font-semibold text-gray-700 mb-1">Shipment Date</label>
-          <div
-            class="flex items-center bg-white rounded-xl  border  focus-within:border-blue-500 transition-all duration-300">
-            <span class="p-3 text-blue-500">
-              <i class="pi pi-truck text-red-500"></i>
-            </span>
-            <input type="date" pInputText placeholder="Shipment-Date" formControlName="shipmentDate"
-              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
-          </div>
-        </div>
-
-        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
-          <label class="block text-sm font-semibold text-gray-700 mb-1">Deadline Date</label>
-          <div
-            class="flex items-center bg-white rounded-xl  border  focus-within:border-blue-500 transition-all duration-300">
-            <span class="p-3 text-blue-500">
-              <i class="pi pi-truck text-red-500"></i>
-            </span>
-            <input type="date" pInputText placeholder="Deadline-Date" formControlName="deadlineDate"
-              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
-          </div>
-        </div>
-
-        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
-          <label class="block text-sm font-semibold text-gray-700 mb-1">Pattern</label>
-          <div
-            class="flex items-center bg-white rounded-xl  border  focus-within:border-blue-500 transition-all duration-300">
-            <span class="p-3 text-blue-500">
-              <i class="pi pi-palette text-purple-500"></i>
-            </span>
-            <input type="text" pInputText placeholder="pattern" formControlName="pattern"
-              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
-          </div>
-        </div>
-
-        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
-          <label class="block text-sm font-semibold text-gray-700 mb-1">Printing</label>
-          <div
-            class="flex items-center bg-white rounded-xl border  focus-within:border-blue-500 transition-all duration-300">
-            <span class="p-3 text-blue-500">
-              <i class="pi pi-print text-blue-400"></i>
-            </span>
-            <input type="text" pInputText placeholder="printing" formControlName="printing"
-              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
-          </div>
-        </div>
-
-
-        <!-- Combo -->
-        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
-          <label class="block text-sm font-semibold text-gray-700 mb-1">Combo</label>
-          <div
-            class="flex items-center bg-white rounded-xl border focus-within:border-blue-500 transition-all duration-300">
-            <span class="p-3 text-blue-500">
-              <i class="pi pi-tags text-indigo-900"></i>
-            </span>
-            <input type="number" pInputText placeholder="combo" formControlName="combo"
-              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
-          </div>
-        </div>
-
-        <!-- Pro color -->
-        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
-          <label class="block text-sm font-semibold text-gray-700 mb-1">Pro Color</label>
-          <div
-            class="flex items-center bg-white rounded-xl border focus-within:border-blue-500 transition-all duration-300">
-            <span class="p-3 text-blue-500">
-              <i class="pi pi-palette text-blue-400"></i>
-            </span>
-            <input type="text" pInputText placeholder="pro color" formControlName="proColor"
-              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
-          </div>
-        </div>
-
-        <!-- Fabric Quality -->
-        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
-          <label class="block text-sm font-semibold text-gray-700 mb-1">Fabric Quality</label>
-          <div
-            class="flex items-center bg-white rounded-xl border focus-within:border-blue-500 transition-all duration-300">
-            <span class="p-3 text-blue-500">
-              <i class="pi pi-clone text-purple-900"></i>
-            </span>
-            <input type="text" pInputText placeholder="fabric quality" formControlName="fabricQuality"
-              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
-          </div>
-        </div>
-
-        <!-- Supplier -->
-        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
-          <label class="block text-sm font-semibold text-gray-700 mb-1">Supplier</label>
-          <div
-            class="flex items-center bg-white rounded-xl border focus-within:border-blue-500 transition-all duration-300">
-            <span class="p-3 text-blue-500">
-              <i class="pi pi-briefcase text-lime-500"></i>
-            </span>
-            <input type="text" pInputText placeholder="supplier" formControlName="supplier"
-              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
-          </div>
-        </div>
-
-        <!-- Preemie -->
-        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
-          <label class="block text-sm font-semibold text-gray-700 mb-1">Preemie</label>
-          <div
-            class="flex items-center bg-white rounded-xl border focus-within:border-blue-500 transition-all duration-300">
-            <span class="p-3 text-blue-500">
-              <i class="pi pi-circle text-orange-400"></i>
-            </span>
-            <input type="text" pInputText placeholder="preemie" formControlName="preemie"
-              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
-          </div>
-        </div>
-
-        <!-- NB -->
-        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
-          <label class="block text-sm font-semibold text-gray-700 mb-1">NB</label>
-          <div
-            class="flex items-center bg-white rounded-xl border focus-within:border-blue-500 transition-all duration-300">
-            <span class="p-3 text-blue-500">
-              <i class="pi pi-star text-blue-400"></i>
-            </span>
-            <input type="text" pInputText placeholder="NB" formControlName="nb"
-              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
-          </div>
-        </div>
-
-        <!-- Total Qnt -->
-        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
-          <label class="block text-sm font-semibold text-gray-700 mb-1">Total quantity</label>
-          <div
-            class="flex items-center bg-white rounded-xl border focus-within:border-blue-500 transition-all duration-300">
-            <span class="p-3 text-blue-500">
-              <i class="pi pi-star text-blue-400"></i>
-            </span>
-            <input type="text" pInputText placeholder="Total Quantity" formControlName="total_quantity"
-              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
-          </div>
-        </div>
-
-
-        <!-- Textarea (Steps Required) -->
-        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
-          <label class="block text-sm font-semibold text-gray-700 mb-1">Steps Required</label>
-          <div class="flex bg-white rounded-xl  border  focus-within:border-indigo-600 transition-all duration-300">
-            <span class="p-3 text-indigo-600">
-              <i class="pi pi-list"></i>
-            </span>
-            <textarea pInputTextarea rows="3" placeholder="Steps Required" formControlName="stepsRequired"
-              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent resize-none"></textarea>
-          </div>
-        </div>
-
-        <!-- Remark -->
-        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
-          <label class="block text-sm font-semibold text-gray-700 mb-1">Remark</label>
-          <div class="flex bg-white rounded-xl border  focus-within:border-gray-600 transition-all duration-300">
-            <span class="p-3 text-gray-600">
-              <i class="pi pi-comment"></i>
-            </span>
-            <textarea pInputTextarea rows="2" placeholder="Remark" formControlName="remark"
-              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent resize-none"></textarea>
-          </div>
-        </div>
-
-
-      </div>
-
-      <!-- Submit Button -->
-      <button pButton type="submit"
-        class="w-full py-3 bg-gradient-to-r from-emerald-400 to-emerald-600 text-white font-bold rounded-xl shadow-md hover:shadow-xl hover:scale-[1.01] transition-all duration-300">
-        <i class="pi pi-check mr-2"></i>Submit
-      </button>
-
+        <ng-template pTemplate="body" let-articleGroup let-ri="rowIndex">
+          <tr [formGroup]="articleGroup">
+            <td>
+              <p-dropdown
+                [options]="ageGroupOptions"
+                formControlName="ageGroup"
+                placeholder="Age Group"
+                class="w-full"
+              ></p-dropdown>
+            </td>
+            <td>
+              <input
+                pInputText
+                formControlName="articleNo"
+                placeholder="Article No"
+                class="w-full"
+              />
+            </td>
+            <td>
+              <input
+                type="number"
+                pInputText
+                formControlName="qty"
+                placeholder="Qty"
+                class="w-full"
+                min="0"
+              />
+            </td>
+            <td>
+              <input
+                pInputText
+                formControlName="gender"
+                placeholder="Gender"
+                class="w-full"
+              />
+            </td>
+            <td>
+              <p-fileUpload
+                name="productPhotos"
+                mode="basic"
+                multiple="multiple"
+                customUpload="true"
+                (uploadHandler)="onProductPhotoUpload($event, ri)"
+                chooseLabel="Upload"
+              ></p-fileUpload>
+            </td>
+            <td>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-trash"
+                class="p-button-text p-button-danger"
+                (click)="removeArticle(ri)"
+                label="Remove"
+              ></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <button
+        pButton
+        type="button"
+        label="Add Article"
+        icon="pi pi-plus"
+        (click)="addArticle()"
+        class="mt-2"
+      ></button>
     </form>
-  </div>
-</div>
+
+    <p-footer>
+      <button
+        pButton
+        label="Close"
+        icon="pi pi-times"
+        (click)="articleDialogVisible=false"
+        class="p-button-text"
+      ></button>
+    </p-footer>
+  </p-dialog>
