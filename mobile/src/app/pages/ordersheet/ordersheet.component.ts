@@ -10,9 +10,11 @@ import { CommonModule } from '@angular/common';
   styleUrl: './ordersheet.component.scss'
 })
 export class OrdersheetComponent {
-  displayProfile:boolean = false;
-  imageUrls: string[] = [];  // To store the image URLs
+  displayProfile: boolean = false;
+  imageUrls: string[] = [];
+  selectedFiles: File[] = [];
   productForm: FormGroup;
+
 
   constructor(private fb: FormBuilder) {
     this.productForm = this.fb.group({
@@ -34,23 +36,30 @@ export class OrdersheetComponent {
   }
 
 
- 
+
 
   // Handle  more file showing
-onFilesSelected(event: any): void {
-  const files = event.target.files;  
-    
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    const reader = new FileReader();
+  onFilesSelected(event: any): void {
+    const files: FileList = event.target.files;
 
-    reader.onload = (e: any) => {
-      this.imageUrls.push(e.target.result);
-    };
-    reader.readAsDataURL(file);
-    console.log(this.imageUrls)
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const reader = new FileReader();
+
+      reader.onload = (e: any) => {
+        this.imageUrls.push(e.target.result);
+        this.selectedFiles.push(file);
+        this.productForm.patchValue({ documents: this.selectedFiles });
+      };
+
+      reader.readAsDataURL(file);
+    }
   }
-}
+  removeFile(index: number): void {
+    this.imageUrls.splice(index, 1);
+    this.selectedFiles.splice(index, 1);
+    this.productForm.patchValue({ documents: this.selectedFiles });
+  }
 
 
 

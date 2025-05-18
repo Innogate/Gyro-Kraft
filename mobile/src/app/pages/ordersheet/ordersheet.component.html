@@ -30,27 +30,42 @@
 
 
       <!-- File Upload -->
-      <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
-        <label class="block text-sm font-semibold text-gray-700 mb-1">Upload Documents</label>
-        <div
-          class="flex items-center bg-white rounded-xl border focus-within:border-green-600 transition-all duration-300">
-          <span class="p-3 text-green-600">
-            <i class="pi pi-upload"></i>
-          </span>
-          <input type="file" multiple (change)="onFilesSelected($event)" formControlName="documents"
-            class="w-full py-3 px-4 text-gray-600 rounded-r-xl outline-none bg-transparent" />
-        </div>
-
-        <!-- Display selected images -->
+      <div class="p-6 bg-white rounded-xl shadow-md border border-gray-200">
+        <label class="block text-sm font-semibold text-gray-700 mb-2">Upload Documents</label>
+      
+        <label
+          for="file-upload"
+          class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-emerald-500 transition-all duration-300 bg-gray-50 text-gray-500 hover:bg-white"
+        >
+          <i class="pi pi-cloud-upload text-4xl mb-2 text-emerald-500"></i>
+          <span class="text-sm">Click to browse or drag & drop files here</span>
+          <input
+            id="file-upload"
+            type="file"
+            multiple
+            (change)="onFilesSelected($event)"
+            class="hidden"
+          />
+        </label>
+      
+        <!-- Image Preview List with Remove -->
         <div *ngIf="imageUrls.length > 0" class="overflow-x-auto mt-4">
-          <div class="flex space-x-4">
-            <div *ngFor="let imageUrl of imageUrls; let i = index" class="flex-shrink-0">
-              <img [src]="imageUrl" alt="Selected Image" class="w-24 h-24 object-cover rounded-xl" />
+          <div class="flex gap-4">
+            <div *ngFor="let imageUrl of imageUrls; let i = index" class="relative group">
+              <img [src]="imageUrl" alt="Selected" class="w-24 h-24 object-cover rounded-xl border shadow" />
+              <button
+                type="button"
+                (click)="removeFile(i)"
+                class="absolute top-1 right-1 bg-white rounded-full shadow text-red-600 hover:bg-red-100 p-1 transition-all duration-200 opacity-0 group-hover:opacity-100"
+              >
+                <i class="pi pi-times text-sm"></i>
+              </button>
             </div>
           </div>
         </div>
-
       </div>
+      
+
 
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">

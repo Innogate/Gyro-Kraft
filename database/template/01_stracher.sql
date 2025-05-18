@@ -43,26 +43,24 @@ CREATE TABLE printers (
     whatsapp_no VARCHAR(20)
 );
 
-CREATE TABLE `orders` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `unique_id` varchar(50) DEFAULT NULL,
-  `order_date` date DEFAULT NULL,
-  `buyer` varchar(100) DEFAULT NULL,
-  `style_no` varchar(100) DEFAULT NULL,
-  `brand` varchar(100) DEFAULT NULL,
-  `season` varchar(100) DEFAULT NULL,
-  `age_group_id` int(11) DEFAULT NULL,
-  `shipment_date` date DEFAULT NULL,
-  `pattern` text DEFAULT NULL,
-  `printing` text DEFAULT NULL,
-  `documents` text DEFAULT NULL,
-  `steps_required` text DEFAULT NULL,
-  `remark` text DEFAULT NULL,
-  `deadline_date` date DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_id` (`unique_id`),
-  KEY `age_group_id` (`age_group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci
+CREATE TABLE orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    unique_id VARCHAR(50) UNIQUE,
+    order_date DATE,
+    buyer VARCHAR(100),
+    style_no VARCHAR(100),
+    brand VARCHAR(100),
+    season VARCHAR(100),
+    age_group_id INT,
+    shipment_date DATE,
+    pattern TEXT,
+    printing TEXT,
+    documents TEXT,
+    steps_required TEXT,
+    remark TEXT,
+    deadline_date DATE,
+    FOREIGN KEY (age_group_id) REFERENCES age_groups(id)
+);
 
 CREATE TABLE order_po_qty (
     id INT AUTO_INCREMENT PRIMARY KEY,
