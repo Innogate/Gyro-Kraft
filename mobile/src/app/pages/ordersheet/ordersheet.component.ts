@@ -32,6 +32,15 @@ export class OrdersheetComponent {
       stepsRequired: [''],
       remark: [''],
       deadlineDate: [null],
+
+
+      combo: [''],
+      proColor: [''],
+      fabricQuality: [''],
+      supplier: [''],
+      preemie: [''],
+      nb: [''],
+      total_quantity:[''],
     });
   }
 

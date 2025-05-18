@@ -32,39 +32,28 @@
       <!-- File Upload -->
       <div class="p-6 bg-white rounded-xl shadow-md border border-gray-200">
         <label class="block text-sm font-semibold text-gray-700 mb-2">Upload Documents</label>
-      
-        <label
-          for="file-upload"
-          class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-emerald-500 transition-all duration-300 bg-gray-50 text-gray-500 hover:bg-white"
-        >
+
+        <label for="file-upload"
+          class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-emerald-500 transition-all duration-300 bg-gray-50 text-gray-500 hover:bg-white">
           <i class="pi pi-cloud-upload text-4xl mb-2 text-emerald-500"></i>
           <span class="text-sm">Click to browse or drag & drop files here</span>
-          <input
-            id="file-upload"
-            type="file"
-            multiple
-            (change)="onFilesSelected($event)"
-            class="hidden"
-          />
+          <input id="file-upload" type="file" multiple (change)="onFilesSelected($event)" class="hidden" />
         </label>
-      
+
         <!-- Image Preview List with Remove -->
         <div *ngIf="imageUrls.length > 0" class="overflow-x-auto mt-4">
           <div class="flex gap-4">
             <div *ngFor="let imageUrl of imageUrls; let i = index" class="relative group">
               <img [src]="imageUrl" alt="Selected" class="w-24 h-24 object-cover rounded-xl border shadow" />
-              <button
-                type="button"
-                (click)="removeFile(i)"
-                class="absolute top-1 right-1 bg-white rounded-full shadow text-red-600 hover:bg-red-100 p-1 transition-all duration-200 opacity-0 group-hover:opacity-100"
-              >
+              <button type="button" (click)="removeFile(i)"
+                class="absolute top-1 right-1 bg-white rounded-full shadow text-red-600 hover:bg-red-100 p-1 transition-all duration-200 opacity-0 group-hover:opacity-100">
                 <i class="pi pi-times text-sm"></i>
               </button>
             </div>
           </div>
         </div>
       </div>
-      
+
 
 
 
@@ -199,7 +188,96 @@
         </div>
 
 
+        <!-- Combo -->
+        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Combo</label>
+          <div
+            class="flex items-center bg-white rounded-xl border focus-within:border-blue-500 transition-all duration-300">
+            <span class="p-3 text-blue-500">
+              <i class="pi pi-tags text-indigo-900"></i>
+            </span>
+            <input type="number" pInputText placeholder="combo" formControlName="combo"
+              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
+          </div>
+        </div>
 
+        <!-- Pro color -->
+        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Pro Color</label>
+          <div
+            class="flex items-center bg-white rounded-xl border focus-within:border-blue-500 transition-all duration-300">
+            <span class="p-3 text-blue-500">
+              <i class="pi pi-palette text-blue-400"></i>
+            </span>
+            <input type="text" pInputText placeholder="pro color" formControlName="proColor"
+              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
+          </div>
+        </div>
+
+        <!-- Fabric Quality -->
+        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Fabric Quality</label>
+          <div
+            class="flex items-center bg-white rounded-xl border focus-within:border-blue-500 transition-all duration-300">
+            <span class="p-3 text-blue-500">
+              <i class="pi pi-clone text-purple-900"></i>
+            </span>
+            <input type="text" pInputText placeholder="fabric quality" formControlName="fabricQuality"
+              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
+          </div>
+        </div>
+
+        <!-- Supplier -->
+        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Supplier</label>
+          <div
+            class="flex items-center bg-white rounded-xl border focus-within:border-blue-500 transition-all duration-300">
+            <span class="p-3 text-blue-500">
+              <i class="pi pi-briefcase text-lime-500"></i>
+            </span>
+            <input type="text" pInputText placeholder="supplier" formControlName="supplier"
+              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
+          </div>
+        </div>
+
+        <!-- Preemie -->
+        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Preemie</label>
+          <div
+            class="flex items-center bg-white rounded-xl border focus-within:border-blue-500 transition-all duration-300">
+            <span class="p-3 text-blue-500">
+              <i class="pi pi-circle text-orange-400"></i>
+            </span>
+            <input type="text" pInputText placeholder="preemie" formControlName="preemie"
+              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
+          </div>
+        </div>
+
+        <!-- NB -->
+        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">NB</label>
+          <div
+            class="flex items-center bg-white rounded-xl border focus-within:border-blue-500 transition-all duration-300">
+            <span class="p-3 text-blue-500">
+              <i class="pi pi-star text-blue-400"></i>
+            </span>
+            <input type="text" pInputText placeholder="NB" formControlName="nb"
+              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
+          </div>
+        </div>
+
+        <!-- Total Qnt -->
+        <div class="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border border-gray-200">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Total quantity</label>
+          <div
+            class="flex items-center bg-white rounded-xl border focus-within:border-blue-500 transition-all duration-300">
+            <span class="p-3 text-blue-500">
+              <i class="pi pi-star text-blue-400"></i>
+            </span>
+            <input type="text" pInputText placeholder="Total Quantity" formControlName="total_quantity"
+              class="w-full py-3 px-4 text-gray-700 rounded-r-xl outline-none bg-transparent" />
+          </div>
+        </div>
 
 
         <!-- Textarea (Steps Required) -->
