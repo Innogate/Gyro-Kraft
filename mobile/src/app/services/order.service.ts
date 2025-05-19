@@ -8,7 +8,8 @@ import {
   OrderListPayload, 
   OrderListResponse, 
   OrderCreatePayload, 
-  OrderCreateResponse 
+  OrderCreateResponse,
+  OrderResponse 
 } from './interface/order';
 
 @Injectable({
@@ -25,5 +26,9 @@ export class OrderService {
   // POST: /orderList/create
   createOrder(payload: OrderCreatePayload): Observable<ApiResponse<OrderCreateResponse>> {
     return this.apiService.post('/orderList/create', payload);
+  }
+
+  getById(payload: any): Observable<ApiResponse<OrderResponse>> {
+    return this.apiService.post('/orderList/byId', payload);
   }
 }

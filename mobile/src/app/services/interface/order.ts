@@ -72,3 +72,37 @@ export interface OrderListResponse {
   orders: OrderCreateResponse[];
   totalCount: number;
 }
+
+
+
+interface PoQty {
+  combo: string;
+  proColor: string;
+  fabricQuality: string;
+  supplier: string;
+  preemie: number;
+  nb: number;
+  totalQty: number;
+  articles: Article[];
+}
+
+
+export interface OrderResponse {
+  uniqueId: string;
+  date: string;
+  buyer: string;
+  styleNo: string;
+  brand: string;
+  season: string;
+  ageGroup: string;
+  shipmentDate: string;
+  pattern: string;
+  printing: string;
+  steps: string;
+  deadlineDate: string;
+  remark: string;
+  documents: any[];
+  poQty: PoQty[];
+  fabricBOM: FabricBOM[];
+  accessoriesBOM: AccessoriesBOM[];
+}

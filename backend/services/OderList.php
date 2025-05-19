@@ -198,3 +198,128 @@ $router->add('POST', '/orderList/create', function () {
 
     (new ApiResponse(200, "Success", $response))->toJson();
 });
+
+$router->add('POST', '/orderList/byId', function () {
+    $jwt = new JwtHandler();
+    $_user = $jwt->validate();
+    $handler = new Handler();
+    
+    $data = json_decode(file_get_contents("php://input"), true);
+    $handler->validateInput($data, ["orderId"]);
+    $order_id = $data['orderId'];
+
+    $dbInstance = new Database();
+    $conn = $dbInstance->pdo;
+
+    try {
+        // Fetch main order data
+        $sql = "SELECT * FROM orders WHERE id = :order_id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':order_id', $order_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $order = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$order) {
+            (new ApiResponse(404, "Order not found"))->toJson();
+            return;
+        }
+
+        // Map order fields to required format
+        $response = [
+            "uniqueId" => $order['unique_id'],
+            "date" => $order['order_date'],
+            "buyer" => $order['buyer'],
+            "styleNo" => $order['style_no'],
+            "brand" => $order['brand'],
+            "season" => $order['season'],
+            "ageGroup" => $order['age_group_id'],  // You can convert to name if needed
+            "shipmentDate" => $order['shipment_date'],
+            "pattern" => $order['pattern'],
+            "printing" => $order['printing'],
+            "steps" => $order['steps_required'],
+            "deadlineDate" => $order['deadline_date'],
+            "remark" => $order['remark'],
+            "documents" => json_decode($order['documents'], true),
+        ];
+
+        // Fetch poQty with articles
+        $sql = "SELECT * FROM order_po_qty WHERE order_id = :order_id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':order_id', $order_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $poQtyRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $poQty = [];
+        foreach ($poQtyRows as $row) {
+            $poQtyItem = [
+                "combo" => $row['combo'],
+                "proColor" => $row['pro_color'],
+                "fabricQuality" => $row['fabric_quality'],
+                "supplier" => $row['supplier'],
+                "preemie" => (int)$row['preemie'],
+                "nb" => (int)$row['nb'],
+                "totalQty" => (int)$row['total_qty'],
+                "articles" => []
+            ];
+
+            // Fetch articles for each poQty
+            $sql = "SELECT * FROM order_articles WHERE poQty_id = :po_qty_id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue(':po_qty_id', $row['id'], PDO::PARAM_INT);
+            $stmt->execute();
+            $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($articles as $article) {
+                $poQtyItem['articles'][] = [
+                    "ageGroup" => $article['age_group_id'],
+                    "articleNo" => $article['article_no'],
+                    "qty" => (int)$article['qty'],
+                    "gender" => $article['gender'],
+                    "productPhotos" => json_decode($article['product_photos'], true)
+                ];
+            }
+
+            $poQty[] = $poQtyItem;
+        }
+
+        $response['poQty'] = $poQty;
+
+        // Fetch fabricBOM
+        $sql = "SELECT * FROM bom_fabrics WHERE order_id = :order_id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':order_id', $order_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $fabricBOM = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $response['fabricBOM'] = array_map(function ($row) {
+            return [
+                "description" => $row['description'],
+                "fabric" => $row['fabric'],
+                "colour" => $row['colour'],
+                "tpx" => $row['tpx']
+            ];
+        }, $fabricBOM);
+
+        // Fetch accessoriesBOM
+        $sql = "SELECT * FROM bom_accessories WHERE order_id = :order_id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':order_id', $order_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $accessoriesBOM = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $response['accessoriesBOM'] = array_map(function ($row) {
+            return [
+                "particular" => $row['particular'],
+                "specification" => $row['specification'],
+                "shadeNo" => $row['shade_no'],
+                "consumption" => $row['consumption'],
+                "supplier" => $row['supplier'],
+                "status" => $row['status']
+            ];
+        }, $accessoriesBOM);
+
+        (new ApiResponse(200, "Success", $response))->toJson();
+    } catch (Exception $e) {
+        (new ApiResponse(500, "Error", $e->getMessage()))->toJson();
+    }
+});

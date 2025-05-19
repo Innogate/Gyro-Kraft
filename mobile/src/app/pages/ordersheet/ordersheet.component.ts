@@ -44,6 +44,7 @@ import { SweetAlertService } from '../../utility/sweet-alert.service';
 export class OrdersheetComponent {
   orderForm: FormGroup;
   showForm: boolean = false;
+  isEdit: boolean = false;
   ordersList?: any;
   ageGroupOptions = [
     { label: 'Infant', value: 'Infant' },
@@ -87,6 +88,7 @@ export class OrdersheetComponent {
   toggleForm() {
     this.showForm = !this.showForm;
     this.orderForm.reset();
+    this.isEdit = false;
   }
   
   // ODER LIST
@@ -110,8 +112,45 @@ export class OrdersheetComponent {
     ));
   }
 
-  onEdit(order: any) {
-    // TODO: Navigate to edit form or open dialog
+  async onEdit(order: any) {
+    this.isEdit = true;
+    await firstValueFrom(this.service.getById({
+      "orderId": order.id
+    }).pipe(
+      tap(
+        (response) => {
+          if (response.status == 200) {
+            console.log(response.body);
+            if (response.body.poQty) {
+              response.body.poQty.forEach((poQty: any) => {
+                this.addPOQty();
+                this.poQty.at(this.poQty.length - 1).patchValue(poQty);
+              });
+            }
+
+            if (response.body.fabricBOM) {
+              response.body.fabricBOM.forEach((fabricBOM: any) => {
+                this.addFabricBOM();
+                this.fabricBOM.at(this.fabricBOM.length - 1).patchValue(fabricBOM);
+              });
+            }
+
+            if (response.body.accessoriesBOM) {
+              this.addAccessoryBOM();
+              response.body.accessoriesBOM.forEach((accessoriesBOM: any) => {
+                this.accessoriesBOM.at(this.accessoriesBOM.length - 1).patchValue(accessoriesBOM);
+              });
+              
+            }
+            this.orderForm.patchValue(response.body);
+            this.showForm = true;
+          }
+        },
+        (error) => {
+          this.alert.errorAlert(error.error.message, error.error.body);
+        }
+      )
+    ))
     console.log('Edit:', order);
   }
 
