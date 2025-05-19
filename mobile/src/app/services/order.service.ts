@@ -1,8 +1,15 @@
+// order.service.ts
+
 import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
 import { Observable } from 'rxjs';
 import { ApiResponse } from './interface/apiResponce';
-import { OrderListPayload, OrderListResponse, OrderCreatePayload, OrderCreateResponse } from './interface/order';
+import { 
+  OrderListPayload, 
+  OrderListResponse, 
+  OrderCreatePayload, 
+  OrderCreateResponse 
+} from './interface/order';
 
 @Injectable({
   providedIn: 'root'
@@ -10,10 +17,12 @@ import { OrderListPayload, OrderListResponse, OrderCreatePayload, OrderCreateRes
 export class OrderService {
   constructor(private apiService: BaseService) {}
 
+  // POST: /orderList/get
   getOrderList(payload: OrderListPayload): Observable<ApiResponse<OrderListResponse>> {
     return this.apiService.post('/orderList/get', payload);
   }
 
+  // POST: /orderList/create
   createOrder(payload: OrderCreatePayload): Observable<ApiResponse<OrderCreateResponse>> {
     return this.apiService.post('/orderList/create', payload);
   }
