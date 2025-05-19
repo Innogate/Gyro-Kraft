@@ -10,10 +10,10 @@ $router->add('POST', '/orderList/get', function () {
     $_user = $jwt->validate();
 
     $data = json_decode(file_get_contents("php://input"), true);
-    $handler->validateInput($data, ["max", "current"]);
+    $handler->validateInput($data, ["page", "pageSize", "search"]);
 
-    $max = (int) $data['max'];
-    $current = (int) $data['current'];
+    $max = (int) $data['pageSize'];
+    $current = (int) $data['page'];
 
     if ($max <= 0 || $max > 100 || $current < 0) {
         (new ApiResponse(400, "Invalid pagination values"))->toJson();
@@ -29,10 +29,9 @@ $router->add('POST', '/orderList/get', function () {
 
     $offset = $current * $max;
 
-    $sql = "SELECT o.*, ag.name as age_group_name
-            FROM orders o
-            LEFT JOIN age_groups ag ON o.age_group_id = ag.id
-            ORDER BY o.id DESC
+    $sql = "SELECT id, unique_id, order_date, style_no, brand, season, age_group_id, shipment_date, pattern, printing, steps_required, remark, deadline_date
+            FROM orders
+            ORDER BY id DESC
             LIMIT :limit OFFSET :offset";
 
     $stmt = $conn->prepare($sql);
@@ -40,15 +39,6 @@ $router->add('POST', '/orderList/get', function () {
     $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
     $stmt->execute();
     $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Decode JSON documents and format dates
-    foreach ($orders as &$order) {
-        $order['documents'] = $order['documents'] ? json_decode($order['documents'], true) : null;
-
-        $order['order_date'] = $order['order_date'] ? date('c', strtotime($order['order_date'])) : null;
-        $order['shipment_date'] = $order['shipment_date'] ? date('c', strtotime($order['shipment_date'])) : null;
-        $order['deadline_date'] = $order['deadline_date'] ? date('c', strtotime($order['deadline_date'])) : null;
-    }
 
     $response = [
         "total" => $total,

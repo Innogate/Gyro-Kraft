@@ -43,6 +43,8 @@ import { SweetAlertService } from '../../utility/sweet-alert.service';
 })
 export class OrdersheetComponent {
   orderForm: FormGroup;
+  showForm: boolean = false;
+  ordersList?: any;
   ageGroupOptions = [
     { label: 'Infant', value: 'Infant' },
     { label: 'Toddler', value: 'Toddler' },
@@ -79,7 +81,45 @@ export class OrdersheetComponent {
       fabricBOM: this.fb.array([]),
       accessoriesBOM: this.fb.array([]),
     });
+    this.fetchOrderList();
   }
+
+  toggleForm() {
+    this.showForm = !this.showForm;
+    this.orderForm.reset();
+  }
+  
+  // ODER LIST
+  async fetchOrderList() {
+    await firstValueFrom(this.service.getOrderList({
+      page: 0,
+      pageSize: 12,
+      search: ''
+
+    }).pipe(
+      tap(
+        (response) => {
+          if (response.status == 200) {
+            this.ordersList = response.body.orders;
+          }
+        },
+        (error) => {
+          this.alert.errorAlert(error.error.message, error.error.body);
+        }
+      )
+    ));
+  }
+
+  onEdit(order: any) {
+    // TODO: Navigate to edit form or open dialog
+    console.log('Edit:', order);
+  }
+
+  onDelete(order: any) {
+    // TODO: Add confirmation and call delete API
+    console.log('Delete:', order);
+  }
+  // LIST ODER
 
   // getters for easy access to form controls
   get f() {
@@ -238,16 +278,16 @@ export class OrdersheetComponent {
 
   convertToMysqlDate(date: any): string | null {
     if (!date) return null;
-  
+
     const d = new Date(date);
-  
+
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
-  
+
     return `${year}-${month}-${day}`;
   }
-  
+
 
   async submitOrder() {
     if (this.orderForm.invalid) {
@@ -261,7 +301,7 @@ export class OrdersheetComponent {
       shipmentDate: this.convertToMysqlDate(this.orderForm.value.shipmentDate),
       deadlineDate: this.convertToMysqlDate(this.orderForm.value.deadlineDate)
     })
-    
+
     await firstValueFrom(this.service.createOrder(this.orderForm.value).pipe(
       tap(
         (response) => {
