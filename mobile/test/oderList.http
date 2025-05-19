@@ -55,18 +55,56 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "unique_id": "ORD-2025-001",
-  "order_date": "2025-05-18",
-  "buyer": "ABC Ltd",
-  "style_no": "STY123",
-  "brand": "BrandX",
-  "season": "Summer",
-  "age_group_id": 2,
-  "shipment_date": "2025-06-01",
-  "deadline_date": "2025-06-10",
-  "pattern": "Stripes",
-  "printing": "Silk",
-  "documents": ["Invoice", "Spec Sheet"],
-  "steps_required": "Cutting, Sewing, Finishing",
-  "remark": "Urgent order"
+    "uniqueId": "123123",
+    "date": "2025-05-05",
+    "buyer": "ABC",
+    "styleNo": "100",
+    "brand": "ABC",
+    "season": "B",
+    "ageGroup": "Infant",
+    "shipmentDate": "2025-05-01",
+    "pattern": "12345",
+    "printing": "12345",
+    "steps": "12345",
+    "deadlineDate": "2025-05-01",
+    "remark": "Helo",
+    "documents": [],
+    "poQty": [
+        {
+            "combo": "12",
+            "proColor": "12",
+            "fabricQuality": "12",
+            "supplier": "12",
+            "preemie": 12,
+            "nb": 1,
+            "totalQty": 1,
+            "articles": [
+                {
+                    "ageGroup": "Infant",
+                    "articleNo": "12",
+                    "qty": 2,
+                    "gender": "Male",
+                    "productPhotos": []
+                }
+            ]
+        }
+    ],
+    "fabricBOM": [
+        {
+            "description": "123",
+            "fabric": "123",
+            "colour": "123",
+            "tpx": "TPX"
+        }
+    ],
+    "accessoriesBOM": [
+        {
+            "particular": "123",
+            "specification": "1231",
+            "shadeNo": "123",
+            "consumption": 123,
+            "supplier": "123",
+            "status": "123"
+        }
+    ]
 }

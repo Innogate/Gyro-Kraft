@@ -51,15 +51,14 @@ CREATE TABLE orders (
     style_no VARCHAR(100),
     brand VARCHAR(100),
     season VARCHAR(100),
-    age_group_id INT,
+    age_group_id VARCHAR(100) DEFAULT NULL,
     shipment_date DATE,
     pattern TEXT,
     printing TEXT,
     documents TEXT,
     steps_required TEXT,
     remark TEXT,
-    deadline_date DATE,
-    FOREIGN KEY (age_group_id) REFERENCES age_groups(id)
+    deadline_date DATE
 );
 
 CREATE TABLE order_po_qty (
@@ -78,14 +77,14 @@ CREATE TABLE order_po_qty (
 CREATE TABLE order_articles (
     id INT AUTO_INCREMENT PRIMARY KEY,
     po_id INT,
-    age_group_id INT,
+    poQty_id INT DEFAULT NULL,
+    age_group_id VARCHAR(100) DEFAULT NULL,
     article_no VARCHAR(100),
     qty INT,
     gender ENUM('Male', 'Female', 'Unisex'),
     product_photos TEXT,
-    FOREIGN KEY (po_id) REFERENCES order_po_qty(id),
-    FOREIGN KEY (age_group_id) REFERENCES age_groups(id)
-);
+    FOREIGN KEY (po_id) REFERENCES order_po_qty(id)
+    );
 
 
 CREATE TABLE bom_fabrics (
