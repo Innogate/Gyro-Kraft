@@ -60,134 +60,149 @@ $router->add('POST', '/orderList/create', function () {
 
     $conn->beginTransaction();
     try {
-        $sql = "INSERT INTO orders (unique_id, order_date, buyer, style_no, brand, season, age_group_id, shipment_date, pattern, printing, documents, steps_required, remark, deadline_date) VALUES (:unique_id, :order_date, :buyer, :style_no, :brand, :season, :age_group_id, :shipment_date, :pattern, :printing, :documents, :steps_required, :remark, :deadline_date)";
-
+        // Insert into orders
+        $sql = "INSERT INTO orders (
+            unique_id, order_date, buyer, style_no, brand, season,
+            age_group_id, shipment_date, pattern, printing, documents,
+            steps_required, remark, deadline_date
+        ) VALUES (
+            :unique_id, :order_date, :buyer, :style_no, :brand, :season,
+            :age_group_id, :shipment_date, :pattern, :printing, :documents,
+            :steps_required, :remark, :deadline_date
+        )";
         $stmt = $conn->prepare($sql);
-
-        $stmt->bindValue(':unique_id', $data['uniqueId'], PDO::PARAM_STR);
-        $stmt->bindValue(':order_date', $data['date'], PDO::PARAM_STR);
-        $stmt->bindValue(':buyer', $data['buyer'], PDO::PARAM_STR);
-        $stmt->bindValue(':style_no', $data['styleNo'], PDO::PARAM_STR);
-        $stmt->bindValue(':brand', $data['brand'], PDO::PARAM_STR);
-        $stmt->bindValue(':season', $data['season'], PDO::PARAM_STR);
-        $stmt->bindValue(':age_group_id', $data['ageGroup'], PDO::PARAM_INT);
-        $stmt->bindValue(':shipment_date', $data['shipmentDate'], PDO::PARAM_STR);
-        $stmt->bindValue(':pattern', $data['pattern'], PDO::PARAM_STR);
-        $stmt->bindValue(':printing', $data['printing'], PDO::PARAM_STR);
-        $stmt->bindValue(':documents', json_encode($data['documents']), PDO::PARAM_STR);
-        $stmt->bindValue(':steps_required', $data['steps'], PDO::PARAM_STR);
-        $stmt->bindValue(':remark', $data['remark'], PDO::PARAM_STR);
-        $stmt->bindValue(':deadline_date', $data['deadlineDate'], PDO::PARAM_STR);
-        
+        $stmt->bindValue(':unique_id', $data['uniqueId']);
+        $stmt->bindValue(':order_date', $data['date']);
+        $stmt->bindValue(':buyer', $data['buyer']);
+        $stmt->bindValue(':style_no', $data['styleNo']);
+        $stmt->bindValue(':brand', $data['brand']);
+        $stmt->bindValue(':season', $data['season']);
+        $stmt->bindValue(':age_group_id', $data['ageGroup']); // must be int ID
+        $stmt->bindValue(':shipment_date', $data['shipmentDate']);
+        $stmt->bindValue(':pattern', $data['pattern']);
+        $stmt->bindValue(':printing', $data['printing']);
+        $stmt->bindValue(':documents', json_encode($data['documents']));
+        $stmt->bindValue(':steps_required', $data['steps']);
+        $stmt->bindValue(':remark', $data['remark']);
+        $stmt->bindValue(':deadline_date', $data['deadlineDate']);
         $stmt->execute();
         $order_id = $conn->lastInsertId();
-
     } catch (Exception $e) {
         $conn->rollBack();
         (new ApiResponse(500, "Error-1", $e->getMessage()))->toJson();
         return;
     }
 
-    if (isset($data['poQty']) && is_array($data['poQty'])) {
-        $sql = "INSERT INTO order_po_qty (order_id, combo, pro_color, fabric_quality, supplier, preemie, nb, total_qty) VALUES (:order_id, :combo, :pro_color, :fabric_quality, :supplier, :preemie, :nb, :total_qty)";
+    // Insert PO Quantities and Articles
+    try {
+        if (!empty($data['poQty']) && is_array($data['poQty'])) {
+            $sql = "INSERT INTO order_po_qty (
+                order_id, combo, pro_color, fabric_quality, supplier,
+                preemie, nb, total_qty
+            ) VALUES (
+                :order_id, :combo, :pro_color, :fabric_quality, :supplier,
+                :preemie, :nb, :total_qty
+            )";
+            $stmt = $conn->prepare($sql);
 
-        $stmt = $conn->prepare($sql);
+            foreach ($data['poQty'] as $poQty) {
+                $stmt->bindValue(':order_id', $order_id, PDO::PARAM_INT);
+                $stmt->bindValue(':combo', $poQty['combo']);
+                $stmt->bindValue(':pro_color', $poQty['proColor']);
+                $stmt->bindValue(':fabric_quality', $poQty['fabricQuality']);
+                $stmt->bindValue(':supplier', $poQty['supplier']);
+                $stmt->bindValue(':preemie', $poQty['preemie'], PDO::PARAM_INT);
+                $stmt->bindValue(':nb', $poQty['nb'], PDO::PARAM_INT);
+                $stmt->bindValue(':total_qty', $poQty['totalQty'], PDO::PARAM_INT);
+                $stmt->execute();
+                $poQty_id = $conn->lastInsertId();
 
-        foreach ($data['poQty'] as $poQty) {
-            $stmt->bindValue(':order_id', $order_id, PDO::PARAM_INT);
-            $stmt->bindValue(':combo', $poQty['combo'], PDO::PARAM_STR);
-            $stmt->bindValue(':pro_color', $poQty['proColor'], PDO::PARAM_STR);
-            $stmt->bindValue(':fabric_quality', $poQty['fabricQuality'], PDO::PARAM_STR);
-            $stmt->bindValue(':supplier', $poQty['supplier'], PDO::PARAM_STR);
-            $stmt->bindValue(':preemie', $poQty['preemie'], PDO::PARAM_INT);
-            $stmt->bindValue(':nb', $poQty['nb'], PDO::PARAM_INT);
-            $stmt->bindValue(':total_qty', $poQty['totalQty'], PDO::PARAM_INT);
-            $stmt->execute();
-            $poQty_id = $conn->lastInsertId();
-            if (isset($poQty['articles'])) {
-                try{
-                    $sql = "INSERT INTO order_articles (po_id, poQty_id, age_group_id, article_no,
-                    qty, gender, product_photos)
-                    VALUES (:order_id, :po_qty_id, :age_group_id, :article_no, :qty, :gender, :product_photos)";
-                    $stmt = $conn->prepare($sql);
-    
+                if (!empty($poQty['articles']) && is_array($poQty['articles'])) {
+                    $articleSql = "INSERT INTO order_articles (
+                        po_id, poQty_id, age_group_id, article_no,
+                        qty, gender, product_photos
+                    ) VALUES (
+                        :order_id, :po_qty_id, :age_group_id, :article_no,
+                        :qty, :gender, :product_photos
+                    )";
+                    $articleStmt = $conn->prepare($articleSql);
+
                     foreach ($poQty['articles'] as $article) {
-                        $stmt->bindValue(':order_id', $order_id, PDO::PARAM_INT);
-                        $stmt->bindValue(':po_qty_id', $poQty_id, PDO::PARAM_INT);
-                        $stmt->bindValue(':age_group_id', $article['ageGroup'], PDO::PARAM_INT);
-                        $stmt->bindValue(':article_no', $article['articleNo'], PDO::PARAM_INT);
-                        $stmt->bindValue(':qty', $article['qty'], PDO::PARAM_INT);
-                        $stmt->bindValue(':gender', $article['gender'], PDO::PARAM_STR);
-                        $stmt->bindValue(':product_photos', json_encode($article['productPhotos']), PDO::PARAM_STR);
-                        $stmt->execute();
+                        $articleStmt->bindValue(':order_id', $order_id, PDO::PARAM_INT);
+                        $articleStmt->bindValue(':po_qty_id', $poQty_id, PDO::PARAM_INT);
+                        $articleStmt->bindValue(':age_group_id', $article['ageGroup']);
+                        $articleStmt->bindValue(':article_no', $article['articleNo']);
+                        $articleStmt->bindValue(':qty', $article['qty'], PDO::PARAM_INT);
+                        $articleStmt->bindValue(':gender', $article['gender']);
+                        $articleStmt->bindValue(':product_photos', json_encode($article['productPhotos']));
+                        $articleStmt->execute();
                     }
                 }
-                catch (Exception $e) {
-                    $conn->rollBack();
-                    (new ApiResponse(500, "Error-2", $e->getMessage()))->toJson();
-                    return;
-                }
             }
-    
         }
+    } catch (Exception $e) {
+        $conn->rollBack();
+        (new ApiResponse(500, "Error-2", $e->getMessage()))->toJson();
+        return;
     }
 
-    if (isset($data['fabricBOM']) && is_array($data['fabricBOM'])) {
-        $sql = "INSERT INTO bom_fabrics (
-        order_id, 
-        fabric, 
-        colour, 
-        tpx, 
-        description
-        ) VALUES (
-        :order_id, 
-        :fabric, 
-        :color, 
-        :tpx, 
-        :description)";
-        try {
+    // Insert Fabric BOM
+    try {
+        if (!empty($data['fabricBOM']) && is_array($data['fabricBOM'])) {
+            $sql = "INSERT INTO bom_fabrics (
+                order_id, fabric, colour, tpx, description
+            ) VALUES (
+                :order_id, :fabric, :colour, :tpx, :description
+            )";
             $stmt = $conn->prepare($sql);
             foreach ($data['fabricBOM'] as $fabricBOM) {
                 $stmt->bindValue(':order_id', $order_id, PDO::PARAM_INT);
-                $stmt->bindValue(':fabric', $fabricBOM['fabric'], PDO::PARAM_STR);
-                $stmt->bindValue(':color', $fabricBOM['colour'], PDO::PARAM_STR);
-                $stmt->bindValue(':tpx', $fabricBOM['tpx'], PDO::PARAM_STR);
-                $stmt->bindValue(':description', $fabricBOM['description'], PDO::PARAM_STR);
+                $stmt->bindValue(':fabric', $fabricBOM['fabric']);
+                $stmt->bindValue(':colour', $fabricBOM['colour']);
+                $stmt->bindValue(':tpx', $fabricBOM['tpx']);
+                $stmt->bindValue(':description', $fabricBOM['description']);
                 $stmt->execute();
             }
-        } catch (Exception $e) {
-            $conn->rollBack();
-            (new ApiResponse(500, "Error-3", $e->getMessage()))->toJson();
-            return;
         }
+    } catch (Exception $e) {
+        $conn->rollBack();
+        (new ApiResponse(500, "Error-3", $e->getMessage()))->toJson();
+        return;
     }
 
-    if (isset($data['accessoriesBOM']) && is_array($data['accessoriesBOM'])) {
-        $sql = "INSERT INTO bom_accessories (order_id, particular, specification, shade_no, consumption, supplier, status) VALUES (:order_id, :particular, :specification, :shade_no, :consumption, :supplier, :status)";
-        try {
+    // Insert Accessories BOM
+    try {
+        if (!empty($data['accessoriesBOM']) && is_array($data['accessoriesBOM'])) {
+            $sql = "INSERT INTO bom_accessories (
+                order_id, particular, specification, shade_no, consumption,
+                supplier, status
+            ) VALUES (
+                :order_id, :particular, :specification, :shade_no, :consumption,
+                :supplier, :status
+            )";
             $stmt = $conn->prepare($sql);
             foreach ($data['accessoriesBOM'] as $accessoriesBOM) {
                 $stmt->bindValue(':order_id', $order_id, PDO::PARAM_INT);
-                $stmt->bindValue(':particular', $accessoriesBOM['particular'], PDO::PARAM_STR);
-                $stmt->bindValue(':specification', $accessoriesBOM['specification'], PDO::PARAM_STR);
-                $stmt->bindValue(':shade_no', $accessoriesBOM['shadeNo'], PDO::PARAM_STR);
-                $stmt->bindValue(':consumption', $accessoriesBOM['consumption'], PDO::PARAM_STR);
-                $stmt->bindValue(':supplier', $accessoriesBOM['supplier'], PDO::PARAM_STR);
-                $stmt->bindValue(':status', $accessoriesBOM['status'], PDO::PARAM_STR);
+                $stmt->bindValue(':particular', $accessoriesBOM['particular']);
+                $stmt->bindValue(':specification', $accessoriesBOM['specification']);
+                $stmt->bindValue(':shade_no', $accessoriesBOM['shadeNo']);
+                $stmt->bindValue(':consumption', $accessoriesBOM['consumption']);
+                $stmt->bindValue(':supplier', $accessoriesBOM['supplier']);
+                $stmt->bindValue(':status', $accessoriesBOM['status']);
                 $stmt->execute();
             }
-        } catch (Exception $e) {
-            $conn->rollBack();
-            (new ApiResponse(500, "Error-4", $e->getMessage()))->toJson();
-            return;
         }
-        
+    } catch (Exception $e) {
+        $conn->rollBack();
+        (new ApiResponse(500, "Error-4", $e->getMessage()))->toJson();
+        return;
     }
 
+    // Commit All Transactions
     $conn->commit();
-    
-    // SELECT NEW ENTER VALUE
-    $sql = "SELECT o.*, ag.name as age_group_name
+
+    // Return the inserted order
+    $sql = "SELECT o.*, ag.name AS age_group_name
             FROM orders o
             LEFT JOIN age_groups ag ON o.age_group_id = ag.id
             WHERE o.id = :order_id";
@@ -198,6 +213,7 @@ $router->add('POST', '/orderList/create', function () {
 
     (new ApiResponse(200, "Success", $response))->toJson();
 });
+
 
 $router->add('POST', '/orderList/byId', function () {
     $jwt = new JwtHandler();
