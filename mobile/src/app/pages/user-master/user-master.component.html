@@ -1,9 +1,234 @@
-<div class="p-6 flex  justify-start relative">
-    <!-- Wrapper for cards -->
-    <div class="flex flex-wrap justify-start">
-        <!-- User Card -->
-         <ng-container *ngFor="let user of users?.users">
-            <app-user-card class="card-inview" [users]="user"></app-user-card>
-         </ng-container>
+<div *ngIf="users" style="margin: 20px;">
+
+    <!-- Create Button -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h2 style="margin: 0; font-weight: 600; color: #374151;">User Master</h2>
+        <button pButton type="button" label="Create" icon="pi pi-plus"
+            class="p-button-rounded p-button-success p-button-outlined" (click)="showCreateUserDialog = true"
+            style="font-weight: 500;">
+        </button>
     </div>
+
+    <!-- PrimeNG Table -->
+    <p-table [value]="users" responsiveLayout="scroll" [style]="{
+        border: '1px solid #e5e7eb',
+        borderRadius: '12px',
+        boxShadow: '0 6px 12px rgba(0,0,0,0.07)'
+      }">
+
+        <!-- Table Header -->
+        <ng-template pTemplate="header">
+            <tr style="background: linear-gradient(to right, #6366f1, #3b82f6); color: white;">
+                <th class="p-3">Photo</th>
+                <th class="p-3">Name</th>
+                <th class="p-3">Role</th>
+                <th class="p-3">Phone</th>
+                <th class="p-3">WhatsApp</th>
+                <th class="p-3">Email</th>
+                <th class="p-3">Address</th>
+                <th class="p-3">Date</th>
+                <th class="p-3">Actions</th>
+            </tr>
+        </ng-template>
+
+        <!-- Table Body -->
+        <ng-template pTemplate="body" let-user let-rowIndex="rowIndex">
+            <tr [ngStyle]="{ background: rowIndex % 2 === 0 ? '#f9fafb' : '#fff' }" style="transition: background 0.3s;"
+                (mouseover)="hoveredRow = rowIndex" (mouseout)="hoveredRow = -1"
+                [style.backgroundColor]="hoveredRow === rowIndex ? '#e0f2fe' : ''">
+                <td class="p-3 text-center">
+                    <img [src]="user.photo ? user.photo : '/img/profile.png'" alt="Profile"
+                        style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.15);" />
+                </td>
+                <td class="p-3">
+                    <div style="font-weight: 600; color: #1f2937;">{{ user.name }}</div>
+                    <div style="font-size: 0.8rem; color: #6b7280;">#{{ user.id }}</div>
+                </td>
+                <td class="p-3">
+                    <span [ngStyle]="{
+              backgroundColor: getRoleColor(user.role),
+              color: '#fff',
+              padding: '4px 8px',
+              borderRadius: '12px',
+              fontSize: '0.75rem'
+            }">
+                        {{ user.role }}
+                    </span>
+                </td>
+                <td class="p-3" style="color: #374151;">{{ user.phone_no }}</td>
+                <td class="p-3" style="color: #10b981;">
+                    <i class="pi pi-whatsapp" style="margin-right: 4px;"></i>{{ user.whatsapp_no }}
+                </td>
+                <td class="p-3" style="color: #374151;">{{ user.email }}</td>
+                <td class="p-3" style="color: #6b7280;">{{ user.address }}</td>
+                <td class="p-3" style="color: #6b7280;">{{ user.created_at | date: 'dd-MM-yyyy' }}</td>
+                <td class="p-3">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button pButton type="button" (click)="showCreateUserDialog = true" label="Update" icon="pi pi-pencil"
+                            class="p-button-sm" style="background-color: #10b981; border-radius: 6px; border: none;">
+                        </button>
+                        <button pButton type="button" label="Rights" icon="pi pi-key" class="p-button-sm"
+                            style="background-color: #8b5cf6; border-radius: 6px; border: none;">
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+
+
+
+
+
+
+
+<!-- this is create user -->
+<div>
+    <p-dialog header="Create User" [(visible)]="showCreateUserDialog" [modal]="true"
+        [style]="{ width: '80vw', maxWidth: '900px' }" [contentStyle]="{ overflow: 'auto' }" [dismissableMask]="true"
+        [closable]="true" [baseZIndex]="10000">
+
+        <div>
+            <div class="flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-300 min-h-screen p-6">
+                <div
+                    class="bg-white shadow-2xl rounded-2xl w-full max-w-5xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
+                    <!-- Left Side - Image and Title -->
+                    <div
+                        class="flex flex-col items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-600 text-white p-10">
+                        <label for="profileImageInput"
+                            class="w-52 h-52 rounded-full bg-white flex items-center justify-center shadow-xl mb-6 cursor-pointer overflow-hidden relative">
+                            <input id="profileImageInput" type="file" accept="image/*" class="hidden"
+                                (change)="onFileSelected($event)" />
+                            <img *ngIf="previewUrl" [src]="previewUrl" alt="Profile"
+                                class="w-full h-full object-cover" />
+                            <i *ngIf="!previewUrl" class="pi pi-user text-6xl text-blue-600 absolute"></i>
+                        </label>
+
+                        <div
+                            class="flex items-center justify-between mt-2 px-4 border rounded-lg bg-white border-blue-50">
+                            <h2 class="text-2xl font-bold text-gray-800 pr-4 pt-2">User Profile</h2>
+
+                            <!-- Styled Toggle Button -->
+                            <button *ngIf="update_mode" pButton type="button" [label]="isEnabled ? 'Enable' : 'Disable'"
+                                [style.backgroundColor]="isEnabled ? '#3B82F6' : '#DC2626'"
+                                class="text-white font-medium rounded  shadow-lg shadow-[#5f5d5d]" (click)="toggle()">
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <!-- Right Side - Form -->
+                    <div class="bg-white p-10 space-y-5">
+                        <form [formGroup]="userForm" (ngSubmit)="submit()" class="space-y-4">
+
+                            <!-- Name -->
+                            <div class="p-inputgroup">
+                                <span class="p-inputgroup-addon"><i class="pi pi-user text-blue-600"></i></span>
+                                <input type="text" pInputText class="w-full" placeholder="Name"
+                                    formControlName="name" />
+                            </div>
+                            <small *ngIf="userForm.get('name')?.touched && userForm.get('name')?.invalid"
+                                class="p-error block">
+                                Name is required.
+                            </small>
+
+                            <!-- Phone -->
+                            <div class="p-inputgroup">
+                                <span class="p-inputgroup-addon"><i class="pi pi-phone text-blue-600"></i></span>
+                                <input type="number" pInputText class="w-full" placeholder="Phone No"
+                                    formControlName="phone" />
+                            </div>
+                            <small *ngIf="userForm.get('phone')?.touched && userForm.get('phone')?.invalid"
+                                class="p-error block">
+                                Phone number is required and must be at least 10 digits.
+                            </small>
+
+
+                            <!-- Checkbox with label -->
+                            <div class="flex items-center gap-2 ">
+                                <p-checkbox binary="true" [formControl]="sameWhatsappControl"
+                                    (onChange)="onCheckboxChange($event)"></p-checkbox>
+                                <label for="sameWhatsappControl" class="text-sm">Same as Phone No</label>
+                            </div>
+
+
+
+
+                            <!-- WhatsApp -->
+                            <div class="p-inputgroup">
+                                <span class="p-inputgroup-addon"><i class="pi pi-whatsapp text-green-500"></i></span>
+                                <input type="number" pInputText class="w-full" placeholder="WhatsApp No"
+                                    formControlName="whatsapp" />
+                            </div>
+                            <small *ngIf="userForm.get('whatsapp')?.touched && userForm.get('whatsapp')?.invalid"
+                                class="p-error block">
+                                WhatsApp number is required.
+                            </small>
+
+
+
+                            <!-- Email -->
+                            <div class="p-inputgroup">
+                                <span class="p-inputgroup-addon"><i class="pi pi-envelope text-blue-600"></i></span>
+                                <input type="email" pInputText class="w-full" placeholder="Email"
+                                    formControlName="email" />
+                            </div>
+                            <small *ngIf="userForm.get('email')?.touched && userForm.get('email')?.invalid"
+                                class="p-error block">
+                                A valid email is required.
+                            </small>
+
+                            <!-- Address -->
+                            <div class="p-inputgroup">
+                                <span class="p-inputgroup-addon"><i class="pi pi-home text-blue-600"></i></span>
+                                <input type="text" pInputText class="w-full" placeholder="Address"
+                                    formControlName="address" />
+                            </div>
+
+                            <!-- Role -->
+                            <div class="p-inputgroup">
+                                <span class="p-inputgroup-addon">
+                                    <i class="pi pi-briefcase text-purple-600"></i>
+                                </span>
+                                <p-dropdown [options]="roleOptions" optionLabel="label" optionValue="value"
+                                    placeholder="Select Role" formControlName="role" class="w-full">
+                                </p-dropdown>
+                            </div>
+
+                            <!-- Password -->
+                            <div class="p-inputgroup">
+                                <span class="p-inputgroup-addon"><i class="pi pi-lock text-blue-600"></i></span>
+                                <input type="password" pInputText class="w-full" placeholder="Password"
+                                    formControlName="password" />
+                            </div>
+                            <small *ngIf="userForm.get('password')?.touched && userForm.get('password')?.invalid"
+                                class="p-error block">
+                                Password is required and must be at least 6 characters.
+                            </small>
+
+                            <!-- Confirm Password -->
+                            <div class="p-inputgroup">
+                                <span class="p-inputgroup-addon"><i class="pi pi-lock text-blue-600"></i></span>
+                                <input type="password" pInputText class="w-full" placeholder="Confirm Password"
+                                    formControlName="confirmPassword" />
+                            </div>
+                            <small *ngIf="userForm.hasError('mismatch') && userForm.get('confirmPassword')?.touched"
+                                class="p-error block">
+                                Passwords do not match.
+                            </small>
+
+                            <!-- Submit Button -->
+                            <div class="pt-4">
+                                <button pButton type="submit" label="Submit" icon="pi pi-check"
+                                    class="w-full p-button-info p-button-rounded"
+                                    [disabled]="userForm.invalid"></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </p-dialog>
 </div>
