@@ -30,19 +30,20 @@ export class AppMenu {
                     {
                         label: 'Users Master',
                         icon: 'pi pi-fw pi-users',
-                        items: [
-                            {
-                                label: 'Users',
-                                icon: 'pi pi-fw pi-users',
-                                routerLink: ['/pages/user-master']
-                            },
-                            {
-                                label: 'Create User',
-                                icon: 'pi pi-fw pi-users',
-                                routerLink: ['/pages/create-user']
-                            }
+                        routerLink: ['/pages/user-master']
+                        // items: [
+                        //     {
+                        //         label: 'Users',
+                        //         icon: 'pi pi-fw pi-users',
+                        //         routerLink: ['/pages/user-master']
+                        //     },
+                            // {
+                            //     label: 'Create User',
+                            //     icon: 'pi pi-fw pi-users',
+                            //     routerLink: ['/pages/create-user']
+                            // }
 
-                        ]
+                        // ]
                     },
                     {
                         label: 'Masters',

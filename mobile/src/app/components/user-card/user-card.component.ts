@@ -2,10 +2,11 @@ import { Component, Input, OnInit } from '@angular/core';
 import { userCreateResponse } from '../../services/interface/user';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-user-card',
-  imports: [CommonModule],
+  imports: [CommonModule,TableModule],
   templateUrl: './user-card.component.html',
   styleUrl: './user-card.component.scss'
 })

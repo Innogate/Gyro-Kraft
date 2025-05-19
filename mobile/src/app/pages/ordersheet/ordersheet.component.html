@@ -1,356 +1,304 @@
-<div>
-  <div class="flex justify-end">
-    <button pButton type="button" label="{{ showForm ? 'Close' : 'Add Order' }}" icon="pi {{ showForm ? 'pi-minus' : 'pi-plus' }}" class="mb-3" (click)="toggleForm()"></button>
+<form [formGroup]="orderForm" (ngSubmit)="submitOrder()" class="p-6 max-w-7xl mx-auto space-y-6" novalidate>
+  <h2 class="text-2xl font-semibold mb-4">Order Sheet Form</h2>
+
+  <!-- Main Fields Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Unique ID -->
+    <div>
+      <label class="block font-medium mb-1" for="uniqueId">Unique ID *</label>
+      <input id="uniqueId" pInputText formControlName="uniqueId" placeholder="Unique ID" class="w-full" />
+      <small *ngIf="f['uniqueId'].invalid && f['uniqueId'].touched" class="text-red-600">Unique ID is required.</small>
+    </div>
+
+    <!-- Date -->
+    <div>
+      <label class="block font-medium mb-1" for="date">Date *</label>
+      <p-calendar id="date" formControlName="date" dateFormat="yy-mm-dd" showIcon="true" class="w-full"
+        [showButtonBar]="true"></p-calendar>
+      <small *ngIf="f['date'].invalid && f['date'].touched" class="text-red-600">Date is required.</small>
+    </div>
+
+    <!-- Buyer -->
+    <div>
+      <label class="block font-medium mb-1" for="buyer">Buyer *</label>
+      <input id="buyer" pInputText formControlName="buyer" placeholder="Buyer" class="w-full" />
+      <small *ngIf="f['buyer'].invalid && f['buyer'].touched" class="text-red-600">Buyer is required.</small>
+    </div>
+
+    <!-- Style No -->
+    <div>
+      <label class="block font-medium mb-1" for="styleNo">Style No *</label>
+      <input id="styleNo" pInputText formControlName="styleNo" placeholder="Style No" class="w-full" />
+      <small *ngIf="f['styleNo'].invalid && f['styleNo'].touched" class="text-red-600">Style No is required.</small>
+    </div>
+
+    <!-- Brand -->
+    <div>
+      <label class="block font-medium mb-1" for="brand">Brand *</label>
+      <input id="brand" pInputText formControlName="brand" placeholder="Brand" class="w-full" />
+      <small *ngIf="f['brand'].invalid && f['brand'].touched" class="text-red-600">Brand is required.</small>
+    </div>
+
+    <!-- Season -->
+    <div>
+      <label class="block font-medium mb-1" for="season">Season *</label>
+      <input id="season" pInputText formControlName="season" placeholder="Season" class="w-full" />
+      <small *ngIf="f['season'].invalid && f['season'].touched" class="text-red-600">Season is required.</small>
+    </div>
+
+    <!-- Age Group Dropdown -->
+    <div>
+      <label class="block font-medium mb-1" for="ageGroup">Age Group *</label>
+      <p-dropdown id="ageGroup" [options]="ageGroupOptions" formControlName="ageGroup" placeholder="Select Age Group"
+        class="w-full"></p-dropdown>
+      <small *ngIf="f['ageGroup'].invalid && f['ageGroup'].touched" class="text-red-600">Age Group is required.</small>
+    </div>
+
+    <!-- Shipment Date -->
+    <div>
+      <label class="block font-medium mb-1" for="shipmentDate">Shipment Date</label>
+      <p-calendar id="shipmentDate" formControlName="shipmentDate" dateFormat="yy-mm-dd" showIcon="true" class="w-full"
+        [showButtonBar]="true"></p-calendar>
+    </div>
+
+    <!-- Pattern -->
+    <div>
+      <label class="block font-medium mb-1" for="pattern">Pattern</label>
+      <input id="pattern" pInputText formControlName="pattern" placeholder="Pattern" class="w-full" />
+    </div>
+
+    <!-- Printing -->
+    <div>
+      <label class="block font-medium mb-1" for="printing">Printing</label>
+      <input id="printing" pInputText formControlName="printing" placeholder="Printing" class="w-full" />
+    </div>
+
+    <!-- Steps Required -->
+    <div>
+      <label class="block font-medium mb-1" for="steps">Steps Required for Product</label>
+      <input id="steps" pInputText formControlName="steps" placeholder="Steps Required" class="w-full" />
+    </div>
+
+    <!-- Deadline Date -->
+    <div>
+      <label class="block font-medium mb-1" for="deadlineDate">Deadline Date</label>
+      <p-calendar id="deadlineDate" formControlName="deadlineDate" dateFormat="yy-mm-dd" showIcon="true" class="w-full"
+        [showButtonBar]="true"></p-calendar>
+    </div>
+
+    <!-- Remark -->
+    <div class="md:col-span-3">
+      <label class="block font-medium mb-1" for="remark">Remark</label>
+      <textarea id="remark" pInputTextarea formControlName="remark" rows="3" placeholder="Remark"
+        class="w-full"></textarea>
+    </div>
+
+    <!-- Documents Upload -->
+    <div class="md:col-span-3">
+      <label class="block font-medium mb-1">Documents Upload</label>
+      <p-fileUpload name="documents" mode="advanced" multiple="multiple" customUpload="true"
+        (uploadHandler)="onDocUpload($event)" chooseLabel="Choose Files" uploadLabel="Upload" cancelLabel="Cancel"
+        auto="false" class="w-full"></p-fileUpload>
+    </div>
   </div>
 
-  <div *ngIf="showForm">
-    <form [formGroup]="orderForm" (ngSubmit)="submitOrder()" class="p-6 max-w-7xl mx-auto space-y-6" novalidate>
-      <h2 class="text-2xl font-semibold mb-4">Order Sheet Form</h2>
+  <!-- PO Qty Section -->
+  <div>
+    <h3 class="text-xl font-semibold mt-6 mb-3">PO Quantity</h3>
+    <button pButton type="button" label="Add PO Qty" icon="pi pi-plus" class="mb-3" (click)="addPOQty()"></button>
 
-      <!-- Main Fields Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Unique ID -->
-        <div>
-          <label class="block font-medium mb-1" for="uniqueId">Unique ID *</label>
-          <input id="uniqueId" pInputText formControlName="uniqueId" placeholder="Unique ID" class="w-full" />
-          <small *ngIf="f['uniqueId'].invalid && f['uniqueId'].touched" class="text-red-600">Unique ID is
-            required.</small>
-        </div>
-
-        <!-- Date -->
-        <div>
-          <label class="block font-medium mb-1" for="date">Date *</label>
-          <p-calendar id="date" formControlName="date" dateFormat="yy-mm-dd" showIcon="true" class="w-full"
-            [showButtonBar]="true"></p-calendar>
-          <small *ngIf="f['date'].invalid && f['date'].touched" class="text-red-600">Date is required.</small>
-        </div>
-
-        <!-- Buyer -->
-        <div>
-          <label class="block font-medium mb-1" for="buyer">Buyer *</label>
-          <input id="buyer" pInputText formControlName="buyer" placeholder="Buyer" class="w-full" />
-          <small *ngIf="f['buyer'].invalid && f['buyer'].touched" class="text-red-600">Buyer is required.</small>
-        </div>
-
-        <!-- Style No -->
-        <div>
-          <label class="block font-medium mb-1" for="styleNo">Style No *</label>
-          <input id="styleNo" pInputText formControlName="styleNo" placeholder="Style No" class="w-full" />
-          <small *ngIf="f['styleNo'].invalid && f['styleNo'].touched" class="text-red-600">Style No is required.</small>
-        </div>
-
-        <!-- Brand -->
-        <div>
-          <label class="block font-medium mb-1" for="brand">Brand *</label>
-          <input id="brand" pInputText formControlName="brand" placeholder="Brand" class="w-full" />
-          <small *ngIf="f['brand'].invalid && f['brand'].touched" class="text-red-600">Brand is required.</small>
-        </div>
-
-        <!-- Season -->
-        <div>
-          <label class="block font-medium mb-1" for="season">Season *</label>
-          <input id="season" pInputText formControlName="season" placeholder="Season" class="w-full" />
-          <small *ngIf="f['season'].invalid && f['season'].touched" class="text-red-600">Season is required.</small>
-        </div>
-
-        <!-- Age Group Dropdown -->
-        <div>
-          <label class="block font-medium mb-1" for="ageGroup">Age Group *</label>
-          <p-dropdown id="ageGroup" [options]="ageGroupOptions" formControlName="ageGroup"
-            placeholder="Select Age Group" class="w-full"></p-dropdown>
-          <small *ngIf="f['ageGroup'].invalid && f['ageGroup'].touched" class="text-red-600">Age Group is
-            required.</small>
-        </div>
-
-        <!-- Shipment Date -->
-        <div>
-          <label class="block font-medium mb-1" for="shipmentDate">Shipment Date</label>
-          <p-calendar id="shipmentDate" formControlName="shipmentDate" dateFormat="yy-mm-dd" showIcon="true"
-            class="w-full" [showButtonBar]="true"></p-calendar>
-        </div>
-
-        <!-- Pattern -->
-        <div>
-          <label class="block font-medium mb-1" for="pattern">Pattern</label>
-          <input id="pattern" pInputText formControlName="pattern" placeholder="Pattern" class="w-full" />
-        </div>
-
-        <!-- Printing -->
-        <div>
-          <label class="block font-medium mb-1" for="printing">Printing</label>
-          <input id="printing" pInputText formControlName="printing" placeholder="Printing" class="w-full" />
-        </div>
-
-        <!-- Steps Required -->
-        <div>
-          <label class="block font-medium mb-1" for="steps">Steps Required for Product</label>
-          <input id="steps" pInputText formControlName="steps" placeholder="Steps Required" class="w-full" />
-        </div>
-
-        <!-- Deadline Date -->
-        <div>
-          <label class="block font-medium mb-1" for="deadlineDate">Deadline Date</label>
-          <p-calendar id="deadlineDate" formControlName="deadlineDate" dateFormat="yy-mm-dd" showIcon="true"
-            class="w-full" [showButtonBar]="true"></p-calendar>
-        </div>
-
-        <!-- Remark -->
-        <div class="md:col-span-3">
-          <label class="block font-medium mb-1" for="remark">Remark</label>
-          <textarea id="remark" pInputTextarea formControlName="remark" rows="3" placeholder="Remark"
-            class="w-full"></textarea>
-        </div>
-
-        <!-- Documents Upload -->
-        <div class="md:col-span-3">
-          <label class="block font-medium mb-1">Documents Upload</label>
-          <p-fileUpload name="documents" mode="advanced" multiple="multiple" customUpload="true"
-            (uploadHandler)="onDocUpload($event)" chooseLabel="Choose Files" uploadLabel="Upload" cancelLabel="Cancel"
-            auto="false" class="w-full"></p-fileUpload>
-        </div>
-      </div>
-
-      <!-- PO Qty Section -->
-      <div>
-        <h3 class="text-xl font-semibold mt-6 mb-3">PO Quantity</h3>
-        <button pButton type="button" label="Add PO Qty" icon="pi pi-plus" class="mb-3" (click)="addPOQty()"></button>
-
-        <p-table [value]="poQty.controls" dataKey="combo" [scrollable]="true" scrollHeight="300px"
-          responsiveLayout="scroll" [showGridlines]="true" [style]="{ 'min-width': '100%' }">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>Combo</th>
-              <th>Pro Color</th>
-              <th>Fabric Quality</th>
-              <th>Supplier</th>
-              <th>Preemie</th>
-              <th>NB</th>
-              <th>Total Qty</th>
-              <th>Articles</th>
-              <th>Actions</th>
-            </tr>
-          </ng-template>
-
-          <ng-template pTemplate="body" let-poQtyGroup let-ri="rowIndex">
-            <tr [formGroup]="poQtyGroup">
-              <td>
-                <input pInputText formControlName="combo" placeholder="Combo" class="w-full" />
-              </td>
-              <td>
-                <input pInputText formControlName="proColor" placeholder="Pro Color" class="w-full" />
-              </td>
-              <td>
-                <input pInputText formControlName="fabricQuality" placeholder="Fabric Quality" class="w-full" />
-              </td>
-              <td>
-                <input pInputText formControlName="supplier" placeholder="Supplier" class="w-full" />
-              </td>
-              <td>
-                <input type="number" pInputText formControlName="preemie" placeholder="Preemie" class="w-full"
-                  min="0" />
-              </td>
-              <td>
-                <input type="number" pInputText formControlName="nb" placeholder="NB" class="w-full" min="0" />
-              </td>
-              <td>
-                <input type="number" pInputText formControlName="totalQty" placeholder="Total Qty" class="w-full"
-                  min="0" />
-              </td>
-              <td>
-                <button pButton type="button" icon="pi pi-eye" class="p-button-text" (click)="openArticleDialog(ri)"
-                  label="Articles"></button>
-              </td>
-              <td>
-                <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-danger"
-                  (click)="removePOQty(ri)" label="Remove"></button>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </div>
-
-      <!-- BOM Fabric Section -->
-      <div>
-        <h3 class="text-xl font-semibold mt-6 mb-3">Bill of Materials (Fabric)</h3>
-        <button pButton type="button" label="Add Fabric" icon="pi pi-plus" class="mb-3"
-          (click)="addFabricBOM()"></button>
-
-        <p-table [value]="fabricBOM.controls" dataKey="description" [scrollable]="true" scrollHeight="300px"
-          responsiveLayout="scroll" [showGridlines]="true" [style]="{ 'min-width': '100%' }">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>Description</th>
-              <th>Fabric</th>
-              <th>Colour</th>
-              <th>TPX</th>
-              <th>Actions</th>
-            </tr>
-          </ng-template>
-
-          <ng-template pTemplate="body" let-fabricGroup let-ri="rowIndex">
-            <tr [formGroup]="fabricGroup">
-              <td>
-                <input pInputText formControlName="description" placeholder="Description" class="w-full" />
-              </td>
-              <td>
-                <input pInputText formControlName="fabric" placeholder="Fabric" class="w-full" />
-              </td>
-              <td>
-                <input pInputText formControlName="colour" placeholder="Colour" class="w-full" />
-              </td>
-              <td>
-                <input pInputText formControlName="tpx" placeholder="TPX" class="w-full" />
-              </td>
-              <td>
-                <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-danger"
-                  (click)="removeFabricBOM(ri)" label="Remove"></button>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </div>
-
-      <!-- BOM Accessories Section -->
-      <div>
-        <h3 class="text-xl font-semibold mt-6 mb-3">Bill of Materials (Accessories)</h3>
-        <button pButton type="button" label="Add Accessory" icon="pi pi-plus" class="mb-3"
-          (click)="addAccessoryBOM()"></button>
-
-        <p-table [value]="accessoriesBOM.controls" dataKey="particular" [scrollable]="true" scrollHeight="300px"
-          responsiveLayout="scroll" [showGridlines]="true" [style]="{ 'min-width': '100%' }">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>Particular</th>
-              <th>Specification</th>
-              <th>Shade No</th>
-              <th>Consumption</th>
-              <th>Supplier</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </ng-template>
-
-          <ng-template pTemplate="body" let-accGroup let-ri="rowIndex">
-            <tr [formGroup]="accGroup">
-              <td>
-                <input pInputText formControlName="particular" placeholder="Particular" class="w-full" />
-              </td>
-              <td>
-                <input pInputText formControlName="specification" placeholder="Specification" class="w-full" />
-              </td>
-              <td>
-                <input pInputText formControlName="shadeNo" placeholder="Shade No" class="w-full" />
-              </td>
-              <td>
-                <input type="number" pInputText formControlName="consumption" placeholder="Consumption" class="w-full"
-                  min="0" />
-              </td>
-              <td>
-                <input pInputText formControlName="supplier" placeholder="Supplier" class="w-full" />
-              </td>
-              <td>
-                <input pInputText formControlName="status" placeholder="Status" class="w-full" />
-              </td>
-              <td>
-                <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-danger"
-                  (click)="removeAccessoryBOM(ri)" label="Remove"></button>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </div>
-
-      <button pButton type="submit" label="Submit Order" class="mt-6" [disabled]="orderForm.invalid"></button>
-    </form>
-
-    <!-- Article Dialog -->
-    <p-dialog header="Articles Details" [(visible)]="articleDialogVisible" [modal]="true" [style]="{ width: '700px' }"
-      [breakpoints]="{ '960px': '90vw', '640px': '100vw' }">
-      <form [formGroup]="selectedPOArticlesGroup" class="space-y-4">
-        <p-table [value]="articlesArray.controls" dataKey="articleNo" [showGridlines]="true" responsiveLayout="scroll">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>Age Group</th>
-              <th>Article No</th>
-              <th>Qty</th>
-              <th>Gender</th>
-              <th>Product Photos</th>
-              <th>Actions</th>
-            </tr>
-          </ng-template>
-
-          <ng-template pTemplate="body" let-articleGroup let-ri="rowIndex">
-            <tr [formGroup]="articleGroup">
-              <td>
-                <p-dropdown [options]="ageGroupOptions" formControlName="ageGroup" placeholder="Age Group"
-                  class="w-full"></p-dropdown>
-              </td>
-              <td>
-                <input pInputText formControlName="articleNo" placeholder="Article No" class="w-full" />
-              </td>
-              <td>
-                <input type="number" pInputText formControlName="qty" placeholder="Qty" class="w-full" min="0" />
-              </td>
-              <td>
-                <input pInputText formControlName="gender" placeholder="Gender" class="w-full" />
-              </td>
-              <td>
-                <p-fileUpload name="productPhotos" mode="basic" multiple="multiple" customUpload="true"
-                  (uploadHandler)="onProductPhotoUpload($event, ri)" chooseLabel="Upload"></p-fileUpload>
-              </td>
-              <td>
-                <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-danger"
-                  (click)="removeArticle(ri)" label="Remove"></button>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-        <button pButton type="button" label="Add Article" icon="pi pi-plus" (click)="addArticle()"
-          class="mt-2"></button>
-      </form>
-
-      <p-footer>
-        <button pButton label="Close" icon="pi pi-times" (click)="articleDialogVisible=false"
-          class="p-button-text"></button>
-      </p-footer>
-    </p-dialog>
-  </div>
-
-
-  <div *ngIf="!showForm && ordersList" class="p-6">
-    <p-table [value]="ordersList" [paginator]="true" [rows]="5" [responsiveLayout]="'scroll'" class="shadow rounded">
+    <p-table [value]="poQty.controls" dataKey="combo" [scrollable]="true" scrollHeight="300px" responsiveLayout="scroll"
+      [showGridlines]="true" [style]="{ 'min-width': '100%' }">
       <ng-template pTemplate="header">
         <tr>
-          <th>Order ID</th>
-          <th>Unique ID</th>
-          <th>Order Date</th>
-          <th>Style No</th>
-          <th>Brand</th>
-          <th>Season</th>
-          <th>Shipment Date</th>
-          <th>Deadline</th>
+          <th>Combo</th>
+          <th>Pro Color</th>
+          <th>Fabric Quality</th>
+          <th>Supplier</th>
+          <th>Preemie</th>
+          <th>NB</th>
+          <th>Total Qty</th>
+          <th>Articles</th>
           <th>Actions</th>
         </tr>
       </ng-template>
 
-      <ng-template pTemplate="body" let-order>
-        <tr>
-          <td>{{ order.id }}</td>
-          <td>{{ order.unique_id }}</td>
-          <td>{{ order.order_date }}</td>
-          <td>{{ order.style_no }}</td>
-          <td>{{ order.brand }}</td>
-          <td>{{ order.season }}</td>
-          <td>{{ order.shipment_date }}</td>
-          <td>{{ order.deadline_date }}</td>
-          <td class="flex gap-2">
-            <button pButton type="button" icon="pi pi-pencil" class="p-button-sm p-button-rounded p-button-info"
-              (click)="onEdit(order)"></button>
-            <button pButton type="button" icon="pi pi-trash" class="p-button-sm p-button-rounded p-button-danger"
-              (click)="onDelete(order)"></button>
+      <ng-template pTemplate="body" let-poQtyGroup let-ri="rowIndex">
+        <tr [formGroup]="poQtyGroup">
+          <td>
+            <input pInputText formControlName="combo" placeholder="Combo" class="w-full" />
+          </td>
+          <td>
+            <input pInputText formControlName="proColor" placeholder="Pro Color" class="w-full" />
+          </td>
+          <td>
+            <input pInputText formControlName="fabricQuality" placeholder="Fabric Quality" class="w-full" />
+          </td>
+          <td>
+            <input pInputText formControlName="supplier" placeholder="Supplier" class="w-full" />
+          </td>
+          <td>
+            <input type="number" pInputText formControlName="preemie" placeholder="Preemie" class="w-full" min="0" />
+          </td>
+          <td>
+            <input type="number" pInputText formControlName="nb" placeholder="NB" class="w-full" min="0" />
+          </td>
+          <td>
+            <input type="number" pInputText formControlName="totalQty" placeholder="Total Qty" class="w-full" min="0" />
+          </td>
+          <td>
+            <button pButton type="button" icon="pi pi-eye" class="p-button-text" (click)="openArticleDialog(ri)"
+              label="Articles"></button>
+          </td>
+          <td>
+            <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-danger"
+              (click)="removePOQty(ri)" label="Remove"></button>
           </td>
         </tr>
       </ng-template>
     </p-table>
   </div>
-</div>
+
+  <!-- BOM Fabric Section -->
+  <div>
+    <h3 class="text-xl font-semibold mt-6 mb-3">Bill of Materials (Fabric)</h3>
+    <button pButton type="button" label="Add Fabric" icon="pi pi-plus" class="mb-3" (click)="addFabricBOM()"></button>
+
+    <p-table [value]="fabricBOM.controls" dataKey="description" [scrollable]="true" scrollHeight="300px"
+      responsiveLayout="scroll" [showGridlines]="true" [style]="{ 'min-width': '100%' }">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Description</th>
+          <th>Fabric</th>
+          <th>Colour</th>
+          <th>TPX</th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-fabricGroup let-ri="rowIndex">
+        <tr [formGroup]="fabricGroup">
+          <td>
+            <input pInputText formControlName="description" placeholder="Description" class="w-full" />
+          </td>
+          <td>
+            <input pInputText formControlName="fabric" placeholder="Fabric" class="w-full" />
+          </td>
+          <td>
+            <input pInputText formControlName="colour" placeholder="Colour" class="w-full" />
+          </td>
+          <td>
+            <input pInputText formControlName="tpx" placeholder="TPX" class="w-full" />
+          </td>
+          <td>
+            <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-danger"
+              (click)="removeFabricBOM(ri)" label="Remove"></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- BOM Accessories Section -->
+  <div>
+    <h3 class="text-xl font-semibold mt-6 mb-3">Bill of Materials (Accessories)</h3>
+    <button pButton type="button" label="Add Accessory" icon="pi pi-plus" class="mb-3"
+      (click)="addAccessoryBOM()"></button>
+
+    <p-table [value]="accessoriesBOM.controls" dataKey="particular" [scrollable]="true" scrollHeight="300px"
+      responsiveLayout="scroll" [showGridlines]="true" [style]="{ 'min-width': '100%' }">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Particular</th>
+          <th>Specification</th>
+          <th>Shade No</th>
+          <th>Consumption</th>
+          <th>Supplier</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-accGroup let-ri="rowIndex">
+        <tr [formGroup]="accGroup">
+          <td>
+            <input pInputText formControlName="particular" placeholder="Particular" class="w-full" />
+          </td>
+          <td>
+            <input pInputText formControlName="specification" placeholder="Specification" class="w-full" />
+          </td>
+          <td>
+            <input pInputText formControlName="shadeNo" placeholder="Shade No" class="w-full" />
+          </td>
+          <td>
+            <input type="number" pInputText formControlName="consumption" placeholder="Consumption" class="w-full"
+              min="0" />
+          </td>
+          <td>
+            <input pInputText formControlName="supplier" placeholder="Supplier" class="w-full" />
+          </td>
+          <td>
+            <input pInputText formControlName="status" placeholder="Status" class="w-full" />
+          </td>
+          <td>
+            <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-danger"
+              (click)="removeAccessoryBOM(ri)" label="Remove"></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <button pButton type="submit" label="Submit Order" class="mt-6" [disabled]="orderForm.invalid"></button>
+</form>
+
+<!-- Article Dialog -->
+<p-dialog header="Articles Details" [(visible)]="articleDialogVisible" [modal]="true" [style]="{ width: '700px' }"
+  [breakpoints]="{ '960px': '90vw', '640px': '100vw' }">
+  <form [formGroup]="selectedPOArticlesGroup" class="space-y-4">
+    <p-table [value]="articlesArray.controls" dataKey="articleNo" [showGridlines]="true" responsiveLayout="scroll">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Age Group</th>
+          <th>Article No</th>
+          <th>Qty</th>
+          <th>Gender</th>
+          <th>Product Photos</th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-articleGroup let-ri="rowIndex">
+        <tr [formGroup]="articleGroup">
+          <td>
+            <p-dropdown [options]="ageGroupOptions" formControlName="ageGroup" placeholder="Age Group"
+              class="w-full"></p-dropdown>
+          </td>
+          <td>
+            <input pInputText formControlName="articleNo" placeholder="Article No" class="w-full" />
+          </td>
+          <td>
+            <input type="number" pInputText formControlName="qty" placeholder="Qty" class="w-full" min="0" />
+          </td>
+          <td>
+            <input pInputText formControlName="gender" placeholder="Gender" class="w-full" />
+          </td>
+          <td>
+            <p-fileUpload name="productPhotos" mode="basic" multiple="multiple" customUpload="true"
+              (uploadHandler)="onProductPhotoUpload($event, ri)" chooseLabel="Upload"></p-fileUpload>
+          </td>
+          <td>
+            <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-danger"
+              (click)="removeArticle(ri)" label="Remove"></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <button pButton type="button" label="Add Article" icon="pi pi-plus" (click)="addArticle()" class="mt-2"></button>
+  </form>
+
+  <p-footer>
+    <button pButton label="Close" icon="pi pi-times" (click)="articleDialogVisible=false"
+      class="p-button-text"></button>
+  </p-footer>
+</p-dialog>
