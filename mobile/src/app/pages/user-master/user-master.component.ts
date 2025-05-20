@@ -17,6 +17,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { DialogModule } from 'primeng/dialog';
 
+
 @Component({
     selector: 'app-user-master',
     imports: [
@@ -34,6 +35,7 @@ import { DialogModule } from 'primeng/dialog';
         InputTextModule,
         InputGroupModule,
         CheckboxModule,
+       
     ],
     templateUrl: './user-master.component.html',
     styleUrl: './user-master.component.scss'
@@ -41,6 +43,8 @@ import { DialogModule } from 'primeng/dialog';
 export class UserMasterComponent implements OnInit {
     users?:  any;
     hoveredRow = -1;
+
+    checked: boolean = true;
 
     showCreateUserDialog = false;
     userForm: FormGroup;
@@ -57,6 +61,7 @@ export class UserMasterComponent implements OnInit {
         { label: 'Normal user',value: ' Normal user' }
         
       ]; 
+
 
     constructor(
         private service: UserService,
