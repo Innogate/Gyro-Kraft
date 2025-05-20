@@ -1,0 +1,104 @@
+<div class="card p-6 sm:p-8 bg-white rounded-2xl shadow-xl space-y-8">
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+      <h1 class="text-gray-800 font-bold text-3xl sm:text-4xl flex items-center gap-2">
+        <i class="pi pi-users text-blue-600 text-3xl"></i> Printers Details
+      </h1>
+      <button (click)="toggleForm()"
+        class="bg-emerald-600 text-white font-medium py-2 px-5 rounded-lg hover:bg-emerald-500 transition-all duration-200">
+        <i class="pi pi-plus mr-2"></i> Add Printers
+      </button>
+    </div>
+  
+    <!-- Dialog -->
+    <p-dialog header="Add New Printers" [(visible)]="showForm" [modal]="true"
+      [style]="{ width: '90vw', maxWidth: '500px' }" [closable]="true" [dismissableMask]="true"
+      [breakpoints]="{ '960px': '75vw', '640px': '90vw' }"
+      [styleClass]="'p-0 overflow-hidden rounded-xl shadow-md'">
+  
+      <form [formGroup]="PrintersForm">
+        <div class="bg-gray-50 p-6 sm:p-8 rounded-b-xl space-y-4">
+          <div *ngIf="errorMessage" class="text-red-500 text-sm mb-4">{{ errorMessage }}</div>
+  
+          <!-- Input Field Template -->
+          <ng-container *ngFor="let field of [
+            {icon: 'pi-user', color: 'text-blue-950', name: 'name', placeholder: 'Printers Name'},
+            {icon: 'pi-map-marker', color: 'text-orange-500', name: 'address', placeholder: 'Address'},
+            {icon: 'pi-phone', color: 'text-blue-500', name: 'phone_no', placeholder: 'Phone Number'},
+            {icon: 'pi-whatsapp', color: 'text-green-500', name: 'whatsapp_no', placeholder: 'WhatsApp Number'}
+          ]">
+            <div class="flex items-center bg-white p-3 rounded-lg border border-gray-300">
+              <i class="pi" [ngClass]="field.icon + ' mr-3 ' + field.color"></i>
+              <input [formControlName]="field.name" [placeholder]="field.placeholder"
+                class="w-full outline-none text-sm sm:text-base" />
+            </div>
+            <div *ngIf="PrintersForm.get(field.name)?.touched && PrintersForm.get(field.name)?.invalid"
+              class="text-red-500 text-xs mb-2 ml-1">
+              {{ field.placeholder }} is required.
+            </div>
+          </ng-container>
+  
+          <!-- Buttons -->
+          <div class="flex justify-end pt-2">
+            <button type="submit" *ngIf="!showEdit" (click)="addPrinters()"
+              class="bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 px-6 rounded-lg transition-colors duration-200">
+              <i class="pi pi-save mr-2"></i> Save Printers
+            </button>
+            <button type="submit" *ngIf="showEdit" (click)="updatePrinters()"
+              class="bg-yellow-600 hover:bg-yellow-500 text-white font-medium py-2 px-6 rounded-lg transition-colors duration-200">
+              <i class="pi pi-refresh mr-2"></i> Update Printers
+            </button>
+          </div>
+        </div>
+      </form>
+    </p-dialog>
+  
+    <!-- Table -->
+    <div class="overflow-x-auto">
+        <table class="min-w-full shadow-xl rounded-xl overflow-hidden">
+            <thead class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600">
+              <tr>
+                <th class="px-6 py-3 text-left font-semibold text-white uppercase tracking-wide">Sl No</th>
+                <th class="px-6 py-3 text-left font-semibold text-white uppercase tracking-wide">Name</th>
+                <th class="px-6 py-3 text-left font-semibold text-white uppercase tracking-wide">Address</th>
+                <th class="px-6 py-3 text-left font-semibold text-white uppercase tracking-wide">Phone</th>
+                <th class="px-6 py-3 text-left font-semibold text-white uppercase tracking-wide">WhatsApp</th>
+                <th class="px-6 py-3 text-left font-semibold text-white uppercase tracking-wide">Status</th>
+                <th class="px-6 py-3 text-center font-semibold text-white uppercase tracking-wide">Actions</th>
+              </tr>
+            </thead>
+          
+            <tbody class="bg-white divide-y divide-gray-100">
+              <tr *ngFor="let printers of printers; let i = index" class="hover:bg-blue-50 transition duration-200">
+                <td class="px-6 py-4 text-gray-800 font-medium">{{ i + 1 }}</td>
+                <td class="px-6 py-4 text-gray-800">{{ printers.name }}</td>
+                <td class="px-6 py-4 text-gray-600">{{ printers.address }}</td>
+                <td class="px-6 py-4 text-blue-600">{{ printers.phone_no }}</td>
+                <td class="px-6 py-4 text-green-600">{{ printers.whatsapp_no }}</td>
+                <td class="px-6 py-4" [ngClass]="printers.status ? 'text-green-600' : 'text-red-600'">
+                  {{ printers.status ? 'Active' : 'Inactive' }}
+                </td>
+          
+                <td class="px-6 py-4 text-center">
+                  <div class="flex justify-center gap-2 flex-wrap">
+                    <button (click)="editPrinters(printers)"
+                      class="flex items-center bg-blue-500 text-white py-1.5 px-3 rounded-md hover:bg-blue-400 transition">
+                      <i class="pi pi-pencil mr-1"></i> Edit
+                    </button>
+                    <button (click)="deletePrinters(printers)"
+                      class="flex items-center py-1.5 px-3 rounded-md transition"
+                      [ngClass]="{
+                        'bg-green-500 hover:bg-green-400 text-white': printers.status,
+                        'bg-red-500 hover:bg-red-400 text-white': !printers.status
+                      }">
+                      <i class="pi pi-trash mr-1"></i> {{ printers.status ? 'Active' : 'Inactive' }}
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          
+    </div>
+  </div>
+  
