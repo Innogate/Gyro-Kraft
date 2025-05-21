@@ -2,6 +2,13 @@
 @use './tailwind.css';
 @use './assets/layout/layout.scss';
 @use 'primeicons/primeicons.css';
+.swal2-container {
+  z-index: 99999 !important;
+}
+
+.ui-dialog {
+  z-index: 1050 !important;
+}
 
 .not-found-container {
     text-align: center;
