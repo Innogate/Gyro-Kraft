@@ -209,9 +209,15 @@
                     </div>
 
                     <!-- Submit -->
-                    <div class="col-span-2 pt-4">
+
+                    <div *ngIf="!update_mode"  class="col-span-2 pt-4">
                         <button pButton type="submit" label="Submit" icon="pi pi-check"
                             class="w-full p-button-info p-button-rounded" [disabled]="userForm.invalid"></button>
+                    </div>
+
+                    <div *ngIf="update_mode" class="col-span-2 pt-4">
+                        <button pButton type="submit" label="Submit" icon="pi pi-check"
+                            class="w-full p-button-info p-button-rounded"></button>
                     </div>
                 </form>
             </div>

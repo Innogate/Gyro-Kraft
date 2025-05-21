@@ -78,7 +78,8 @@ export class UserMasterComponent implements OnInit {
       address: [''],
       role: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['']
+      confirmPassword: [''],
+      profileImage: [''],
     }, { validators: this.passwordMatchValidator });
 
 
@@ -182,7 +183,9 @@ export class UserMasterComponent implements OnInit {
         this.previewUrl = reader.result;
         // also add bas
         const base64String = (reader.result as string);
-        this.userForm.get('profileImage')?.setValue(base64String);
+        this.userForm.patchValue({
+          profileImage: base64String
+        })
       };
 
       reader.readAsDataURL(file);
@@ -207,9 +210,9 @@ export class UserMasterComponent implements OnInit {
 
 
   async submit() {
-    if (this.userForm.valid) {
-      console.log('Form Data:', this.userForm.value);
-      if (!this.update_mode) {
+
+    if (!this.update_mode) {
+      if (this.userForm.valid) {
         await firstValueFrom(this.service.createUser({
           name: this.userForm.get('name')?.value,
           address: this.userForm.get('address')?.value,
@@ -232,36 +235,37 @@ export class UserMasterComponent implements OnInit {
           )
         ));
       } else {
-
-        await firstValueFrom(this.service.updateUser(
-          {
-            id: this.user_id,
-            name: this.userForm.get('name')?.value,
-            address: this.userForm.get('address')?.value,
-            phone_no: this.userForm.get('phone')?.value,
-            whatsapp_no: this.userForm.get('whatsapp')?.value,
-            email: this.userForm.get('email')?.value,
-            photo: this.userForm.get('profileImage')?.value,
-            password_hash: this.userForm.get('password')?.value,
-            disabled: this.user_disable,
-            role: this.userForm.get('role')?.value
-          }
-        ).pipe(
-          tap(
-            (response) => {
-              if (response.status == 200) {
-                this.alert.successAlert('Success', 'User updated successfully.');
-              }
-            },
-            (error) => {
-              this.alert.errorAlert(error.error.message, error.error.body);
-            }
-          )
-        ));
+        this.alert.errorAlert('Error', 'Please fill in all the required fields.');
       }
     } else {
-      this.alert.errorAlert('Error', 'Please fill in all the required fields.');
+      await firstValueFrom(this.service.updateUser(
+        {
+          id: this.user_id,
+          name: this.userForm.get('name')?.value,
+          address: this.userForm.get('address')?.value,
+          phone_no: this.userForm.get('phone')?.value,
+          whatsapp_no: this.userForm.get('whatsapp')?.value,
+          email: this.userForm.get('email')?.value,
+          photo: this.userForm.get('profileImage')?.value,
+          password_hash: this.userForm.get('password')?.value,
+          disabled: this.user_disable,
+          role: this.userForm.get('role')?.value
+        }
+      ).pipe(
+        tap(
+          (response) => {
+            if (response.status == 200) {
+              this.alert.successAlert('Success', 'User updated successfully.');
+            }
+          },
+          (error) => {
+            this.alert.errorAlert(error.error.message, error.error.body);
+          }
+        )
+      ));
     }
+
+    this.ngOnInit();
   }
 
   updateUser(user: any) {
