@@ -11,5 +11,6 @@ export default [
     { path: 'empty', component: Empty },
     { path: 'user-master', component: UserMasterComponent, canActivate: [AuthGuard]  },
     { path: 'order-sheet', component:OrdersheetComponent, canActivate: [AuthGuard]  },
+    { path: 'printer-master', component:PrinterMasterComponent, canActivate: [AuthGuard]  },
     { path: '**', redirectTo: '/notfound' }
 ] as Routes;
