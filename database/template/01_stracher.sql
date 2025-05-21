@@ -36,7 +36,8 @@ CREATE TABLE cutters (
     name VARCHAR(100),
     address TEXT,
     phone_no VARCHAR(20),
-    whatsapp_no VARCHAR(20)
+    whatsapp_no VARCHAR(20),
+    status BOOLEAN DEFAULT 1
 );
 
 CREATE TABLE printers (
@@ -44,7 +45,8 @@ CREATE TABLE printers (
     name VARCHAR(100),
     address TEXT,
     phone_no VARCHAR(20),
-    whatsapp_no VARCHAR(20)
+    whatsapp_no VARCHAR(20),
+    status BOOLEAN DEFAULT 1
 );
 
 CREATE TABLE orders (

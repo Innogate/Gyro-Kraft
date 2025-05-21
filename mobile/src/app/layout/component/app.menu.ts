@@ -49,26 +49,31 @@ export class AppMenu {
                         label: 'Masters',
                         icon: 'pi pi-fw pi-cog',
                         items: [
-                            {
-                                label: 'Age Group',
-                                icon: 'pi pi-fw pi-sliders-h',
-                                routerLink: ['/masters/age-group']
-                            },
+                            // {
+                            //     label: 'Age Group',
+                            //     icon: 'pi pi-fw pi-sliders-h',
+                            //     routerLink: ['/masters/age-group']
+                            // },
                             {
                                 label: 'Cutter Master',
                                 icon: 'pi pi-user',
                                 routerLink: ['/pages/cutter-name']
                             },
                             {
-                                label: 'Printer Master',
-                                icon: 'pi pi-fw pi-print',
-                                items: [
-                                    { label: 'Name', icon: 'pi pi-fw pi-id-card' },
-                                    { label: 'Address', icon: 'pi pi-fw pi-map-marker' },
-                                    { label: 'Phone No', icon: 'pi pi-fw pi-phone' },
-                                    { label: 'Whatsapp No', icon: 'pi pi-fw pi-whatsapp' }
-                                ]
-                            }
+                                label:'Printer Master',
+                                icon: 'pi pi-print',
+                                routerLink: ['/pages/printer-master']
+                            },
+                            // {
+                            //     label: 'Printer Master',
+                            //     icon: 'pi pi-fw pi-print',
+                            //     items: [
+                            //         { label: 'Name', icon: 'pi pi-fw pi-id-card' },
+                            //         { label: 'Address', icon: 'pi pi-fw pi-map-marker' },
+                            //         { label: 'Phone No', icon: 'pi pi-fw pi-phone' },
+                            //         { label: 'Whatsapp No', icon: 'pi pi-fw pi-whatsapp' }
+                            //     ]
+                            // }
                         ]
                     },
                     {

@@ -1,66 +1,155 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-
-interface Cutter {
-  name: string;
-  address: string;
-  phone: string;
-  whatsapp: string;
-}
+import { FormGroup, FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { CutterNameService } from '../../../services/cutterName.service';
+import { firstValueFrom } from 'rxjs';
+import { CutterName } from '../../../services/interface/cutter-name';
+import { DialogModule } from 'primeng/dialog';
+import { FormBuilder, Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
+import { SweetAlertService } from '../../../utility/sweet-alert.service';
 
 @Component({
   selector: 'app-cutter-name',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DialogModule, ReactiveFormsModule],
   templateUrl: './cutter-name.component.html',
   styleUrls: ['./cutter-name.component.scss']
 })
 export class CutterNameComponent {
-  cutters: Cutter[] = [
-    { name: 'John Doe', address: '123 Main St, City A', phone: '1234567890', whatsapp: '1234567890' },
-    { name: 'Jane Smith', address: '456 Elm St, City B', phone: '1234567891', whatsapp: '1234567891' },
-    { name: 'Michael Brown', address: '789 Maple Ave, City C', phone: '1234567892', whatsapp: '1234567892' },
-  ];
+  cutters: CutterName[] = [];
+
+  constructor(
+    private cutterNameService: CutterNameService,
+    private fb: FormBuilder,
+    private sweetAlertService: SweetAlertService
+  ) {
+
+  }
 
   showForm = false;
-  newCutter: Cutter = { name: '', address: '', phone: '', whatsapp: '' };
+  showEdit = false;
+  newCutter: CutterName = { name: '', address: '', phone_no: '', whatsapp_no: '' };
   errorMessage: string = '';
+  cutterForm!: FormGroup;
 
   toggleForm() {
+    this.showEdit = false;
     this.showForm = !this.showForm;
-    this.newCutter = { name: '', address: '', phone: '', whatsapp: '' };
-    this.errorMessage = '';
+    if (this.showForm) {
+      this.cutterForm.reset();
+    }
   }
 
+  ngOnInit() {
+    this.cutterForm = this.fb.group({
+      id: [null],
+      name: ['', Validators.required],
+      address: [''],
+      phone_no: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      whatsapp_no: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+    });
+    this.gateAllCutter();
+  }
+
+  // gate all cutter
+  async gateAllCutter() {
+    try {
+      const response = await firstValueFrom(this.cutterNameService.gateAllCutter());
+      if (response.status === 200 && Array.isArray(response.body)) {
+        this.cutters = response.body;
+      }
+    } catch (e) {
+      console.error('Error fetching cutters:', e);
+    }
+  }
+ 
+  // add cutter
   addCutter() {
-    // Check for duplicate phone or WhatsApp numbers
-    const isDuplicate = this.cutters.some(
-      cutter =>
-        cutter.phone === this.newCutter.phone || 
-        cutter.whatsapp === this.newCutter.whatsapp
-    );
-
-    if (isDuplicate) {
-      this.errorMessage = 'Cutter with the same phone or WhatsApp number already exists.';
-      return;
-    }
-
-    // Add the new cutter if all fields are filled
-    if (this.newCutter.name && this.newCutter.address && this.newCutter.phone && this.newCutter.whatsapp) {
-      this.cutters.push({ ...this.newCutter });
-      this.toggleForm();
+    if (this.cutterForm.valid) {
+      this.newCutter = this.cutterForm.value;
+      try {
+        firstValueFrom(this.cutterNameService.createCutter(this.newCutter)).then((response) => {
+          if (response.status === 200) {
+            this.sweetAlertService.successAlert('Success', 'Cutter created successfully');
+            this.gateAllCutter();
+            this.toggleForm();
+          } else {
+            this.sweetAlertService.errorAlert('Error', 'Failed to create cutter');
+          }
+        });
+      }
+      catch (e) {
+        this.sweetAlertService.errorAlert('Error', 'Failed to create cutter');
+      }
+    } else {
+      this.sweetAlertService.warningAlert('Worning', 'Please fill in all required fields correctly.');
     }
   }
 
-  filterNumbers(event: Event, field: 'phone' | 'whatsapp') {
-    const inputElement = event.target as HTMLInputElement;
-    inputElement.value = inputElement.value.replace(/[^0-9]/g, '');
+  // View cutter
+  editCutter(cutter: CutterName) {
+    console.log(cutter);
+    this.newCutter = cutter;
+    this.cutterForm.patchValue({
+      id: cutter.id,
+      name: cutter.name,
+      address: cutter.address,
+      phone_no: Number(cutter.phone_no),
+      whatsapp_no: Number(cutter.whatsapp_no),
+    });
+    this.showEdit = true;
+    this.showForm = true;
+  }
 
-    // Update the corresponding model value
-    if (field === 'phone') {
-      this.newCutter.phone = inputElement.value;
-    } else if (field === 'whatsapp') {
-      this.newCutter.whatsapp = inputElement.value;
+ // Update cutter
+  updateCutter() {
+    console.log(this.cutterForm.value);
+    if (this.cutterForm.valid) {
+      this.newCutter = this.cutterForm.value;
+      try {
+        firstValueFrom(this.cutterNameService.updateCutter(this.newCutter)).then((response) => {
+          if (response.status === 200) {
+            this.sweetAlertService.successAlert('Success', 'Cutter updated successfully');
+            this.gateAllCutter();
+            this.toggleForm();
+          } else {
+            this.sweetAlertService.errorAlert('Error', 'Failed to update cutter');
+          }
+        });
+      }
+      catch (e) {
+        this.sweetAlertService.errorAlert('Error', 'Failed to update cutter');
+      }
+    } else {
+      this.sweetAlertService.warningAlert('Worning', 'Please fill in all required fields correctly.');
     }
+  }
+
+  // Delete cutter
+  deleteCutter(cutter: CutterName) {
+    const newStatus = !cutter.status;
+    const action = newStatus ? 'activate' : 'deactivate';
+
+    const payload = {
+      id: cutter.id,
+      status: !cutter.status,
+    } as unknown as CutterName;
+
+    this.sweetAlertService.confirmAlert(
+      'Confirmation',
+      `Are you sure you want to ${action} this cutter?`
+    ).then((result) => {
+      if (result.isConfirmed) {
+        firstValueFrom(this.cutterNameService.deleteCutter(payload)).then((response) => {
+          if (response.status === 200) {
+            this.sweetAlertService.successAlert('Success', `Cutter ${action}d successfully`);
+            this.gateAllCutter();
+          } else {
+            this.sweetAlertService.errorAlert('Error', `Failed to ${action} cutter`);
+          }
+        });
+      }
+    });
   }
 }
