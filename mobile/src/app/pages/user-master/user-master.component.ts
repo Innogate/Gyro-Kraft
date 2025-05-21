@@ -19,58 +19,58 @@ import { DialogModule } from 'primeng/dialog';
 
 
 @Component({
-    selector: 'app-user-master',
-    imports: [
-        DialogModule,
-        CardModule,
-        ButtonModule, 
-        CommonModule,
-        TableModule,
-        ButtonModule,
-        FormsModule,
-        ReactiveFormsModule,
-        CardModule,
-        DropdownModule,
-        ToggleButtonModule,
-        InputTextModule,
-        InputGroupModule,
-        CheckboxModule,
-       
-    ],
-    templateUrl: './user-master.component.html',
-    styleUrl: './user-master.component.scss'
+  selector: 'app-user-master',
+  imports: [
+    DialogModule,
+    CardModule,
+    ButtonModule,
+    CommonModule,
+    TableModule,
+    ButtonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    CardModule,
+    DropdownModule,
+    ToggleButtonModule,
+    InputTextModule,
+    InputGroupModule,
+    CheckboxModule,
+
+  ],
+  templateUrl: './user-master.component.html',
+  styleUrl: './user-master.component.scss'
 })
 export class UserMasterComponent implements OnInit {
-    users?:  any;
-    hoveredRow = -1;
+  users?: any;
+  hoveredRow = -1;
 
-    checked: boolean = true;
+  checked: boolean = true;
 
-    showCreateUserDialog = false;
-    userForm: FormGroup;
-    previewUrl: string | ArrayBuffer | null = null;
-    sameWhatsappControl = new FormControl(false);
-    isEnabled: boolean = true;
-    user_disable = 0;
-    update_mode = false;
-    user_id = 0;
-    
-    roleOptions = [
-        { label: 'Manager',value: 'Manager' },
-        { label: 'Super Admin',value: 'Super Admin' },
-        { label: 'Normal user',value: ' Normal user' }
-        
-      ]; 
+  showCreateUserDialog = false;
+  userForm: FormGroup;
+  previewUrl: string | ArrayBuffer | null = null;
+  sameWhatsappControl = new FormControl(false);
+  isEnabled: boolean = true;
+  user_disable = 0;
+  update_mode = false;
+  user_id = 0;
+
+  roleOptions = [
+    { label: 'Manager', value: 'Manager' },
+    { label: 'Super Admin', value: 'Super Admin' },
+    { label: 'Normal user', value: ' Normal user' }
+
+  ];
 
 
-    constructor(
-        private service: UserService,
-        private alert: SweetAlertService,
-        private router: Router,
-        private fb: FormBuilder,
-        private route: ActivatedRoute
-    ) {
-        this.userForm = this.fb.group({
+  constructor(
+    private service: UserService,
+    private alert: SweetAlertService,
+    private router: Router,
+    private fb: FormBuilder,
+    private route: ActivatedRoute
+  ) {
+    this.userForm = this.fb.group({
       name: ['', Validators.required],
       phone: ['', [Validators.required, Validators.minLength(10)]],
       whatsapp: ['', Validators.required],
@@ -81,91 +81,91 @@ export class UserMasterComponent implements OnInit {
       confirmPassword: ['']
     }, { validators: this.passwordMatchValidator });
 
-    
-    }
 
-
-    toggle() {
-        this.isEnabled = !this.isEnabled;
-        this.user_disable = this.isEnabled ? 0 : 1;
-      
-        this.userForm.patchValue({
-          disabled: this.user_disable
-        });
-      }
-
-
-
-    async ngOnInit() {
-        await firstValueFrom(this.service.getAllUsers({
-            max: 100,
-            current: 0
-        }).pipe(
-            tap(
-                (response) => {
-                    if (response.status == 200) {
-                        this.users = response.body.users;
-                    }
-                },
-                (error) => {
-                    this.alert.errorAlert(error.error.message, error.error.body);
-                }
-            )
-        ))
-
-
-        
-        this.route.queryParams.subscribe(params => {
-            if (params['user_data']) {
-              const user = JSON.parse(params['user_data']);
-              this.user_id = user.id;
-              this.userForm.patchValue({
-                name: user.name,
-                phone: user.phone_no,
-                whatsapp: user.whatsapp_no,
-                email: user.email,
-                address: user.address,
-                role: user.role
-              });
-              // set image
-              if (user.photo) {
-                this.previewUrl = `data:image/jpeg;base64,${user.photo}`;
-              }else {
-                this.previewUrl = '/img/profile.png'
-              }
-              this.update_mode = true;
-              // remove password and confirm password fields required validators
-              this.userForm.get('password')?.clearValidators();
-              this.userForm.get('password')?.updateValueAndValidity();
-              this.userForm.get('confirmPassword')?.clearValidators();
-              this.userForm.get('confirmPassword')?.updateValueAndValidity();
-      
-            }
-          });
-    }
-
-
-
-
-getRoleColor(role: string): string {
-  switch (role.toLowerCase()) {
-    case 'admin':
-      return '#ef4444'; // red
-    case 'manager':
-      return '#f59e0b'; // amber
-    case 'user':
-      return '#3b82f6'; // blue
-    default:
-      return '#6b7280'; // gray
   }
-}
+
+
+  toggle() {
+    this.isEnabled = !this.isEnabled;
+    this.user_disable = this.isEnabled ? 0 : 1;
+
+    this.userForm.patchValue({
+      disabled: this.user_disable
+    });
+  }
+
+
+
+  async ngOnInit() {
+    await firstValueFrom(this.service.getAllUsers({
+      max: 100,
+      current: 0
+    }).pipe(
+      tap(
+        (response) => {
+          if (response.status == 200) {
+            this.users = response.body.users;
+          }
+        },
+        (error) => {
+          this.alert.errorAlert(error.error.message, error.error.body);
+        }
+      )
+    ))
+
+
+
+    this.route.queryParams.subscribe(params => {
+      if (params['user_data']) {
+        const user = JSON.parse(params['user_data']);
+        this.user_id = user.id;
+        this.userForm.patchValue({
+          name: user.name,
+          phone: user.phone_no,
+          whatsapp: user.whatsapp_no,
+          email: user.email,
+          address: user.address,
+          role: user.role
+        });
+        // set image
+        if (user.photo) {
+          this.previewUrl = `data:image/jpeg;base64,${user.photo}`;
+        } else {
+          this.previewUrl = '/img/profile.png'
+        }
+        this.update_mode = true;
+        // remove password and confirm password fields required validators
+        this.userForm.get('password')?.clearValidators();
+        this.userForm.get('password')?.updateValueAndValidity();
+        this.userForm.get('confirmPassword')?.clearValidators();
+        this.userForm.get('confirmPassword')?.updateValueAndValidity();
+
+      }
+    });
+  }
+
+
+
+
+  getRoleColor(role: string): string {
+    switch (role.toLowerCase()) {
+      case 'admin':
+        return '#ef4444'; // red
+      case 'manager':
+        return '#f59e0b'; // amber
+      case 'user':
+        return '#3b82f6'; // blue
+      default:
+        return '#6b7280'; // gray
+    }
+  }
 
 
 
 
 
-// Custom validator to ensure password and confirmPassword match
-passwordMatchValidator(group: FormGroup) {
+  // Custom validator to ensure password and confirmPassword match
+  passwordMatchValidator(group: FormGroup) {
     const password = group.get('password')?.value;
     const confirmPassword = group.get('confirmPassword')?.value;
     return password === confirmPassword ? null : { mismatch: true };
@@ -205,12 +205,37 @@ passwordMatchValidator(group: FormGroup) {
     }
   }
 
-  
+
   async submit() {
     if (this.userForm.valid) {
       console.log('Form Data:', this.userForm.value);
       if (!this.update_mode) {
         await firstValueFrom(this.service.createUser({
+          name: this.userForm.get('name')?.value,
+          address: this.userForm.get('address')?.value,
+          phone_no: this.userForm.get('phone')?.value,
+          whatsapp_no: this.userForm.get('whatsapp')?.value,
+          email: this.userForm.get('email')?.value,
+          photo: this.userForm.get('profileImage')?.value,
+          password_hash: this.userForm.get('password')?.value,
+          role: this.userForm.get('role')?.value
+        }).pipe(
+          tap(
+            (response) => {
+              if (response.status == 200) {
+                this.alert.successAlert('Success', 'User created successfully.');
+              }
+            },
+            (error) => {
+              this.alert.errorAlert(error.error.message, error.error.body);
+            }
+          )
+        ));
+      } else {
+
+        await firstValueFrom(this.service.updateUser(
+          {
+            id: this.user_id,
             name: this.userForm.get('name')?.value,
             address: this.userForm.get('address')?.value,
             phone_no: this.userForm.get('phone')?.value,
@@ -218,49 +243,38 @@ passwordMatchValidator(group: FormGroup) {
             email: this.userForm.get('email')?.value,
             photo: this.userForm.get('profileImage')?.value,
             password_hash: this.userForm.get('password')?.value,
+            disabled: this.user_disable,
             role: this.userForm.get('role')?.value
-          }).pipe(
-            tap(
-              (response) => {
-                if (response.status == 200) {
-                  this.alert.successAlert('Success', 'User created successfully.');
-                }
-              },
-              (error) => {
-                this.alert.errorAlert(error.error.message, error.error.body);
-              }
-            )
-          ));
-      }else{
-
-        await firstValueFrom(this.service.updateUser(
-            {
-                id: this.user_id,
-                name: this.userForm.get('name')?.value,
-                address: this.userForm.get('address')?.value,
-                phone_no: this.userForm.get('phone')?.value,
-                whatsapp_no: this.userForm.get('whatsapp')?.value,
-                email: this.userForm.get('email')?.value,
-                photo: this.userForm.get('profileImage')?.value,
-                password_hash: this.userForm.get('password')?.value,
-                disabled: this.user_disable,
-                role: this.userForm.get('role')?.value
-            }
+          }
         ).pipe(
-            tap(
-              (response) => {
-                if (response.status == 200) {
-                  this.alert.successAlert('Success', 'User updated successfully.');
-                }
-              },
-              (error) => {
-                this.alert.errorAlert(error.error.message, error.error.body);
+          tap(
+            (response) => {
+              if (response.status == 200) {
+                this.alert.successAlert('Success', 'User updated successfully.');
               }
-            )
-          ));
+            },
+            (error) => {
+              this.alert.errorAlert(error.error.message, error.error.body);
+            }
+          )
+        ));
       }
     } else {
       this.alert.errorAlert('Error', 'Please fill in all the required fields.');
     }
+  }
+
+  updateUser(user: any) {
+    this.update_mode = true;
+    this.showCreateUserDialog = true;
+    this.user_id = user.id;
+    this.userForm.patchValue({
+      name: user.name,
+      phone: user.phone_no,
+      whatsapp: user.whatsapp_no,
+      email: user.email,
+      address: user.address,
+      role: user.role
+    });
   }
 }
