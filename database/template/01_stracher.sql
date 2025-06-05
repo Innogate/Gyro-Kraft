@@ -26,11 +26,6 @@ CREATE TABLE user_rights (
     FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
-CREATE TABLE age_groups (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) UNIQUE
-);
-
 CREATE TABLE cutters (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100),
@@ -51,20 +46,17 @@ CREATE TABLE printers (
 
 CREATE TABLE orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    unique_id VARCHAR(50) UNIQUE,
+    style_no VARCHAR(100),
+    description TEXT,
+    age_group VARCHAR(100) DEFAULT NULL,
+    pattern TEXT,
     order_date DATE,
     buyer VARCHAR(100),
-    style_no VARCHAR(100),
     brand VARCHAR(100),
     season VARCHAR(100),
-    age_group_id VARCHAR(100) DEFAULT NULL,
     shipment_date DATE,
-    pattern TEXT,
-    printing TEXT,
     documents TEXT,
-    steps_required TEXT,
-    remark TEXT,
-    deadline_date DATE
+    remark TEXT
 );
 
 CREATE TABLE order_po_qty (
@@ -79,35 +71,13 @@ CREATE TABLE order_po_qty (
     total_qty INT
 );
 
-CREATE TABLE order_articles (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    po_id INT,
-    poQty_id INT DEFAULT NULL,
-    age_group_id VARCHAR(100) DEFAULT NULL,
-    article_no VARCHAR(100),
-    qty INT,
-    gender ENUM('Male', 'Female', 'Unisex'),
-    product_photos TEXT
-);
-
-CREATE TABLE bom_fabrics (
+CREATE TABLE bom (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT,
     description TEXT,
     fabric VARCHAR(100),
     colour VARCHAR(50),
     tpx VARCHAR(50)
-);
-
-CREATE TABLE bom_accessories (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    order_id INT,
-    particular VARCHAR(100),
-    specification TEXT,
-    shade_no VARCHAR(50),
-    consumption VARCHAR(100),
-    supplier VARCHAR(100),
-    status VARCHAR(50)
 );
 
 CREATE TABLE cutting (

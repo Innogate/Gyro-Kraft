@@ -56,56 +56,49 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-    "uniqueId": "123123",
-    "date": "2025-05-05",
-    "buyer": "ABC",
-    "styleNo": "100",
-    "brand": "ABC",
-    "season": "B",
-    "ageGroup": "Infant",
-    "shipmentDate": "2025-05-01",
-    "pattern": "12345",
-    "printing": "12345",
-    "steps": "12345",
-    "deadlineDate": "2025-05-01",
-    "remark": "Helo",
-    "documents": [],
+    "styleNo": "121",
+    "description": "ABC",
+    "date": "2025-06-04",
+    "buyer": "123",
+    "brand": "abc",
+    "season": "May",
+    "ageGroup": "Smaill",
+    "shipmentDate": "2025-06-04",
+    "pattern": "12",
+    "remark": "RWE",
+    "documents": null,
     "poQty": [
         {
+            "fabric": "12",
+            "item": "12",
+            "color": "12",
             "combo": "12",
-            "proColor": "12",
-            "fabricQuality": "12",
-            "supplier": "12",
-            "preemie": 12,
-            "nb": 1,
-            "totalQty": 1,
-            "articles": [
-                {
-                    "ageGroup": "Infant",
-                    "articleNo": "12",
-                    "qty": 2,
-                    "gender": "Male",
-                    "productPhotos": []
-                }
-            ]
-        }
-    ],
-    "fabricBOM": [
+            "size": "12",
+            "qty": "12",
+            "totalQty": 12
+        },
         {
-            "description": "123",
-            "fabric": "123",
-            "colour": "123",
-            "tpx": "TPX"
+            "fabric": "12",
+            "item": "12",
+            "color": "12",
+            "combo": "12",
+            "size": "12",
+            "qty": "12",
+            "totalQty": 21
         }
     ],
     "accessoriesBOM": [
         {
-            "particular": "123",
-            "specification": "1231",
-            "shadeNo": "123",
-            "consumption": 123,
-            "supplier": "123",
-            "status": "123"
+            "item": "12",
+            "description": "12",
+            "consumption": 12,
+            "status": "12"
+        },
+        {
+            "item": "12",
+            "description": "12",
+            "consumption": 12,
+            "status": "12"
         }
     ]
 }
@@ -119,5 +112,60 @@ Authorization: Bearer {{token}}
 
 
 {
-    "orderId": 10
+    "orderId": 2
+}
+
+
+### CREATE NEW ORDER
+POST {{ apiUrl }}/orderList/update
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "id": 2,
+    "styleNo": "121",
+    "description": "ABCD",
+    "date": "2025-06-04",
+    "buyer": "123",
+    "brand": "abc",
+    "season": "May",
+    "ageGroup": "Smaill",
+    "shipmentDate": "2025-06-04",
+    "pattern": "12",
+    "remark": "RWE",
+    "documents": null,
+    "poQty": [
+        {
+            "fabric": "12",
+            "item": "12",
+            "color": "12",
+            "combo": "12",
+            "size": "12",
+            "qty": "12",
+            "totalQty": 12
+        },
+        {
+            "fabric": "12",
+            "item": "12",
+            "color": "12",
+            "combo": "12",
+            "size": "12",
+            "qty": "12",
+            "totalQty": 21
+        }
+    ],
+    "accessoriesBOM": [
+        {
+            "item": "12",
+            "description": "12",
+            "consumption": 12,
+            "status": "12"
+        },
+        {
+            "item": "12",
+            "description": "12",
+            "consumption": 12,
+            "status": "12"
+        }
+    ]
 }

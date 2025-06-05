@@ -46,16 +46,9 @@ export class OrdersheetComponent {
   showForm: boolean = false;
   isEdit: boolean = false;
   ordersList?: any;
-  ageGroupOptions = [
-    { label: 'Infant', value: 'Infant' },
-    { label: 'Toddler', value: 'Toddler' },
-    { label: 'Child', value: 'Child' },
-    { label: 'Teen', value: 'Teen' },
-    { label: 'Adult', value: 'Adult' },
-  ];
-
   articleDialogVisible = false;
   selectedPOIndex = -1;
+  updateId= 0;
 
   constructor(
     private fb: FormBuilder,
@@ -63,23 +56,19 @@ export class OrdersheetComponent {
     private alert: SweetAlertService
   ) {
     this.orderForm = this.fb.group({
-      uniqueId: ['', Validators.required],
+      styleNo: ['', Validators.required],
+      description: ['', Validators.required],
       date: [null, Validators.required],
       buyer: ['', Validators.required],
-      styleNo: ['', Validators.required],
       brand: ['', Validators.required],
       season: ['', Validators.required],
       ageGroup: [null, Validators.required],
       shipmentDate: [null],
       pattern: [''],
-      printing: [''],
-      steps: [''],
-      deadlineDate: [null],
       remark: [''],
       documents: [[]],
 
       poQty: this.fb.array([]),
-      fabricBOM: this.fb.array([]),
       accessoriesBOM: this.fb.array([]),
     });
     this.fetchOrderList();
@@ -114,6 +103,7 @@ export class OrdersheetComponent {
 
   async onEdit(order: any) {
     this.isEdit = true;
+    this.updateId = order.id;
     await firstValueFrom(this.service.getById({
       "orderId": order.id
     }).pipe(
@@ -128,12 +118,6 @@ export class OrdersheetComponent {
               });
             }
 
-            if (response.body.fabricBOM) {
-              response.body.fabricBOM.forEach((fabricBOM: any) => {
-                this.addFabricBOM();
-                this.fabricBOM.at(this.fabricBOM.length - 1).patchValue(fabricBOM);
-              });
-            }
 
             if (response.body.accessoriesBOM) {
               this.addAccessoryBOM();
@@ -169,26 +153,22 @@ export class OrdersheetComponent {
     return this.orderForm.get('poQty') as FormArray;
   }
 
-  get fabricBOM(): FormArray {
-    return this.orderForm.get('fabricBOM') as FormArray;
-  }
 
   get accessoriesBOM(): FormArray {
     return this.orderForm.get('accessoriesBOM') as FormArray;
   }
 
-  // Add PO Qty group
+  //! Add PO Qty group
   addPOQty() {
     this.poQty.push(
       this.fb.group({
+        fabric: [''],
+        item: [''],
+        color: [''],
         combo: [''],
-        proColor: [''],
-        fabricQuality: [''],
-        supplier: [''],
-        preemie: [0],
-        nb: [0],
+        size: [''],
+        qty: [''],
         totalQty: [0],
-        articles: this.fb.array([]),
       })
     );
   }
@@ -197,69 +177,14 @@ export class OrdersheetComponent {
     this.poQty.removeAt(index);
   }
 
-  // Articles form array inside selected PO Qty
-  getArticlesArray(index: number): FormArray {
-    return this.poQty.at(index).get('articles') as FormArray;
-  }
-
-  // Article dialog form for currently selected PO Qty
-  get selectedPOArticlesGroup(): FormGroup {
-    if (this.selectedPOIndex === -1) return this.fb.group({});
-    return this.poQty.at(this.selectedPOIndex) as FormGroup;
-  }
-
-  get articlesArray(): FormArray {
-    if (this.selectedPOIndex === -1) return this.fb.array([]);
-    return this.getArticlesArray(this.selectedPOIndex);
-  }
-
-  openArticleDialog(poIndex: number) {
-    this.selectedPOIndex = poIndex;
-    this.articleDialogVisible = true;
-  }
-
-  addArticle() {
-    if (this.selectedPOIndex === -1) return;
-    this.articlesArray.push(
-      this.fb.group({
-        ageGroup: [null],
-        articleNo: [''],
-        qty: [0],
-        gender: [''],
-        productPhotos: [[]], // file info
-      })
-    );
-  }
-
-  removeArticle(index: number) {
-    this.articlesArray.removeAt(index);
-  }
-
-  // BOM Fabric
-  addFabricBOM() {
-    this.fabricBOM.push(
-      this.fb.group({
-        description: [''],
-        fabric: [''],
-        colour: [''],
-        tpx: [''],
-      })
-    );
-  }
-
-  removeFabricBOM(index: number) {
-    this.fabricBOM.removeAt(index);
-  }
 
   // BOM Accessories
   addAccessoryBOM() {
     this.accessoriesBOM.push(
       this.fb.group({
-        particular: [''],
-        specification: [''],
-        shadeNo: [''],
-        consumption: [0],
-        supplier: [''],
+        item: [''],
+        description: [''],
+        consumption: [''],
         status: [''],
       })
     );
@@ -308,11 +233,7 @@ export class OrdersheetComponent {
   onProductPhotoUpload(event: any, articleIndex: number) {
     if (this.selectedPOIndex === -1) return;
     const files = event.files;
-    const articles = this.getArticlesArray(this.selectedPOIndex);
-    const currentPhotos = articles.at(articleIndex).get('productPhotos')?.value || [];
-    articles.at(articleIndex).patchValue({
-      productPhotos: [...currentPhotos, ...files],
-    });
+
   }
 
   convertToMysqlDate(date: any): string | null {
@@ -340,6 +261,26 @@ export class OrdersheetComponent {
       shipmentDate: this.convertToMysqlDate(this.orderForm.value.shipmentDate),
       deadlineDate: this.convertToMysqlDate(this.orderForm.value.deadlineDate)
     })
+
+    if (this.isEdit) {
+      
+      const payload = { ...this.orderForm.value, id: this.updateId };
+
+      await firstValueFrom(this.service.update(payload).pipe(
+        tap(
+          (response) => {
+            if (response.status == 200) {
+              console.log(response);
+              this.alert.successAlert('Success', 'Order updated successfully.');
+            }
+          },
+          (error) => {
+            this.alert.errorAlert(error.error.message, error.error.body);
+          }
+        )
+      ))
+      return;
+    }
 
     await firstValueFrom(this.service.createOrder(this.orderForm.value).pipe(
       tap(

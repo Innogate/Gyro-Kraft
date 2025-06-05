@@ -31,4 +31,8 @@ export class OrderService {
   getById(payload: any): Observable<ApiResponse<OrderResponse>> {
     return this.apiService.post('/orderList/byId', payload);
   }
+
+  update(payload: any): Observable<ApiResponse<any>> {
+    return this.apiService.post('/orderList/update', payload);
+  }
 }
