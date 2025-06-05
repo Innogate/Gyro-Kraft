@@ -5,13 +5,14 @@ import { Landing } from './app/pages/landing/landing';
 import { Notfound } from './app/pages/notfound/notfound';
 import { LoginComponent } from './app/pages/login/login.component';
 import { LoginOtpComponent } from './app/pages/login-otp/login-otp.component';
+import { AuthGuard } from './app/pages/auth/auth.guard';
 
 export const appRoutes: Routes = [
     {
         path: '',
         component: AppLayout,
         children: [
-            { path: '', component: Dashboard },
+            { path: '', component: Dashboard, canActivate: [AuthGuard] },
             { path: 'pages', loadChildren: () => import('./app/pages/pages.routes') }
         ]
     },

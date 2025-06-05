@@ -24,58 +24,39 @@ export class LoginOtpComponent implements OnInit {
   cooldown: number = 0; // seconds remaining
   cooldownDuration: number = 30; // change this to any seconds you want
   cooldownInterval: any;
-
+  otp: string = '';
   constructor(
     private route: ActivatedRoute,
     private service: UserService,
     private alert: SweetAlertService,
     private router: Router
-) {}
+  ) { }
 
-    ngOnInit() {
-        this.startCooldown();
-        this.otp_id = this.route.snapshot.paramMap.get('OTPid');
+  ngOnInit() {
+    this.startCooldown();
+    this.otp_id = this.route.snapshot.paramMap.get('OTPid');
 
-        // Optional: Focus first field
-        setTimeout(() => {
-        const firstInput = document.getElementById('otp-0');
-        if (firstInput) (firstInput as HTMLInputElement).focus();
-        });
+    // Optional: Focus first field
+    setTimeout(() => {
+      const firstInput = document.getElementById('otp-0');
+      if (firstInput) (firstInput as HTMLInputElement).focus();
+    });
+  }
+  
+  onOtpInput(): void {
+    this.otp = this.otp.replace(/\D/g, '').slice(0, 6);
+    if (this.otp.length === 6) {
+      this.submitOtp();
+      
+    }
   }
 
   get isOtpIncomplete(): boolean {
     return this.otpDigits.some(d => !d);
   }
 
-  onOtpChange(event: Event, index: number): void {
-    const input = event.target as HTMLInputElement;
-    const value = input.value;
-
-    if (!/^\d$/.test(value)) {
-      input.value = '';
-      return;
-    }
-
-    this.otpDigits[index] = value;
-
-    // Move to next
-    if (value && index < 5) {
-      const next = document.getElementById(`otp-${index + 1}`);
-      if (next) (next as HTMLInputElement).focus();
-    }
-  }
-
-  onKeyDown(event: KeyboardEvent, index: number): void {
-    const input = event.target as HTMLInputElement;
-
-    if (event.key === 'Backspace' && !this.otpDigits[index] && index > 0) {
-      const prev = document.getElementById(`otp-${index - 1}`);
-      if (prev) (prev as HTMLInputElement).focus();
-    }
-  }
-
   async submitOtp() {
-    if (this.isOtpIncomplete) {
+    if (this.otp.length !== 6) {
       this.errorMessage = 'Please enter all 6 digits of OTP.';
       return;
     }
@@ -83,24 +64,23 @@ export class LoginOtpComponent implements OnInit {
     this.errorMessage = '';
     this.loading = true;
 
-    const fullOtp = this.otpDigits.join('');
-
-   if (this.otp_id) {
-    await firstValueFrom(this.service.loginOTPVerify({ otp_id: this.otp_id, otp: fullOtp }).pipe(
-       tap(
-         (response) => {
-             debug(response);
-             if (response.status == 200 && response.body.token) {
-                 localStorage.setItem('token', response.body.token);
-                 this.router.navigate(['/']);
-             }
-         },
-         (error) => {
-           this.alert.errorAlert(error.error.message, error.error.body);
-         }
-       )
-    ));
-   }
+  
+    if (this.otp_id) {
+      await firstValueFrom(this.service.loginOTPVerify({ otp_id: this.otp_id, otp: this.otp }).pipe(
+        tap(
+          (response) => {
+            debug(response);
+            if (response.status == 200 && response.body.token) {
+              localStorage.setItem('token', response.body.token);
+              this.router.navigate(['/']);
+            }
+          },
+          (error) => {
+            this.alert.errorAlert(error.error.message, error.error.body);
+          }
+        )
+      ));
+    }
   }
 
   resendOtp(): void {

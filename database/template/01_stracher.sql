@@ -5,10 +5,14 @@ CREATE TABLE users (
     phone_no VARCHAR(20),
     whatsapp_no VARCHAR(20),
     email VARCHAR(100) UNIQUE,
-    photo VARCHAR(255),
+    photo LONGTEXT,
     password_hash VARCHAR(255),
     disabled BOOLEAN DEFAULT FALSE,
-    role ENUM('Super Admin', 'Manager', 'Normal user'),
+    role ENUM(
+        'Super Admin',
+        'Manager',
+        'Normal user'
+    ),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -19,12 +23,7 @@ CREATE TABLE user_rights (
     can_add BOOLEAN,
     can_edit BOOLEAN,
     can_delete BOOLEAN,
-    FOREIGN KEY (user_id) REFERENCES users(id)
-);
-
-CREATE TABLE age_groups (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) UNIQUE
+    FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 CREATE TABLE cutters (
@@ -32,7 +31,8 @@ CREATE TABLE cutters (
     name VARCHAR(100),
     address TEXT,
     phone_no VARCHAR(20),
-    whatsapp_no VARCHAR(20)
+    whatsapp_no VARCHAR(20),
+    status BOOLEAN DEFAULT 1
 );
 
 CREATE TABLE printers (
@@ -40,26 +40,23 @@ CREATE TABLE printers (
     name VARCHAR(100),
     address TEXT,
     phone_no VARCHAR(20),
-    whatsapp_no VARCHAR(20)
+    whatsapp_no VARCHAR(20),
+    status BOOLEAN DEFAULT 1
 );
 
 CREATE TABLE orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    unique_id VARCHAR(50) UNIQUE,
+    style_no VARCHAR(100),
+    description TEXT,
+    age_group VARCHAR(100) DEFAULT NULL,
+    pattern TEXT,
     order_date DATE,
     buyer VARCHAR(100),
-    style_no VARCHAR(100),
     brand VARCHAR(100),
     season VARCHAR(100),
-    age_group_id INT,
     shipment_date DATE,
-    pattern TEXT,
-    printing TEXT,
     documents TEXT,
-    steps_required TEXT,
-    remark TEXT,
-    deadline_date DATE,
-    FOREIGN KEY (age_group_id) REFERENCES age_groups(id)
+    remark TEXT
 );
 
 CREATE TABLE order_po_qty (
@@ -71,43 +68,16 @@ CREATE TABLE order_po_qty (
     supplier VARCHAR(100),
     preemie INT,
     nb INT,
-    total_qty INT,
-    FOREIGN KEY (order_id) REFERENCES orders(id)
+    total_qty INT
 );
 
-CREATE TABLE order_articles (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    po_id INT,
-    age_group_id INT,
-    article_no VARCHAR(100),
-    qty INT,
-    gender ENUM('Male', 'Female', 'Unisex'),
-    product_photos TEXT,
-    FOREIGN KEY (po_id) REFERENCES order_po_qty(id),
-    FOREIGN KEY (age_group_id) REFERENCES age_groups(id)
-);
-
-
-CREATE TABLE bom_fabrics (
+CREATE TABLE bom (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT,
     description TEXT,
     fabric VARCHAR(100),
     colour VARCHAR(50),
-    tpx VARCHAR(50),
-    FOREIGN KEY (order_id) REFERENCES orders(id)
-);
-
-CREATE TABLE bom_accessories (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    order_id INT,
-    particular VARCHAR(100),
-    specification TEXT,
-    shade_no VARCHAR(50),
-    consumption VARCHAR(100),
-    supplier VARCHAR(100),
-    status VARCHAR(50),
-    FOREIGN KEY (order_id) REFERENCES orders(id)
+    tpx VARCHAR(50)
 );
 
 CREATE TABLE cutting (
@@ -117,8 +87,8 @@ CREATE TABLE cutting (
     cutter_id INT,
     lot_no VARCHAR(100),
     total_qty INT,
-    FOREIGN KEY (order_id) REFERENCES orders(id),
-    FOREIGN KEY (cutter_id) REFERENCES cutters(id)
+    FOREIGN KEY (order_id) REFERENCES orders (id),
+    FOREIGN KEY (cutter_id) REFERENCES cutters (id)
 );
 
 CREATE TABLE cutting_articles (
@@ -126,8 +96,8 @@ CREATE TABLE cutting_articles (
     cutting_id INT,
     age_group_id INT,
     qty INT,
-    FOREIGN KEY (cutting_id) REFERENCES cutting(id),
-    FOREIGN KEY (age_group_id) REFERENCES age_groups(id)
+    FOREIGN KEY (cutting_id) REFERENCES cutting (id),
+    FOREIGN KEY (age_group_id) REFERENCES age_groups (id)
 );
 
 CREATE TABLE printing (
@@ -141,19 +111,24 @@ CREATE TABLE printing (
     delivery_date DATE,
     received_qty INT,
     remark TEXT,
-    FOREIGN KEY (order_id) REFERENCES orders(id),
-    FOREIGN KEY (printer_id) REFERENCES printers(id)
+    FOREIGN KEY (order_id) REFERENCES orders (id),
+    FOREIGN KEY (printer_id) REFERENCES printers (id)
 );
 
 CREATE TABLE production_stage (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT,
-    stage ENUM('Stitch', 'Button', 'Finishing', 'Packing'),
+    stage ENUM(
+        'Stitch',
+        'Button',
+        'Finishing',
+        'Packing'
+    ),
     date DATE,
     lot_no VARCHAR(100),
     total_qty INT,
     remark TEXT,
-    FOREIGN KEY (order_id) REFERENCES orders(id)
+    FOREIGN KEY (order_id) REFERENCES orders (id)
 );
 
 CREATE TABLE notifications (
@@ -162,7 +137,7 @@ CREATE TABLE notifications (
     message TEXT,
     sent BOOLEAN DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 CREATE TABLE otps (
@@ -170,5 +145,5 @@ CREATE TABLE otps (
     user_id INT,
     otp VARCHAR(6),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (user_id) REFERENCES users (id)
 );
