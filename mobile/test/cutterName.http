@@ -34,22 +34,24 @@ POST {{apiUrl}}/users/login/otp_verify
 Content-Type: application/json
 
 {
-    "otp_id": 6,
+    "otp_id": 3,
     "otp": 307630
 }
 
 
 ### create cutter name master
 # @name create cutter name
-POST {{apiUrl}}/master/cutterName
+POST {{apiUrl}}/master/cutterName/add
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-    "name": "Cutter Name 1",
-    "address": "Cutter Name 1 Description",
+    "name": "Amit maity",
+    "address": "Cutter Name",
     "phone_no": 764466775,
-    "whatsapp_no": 2659785658
+    "jobber_type": "cutter",
+    "gst_no": "dfteref23456789",
+    "srcore": 2
 }
 
 

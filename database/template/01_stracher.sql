@@ -31,7 +31,9 @@ CREATE TABLE cutters (
     name VARCHAR(100),
     address TEXT,
     phone_no VARCHAR(20),
-    whatsapp_no VARCHAR(20),
+    jobber_type VARCHAR(50),
+    gst_no  VARCHAR(15),
+    srcore INT(11),
     status BOOLEAN DEFAULT 1
 );
 
