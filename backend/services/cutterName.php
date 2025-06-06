@@ -11,7 +11,7 @@ $router->add('POST', '/master/cutterName/add', function () {
     $jwt = new JwtHandler();
     $handler = new Handler();
 
-    
+
     $_user = $jwt->validate();
 
     $data = json_decode(file_get_contents("php://input"));
@@ -27,13 +27,16 @@ $router->add('POST', '/master/cutterName/add', function () {
     $conn->beginTransaction();
 
     try {
-        $sql = "INSERT INTO cutters (name, address, phone_no, whatsapp_no) 
-                VALUES (:name, :address, :phone_no, :whatsapp_no)";
+        $sql = "INSERT INTO cutters (name, address, phone_no, jobber_type,gst_no,srcore) 
+                VALUES (:name, :address, :phone_no, :jobber_type, :gst_no, :srcore)";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':name', $data->name);
         $stmt->bindValue(':address', $data->address);
         $stmt->bindValue(':phone_no', $data->phone_no);
-        $stmt->bindValue(':whatsapp_no', $data->whatsapp_no);
+        $stmt->bindValue(':jobber_type', $data->jobber_type);
+        $stmt->bindValue(':gst_no', $data->gst_no);
+        $stmt->bindValue(':srcore', $data->srcore);
+
 
         $stmt->execute();
         $lastId = $conn->lastInsertId();
@@ -51,7 +54,7 @@ $router->add('GET', '/master/cutterName', function () {
     $jwt = new JwtHandler();
     $handler = new Handler();
 
-   
+
     $_user = $jwt->validate();
 
     $dbInstance = new Database();
@@ -75,7 +78,7 @@ $router->add('POST', '/master/cutterName/update', function () {
     $jwt = new JwtHandler();
     $handler = new Handler();
 
-    
+
     $_user = $jwt->validate();
 
     $data = json_decode(file_get_contents("php://input"));
@@ -89,12 +92,15 @@ $router->add('POST', '/master/cutterName/update', function () {
     $conn = $dbInstance->pdo;
 
     try {
-        $sql = "UPDATE cutters SET name = :name, address = :address, phone_no = :phone_no, whatsapp_no = :whatsapp_no WHERE id = :id";
+        $sql = "UPDATE cutters SET name = :name, address = :address, phone_no = :phone_no, jobber_type = :jobber_type, gst_no = :gst_no, srcore = :srcore WHERE id = :id";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':name', $data->name);
         $stmt->bindValue(':address', $data->address);
         $stmt->bindValue(':phone_no', $data->phone_no);
-        $stmt->bindValue(':whatsapp_no', $data->whatsapp_no);
+        $stmt->bindValue(':jobber_type', $data->jobber_type);
+        $stmt->bindValue(':gst_no', $data->gst_no);
+        $stmt->bindValue(':srcore', $data->srcore);
+
         $stmt->bindValue(':id', $data->id);
 
         if ($stmt->execute()) {
@@ -139,5 +145,3 @@ $router->add('POST', '/master/cutterName/delete', function () {
         (new ApiResponse(500, "Error: " . $e->getMessage()))->toJson();
     }
 });
-
-?>

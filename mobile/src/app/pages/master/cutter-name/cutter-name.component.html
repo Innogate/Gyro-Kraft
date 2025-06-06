@@ -1,104 +1,129 @@
-<div class="card p-6 sm:p-8 bg-white rounded-2xl shadow-xl space-y-8">
+<div class="p-6 space-y-8 bg-white shadow-xl card sm:p-8 rounded-2xl">
     <!-- Header -->
-    <div class="flex justify-between items-center">
-      <h1 class="text-gray-800 font-bold text-3xl sm:text-4xl flex items-center gap-2">
-        <i class="pi pi-users text-blue-600 text-3xl"></i> Cutter Details
-      </h1>
-      <button (click)="toggleForm()"
-        class="bg-emerald-600 text-white font-medium py-2 px-5 rounded-lg hover:bg-emerald-500 transition-all duration-200">
-        <i class="pi pi-plus mr-2"></i> Add Cutter
-      </button>
+    <div class="flex items-center justify-between">
+        <h1 class="flex items-center gap-2 text-3xl font-bold text-gray-800 sm:text-4xl"><i class="text-3xl text-blue-600 pi pi-users"></i> Jobbers Details</h1>
+        <button (click)="toggleForm()" class="px-5 py-2 font-medium text-white transition-all duration-200 rounded-lg bg-emerald-600 hover:bg-emerald-500"><i class="mr-2 pi pi-plus"></i> Add Jobber</button>
     </div>
-  
+
     <!-- Dialog -->
-    <p-dialog header="Add New Cutter" [(visible)]="showForm" [modal]="true"
-      [style]="{ width: '90vw', maxWidth: '500px' }" [closable]="true" [dismissableMask]="true"
-      [breakpoints]="{ '960px': '75vw', '640px': '90vw' }"
-      [styleClass]="'p-0 overflow-hidden rounded-xl shadow-md'">
-  
-      <form [formGroup]="cutterForm">
-        <div class="bg-gray-50 p-6 sm:p-8 rounded-b-xl space-y-4">
-          <div *ngIf="errorMessage" class="text-red-500 text-sm mb-4">{{ errorMessage }}</div>
-  
-          <!-- Input Field Template -->
-          <ng-container *ngFor="let field of [
-            {icon: 'pi-user', color: 'text-blue-950', name: 'name', placeholder: 'Cutter Name'},
-            {icon: 'pi-map-marker', color: 'text-orange-500', name: 'address', placeholder: 'Address'},
-            {icon: 'pi-phone', color: 'text-blue-500', name: 'phone_no', placeholder: 'Phone Number'},
-            {icon: 'pi-whatsapp', color: 'text-green-500', name: 'whatsapp_no', placeholder: 'WhatsApp Number'}
-          ]">
-            <div class="flex items-center bg-white p-3 rounded-lg border border-gray-300">
-              <i class="pi" [ngClass]="field.icon + ' mr-3 ' + field.color"></i>
-              <input [formControlName]="field.name" [placeholder]="field.placeholder"
-                class="w-full outline-none text-sm sm:text-base" />
+    <p-dialog
+        header="Add New Jobber"
+        [(visible)]="showForm"
+        [modal]="true"
+        [style]="{ width: '90vw', maxWidth: '500px' }"
+        [closable]="true"
+        [dismissableMask]="true"
+        [breakpoints]="{ '960px': '75vw', '640px': '90vw' }"
+        [styleClass]="'p-0 overflow-hidden rounded-xl shadow-md'"
+    >
+        <form [formGroup]="cutterForm">
+            <div class="p-6 space-y-4 bg-gray-50 sm:p-8 rounded-b-xl">
+                <div *ngIf="errorMessage" class="mb-4 text-sm text-red-500">{{ errorMessage }}</div>
+
+                <div class="p-3 mb-3 bg-white border border-gray-300 rounded-lg">
+                    <p-dropdown [options]="typeOptions" formControlName="jobber_type" placeholder="Select Type" optionLabel="label" class="w-full"></p-dropdown>
+                </div>
+                <!-- Input Field Template -->
+                <ng-container
+                    *ngFor="
+                        let field of [
+                            { icon: 'pi-user', color: 'text-blue-950', name: 'name', placeholder: 'Jobbers Name', type: 'text' },
+                            { icon: 'pi-map-marker', color: 'text-orange-500', name: 'address', placeholder: 'Address', type: 'text' },
+                            { icon: 'pi-whatsapp', color: 'text-green-500', name: 'phone_no', placeholder: 'Phone/WhatsApp Number', type: 'tel' },
+                            { icon: 'pi-id-card', color: 'text-purple-600', name: 'gst_no', placeholder: 'GST NO', type: 'text' },
+                            { icon: 'pi-star', color: 'text-yellow-500', name: 'srcore', placeholder: 'Score', type: 'number' }
+                        ]
+                    "
+                >
+                    <div class="flex items-center p-3 mb-1 bg-white border border-gray-300 rounded-lg">
+                        <i class="pi" [ngClass]="field.icon + ' mr-3 ' + field.color"></i>
+                        <input [type]="field.type" [formControlName]="field.name" [placeholder]="field.placeholder" class="w-full text-sm outline-none sm:text-base" />
+                    </div>
+
+                    <!-- Error Message Block -->
+                    <div *ngIf="cutterForm.get(field.name)?.touched && cutterForm.get(field.name)?.invalid" class="mb-2 ml-1 text-xs text-red-500">
+                        <ng-container [ngSwitch]="field.name">
+                            <!-- Phone Validation -->
+                            <div *ngSwitchCase="'phone_no'">
+                                <div *ngIf="cutterForm.get('phone_no')?.errors?.['required']">Phone number is required.</div>
+                                <div *ngIf="cutterForm.get('phone_no')?.errors?.['pattern']">Phone number must be 10 digits.</div>
+                            </div>
+
+                            <!-- GST No Validation -->
+                            <div *ngSwitchCase="'gst_no'">
+                                <div *ngIf="cutterForm.get('gst_no')?.errors?.['maxlength']">GST No cannot exceed 15 characters.</div>
+                            </div>
+
+                            <!-- Score Validation -->
+                            <div *ngSwitchCase="'srcore'">
+                                <div *ngIf="cutterForm.get('srcore')?.errors?.['min']">Score cannot be negative.</div>
+                                <div *ngIf="cutterForm.get('srcore')?.errors?.['max']">Score cannot exceed 100.</div>
+                            </div>
+
+                            <!-- Generic Required -->
+                            <div *ngSwitchDefault>{{ field.placeholder }} is required.</div>
+                        </ng-container>
+                    </div>
+                </ng-container>
+
+                <!-- Buttons -->
+                <div class="flex justify-end pt-2">
+                    <button type="submit" *ngIf="!showEdit" (click)="addCutter()" class="px-6 py-2 font-medium text-white transition-colors duration-200 bg-blue-600 rounded-lg hover:bg-blue-500"><i class="mr-2 pi pi-save"></i> Save Cutter</button>
+                    <button type="submit" *ngIf="showEdit" (click)="updateCutter()" class="px-6 py-2 font-medium text-white transition-colors duration-200 bg-yellow-600 rounded-lg hover:bg-yellow-500">
+                        <i class="mr-2 pi pi-refresh"></i> Update Cutter
+                    </button>
+                </div>
             </div>
-            <div *ngIf="cutterForm.get(field.name)?.touched && cutterForm.get(field.name)?.invalid"
-              class="text-red-500 text-xs mb-2 ml-1">
-              {{ field.placeholder }} is required.
-            </div>
-          </ng-container>
-  
-          <!-- Buttons -->
-          <div class="flex justify-end pt-2">
-            <button type="submit" *ngIf="!showEdit" (click)="addCutter()"
-              class="bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 px-6 rounded-lg transition-colors duration-200">
-              <i class="pi pi-save mr-2"></i> Save Cutter
-            </button>
-            <button type="submit" *ngIf="showEdit" (click)="updateCutter()"
-              class="bg-yellow-600 hover:bg-yellow-500 text-white font-medium py-2 px-6 rounded-lg transition-colors duration-200">
-              <i class="pi pi-refresh mr-2"></i> Update Cutter
-            </button>
-          </div>
-        </div>
-      </form>
+        </form>
     </p-dialog>
-  
+
     <!-- Table -->
     <div class="overflow-x-auto">
-        <table class="min-w-full shadow-xl rounded-xl overflow-hidden">
+        <table class="min-w-full overflow-hidden shadow-xl rounded-xl">
             <thead class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600">
-              <tr>
-                <th class="px-6 py-3 text-left font-semibold text-white uppercase tracking-wide">Sl No</th>
-                <th class="px-6 py-3 text-left font-semibold text-white uppercase tracking-wide">Name</th>
-                <th class="px-6 py-3 text-left font-semibold text-white uppercase tracking-wide">Address</th>
-                <th class="px-6 py-3 text-left font-semibold text-white uppercase tracking-wide">Phone</th>
-                <th class="px-6 py-3 text-left font-semibold text-white uppercase tracking-wide">WhatsApp</th>
-                <th class="px-6 py-3 text-left font-semibold text-white uppercase tracking-wide">Status</th>
-                <th class="px-6 py-3 text-center font-semibold text-white uppercase tracking-wide">Actions</th>
-              </tr>
+                <tr>
+                    <th class="px-6 py-3 font-semibold tracking-wide text-left text-white uppercase">Sl No</th>
+                    <th class="px-6 py-3 font-semibold tracking-wide text-left text-white uppercase">Name</th>
+                    <th class="px-6 py-3 font-semibold tracking-wide text-left text-white uppercase">Address</th>
+                    <th class="px-6 py-3 font-semibold tracking-wide text-left text-white uppercase">Phone</th>
+                    <th class="px-6 py-3 font-semibold tracking-wide text-left text-white uppercase">Jobbers Type</th>
+                    <th class="px-6 py-3 font-semibold tracking-wide text-left text-white uppercase">GST NO</th>
+                    <th class="px-6 py-3 font-semibold tracking-wide text-left text-white uppercase">Score</th>
+                    <th class="px-6 py-3 font-semibold tracking-wide text-left text-white uppercase">Status</th>
+                    <th class="px-6 py-3 font-semibold tracking-wide text-center text-white uppercase">Actions</th>
+                </tr>
             </thead>
-          
+
             <tbody class="bg-white divide-y divide-gray-100">
-              <tr *ngFor="let cutter of cutters; let i = index" class="hover:bg-blue-50 transition duration-200">
-                <td class="px-6 py-4 text-gray-800 font-medium">{{ i + 1 }}</td>
-                <td class="px-6 py-4 text-gray-800">{{ cutter.name }}</td>
-                <td class="px-6 py-4 text-gray-600">{{ cutter.address }}</td>
-                <td class="px-6 py-4 text-blue-600">{{ cutter.phone_no }}</td>
-                <td class="px-6 py-4 text-green-600">{{ cutter.whatsapp_no }}</td>
-                <td class="px-6 py-4" [ngClass]="cutter.status ? 'text-green-600' : 'text-red-600'">
-                  {{ cutter.status ? 'Active' : 'Inactive' }}
-                </td>
-          
-                <td class="px-6 py-4 text-center">
-                  <div class="flex justify-center gap-2 flex-wrap">
-                    <button (click)="editCutter(cutter)"
-                      class="flex items-center bg-blue-500 text-white py-1.5 px-3 rounded-md hover:bg-blue-400 transition">
-                      <i class="pi pi-pencil mr-1"></i> Edit
-                    </button>
-                    <button (click)="deleteCutter(cutter)"
-                      class="flex items-center py-1.5 px-3 rounded-md transition"
-                      [ngClass]="{
-                        'bg-green-500 hover:bg-green-400 text-white': cutter.status,
-                        'bg-red-500 hover:bg-red-400 text-white': !cutter.status
-                      }">
-                      <i class="pi pi-trash mr-1"></i> {{ cutter.status ? 'Active' : 'Inactive' }}
-                    </button>
-                  </div>
-                </td>
-              </tr>
+                <tr *ngFor="let cutter of cutters; let i = index" class="transition duration-200 hover:bg-blue-50">
+                    <td class="px-6 py-4 font-medium text-gray-800">{{ i + 1 }}</td>
+                    <td class="px-6 py-4 text-gray-800">{{ cutter.name }}</td>
+                    <td class="px-6 py-4 text-gray-600">{{ cutter.address }}</td>
+                    <td class="px-6 py-4 text-blue-600">{{ cutter.phone_no }}</td>
+                    <td class="px-6 py-4 text-green-600">{{ cutter.jobber_type }}</td>
+                    <td class="px-6 py-4 text-green-600">{{ cutter.gst_no }}</td>
+                    <td class="px-6 py-4 text-green-600">{{ cutter.srcore }}</td>
+                    <td class="px-6 py-4" [ngClass]="cutter.status ? 'text-green-600' : 'text-red-600'">
+                        {{ cutter.status ? 'Active' : 'Inactive' }}
+                    </td>
+
+                    <td class="px-6 py-4 text-center">
+                        <div class="flex flex-wrap justify-center gap-2">
+                            <button (click)="editCutter(cutter)" class="flex items-center bg-blue-500 text-white py-1.5 px-3 rounded-md hover:bg-blue-400 transition"><i class="mr-1 pi pi-pencil"></i> Edit</button>
+                            <button
+                                (click)="deleteCutter(cutter)"
+                                class="flex items-center py-1.5 px-3 rounded-md transition"
+                                [ngClass]="{
+                                    'bg-green-500 hover:bg-green-400 text-white': cutter.status,
+                                    'bg-red-500 hover:bg-red-400 text-white': !cutter.status
+                                }"
+                            >
+                                <i class="mr-1 pi pi-trash"></i> {{ cutter.status ? 'Active' : 'Inactive' }}
+                            </button>
+                        </div>
+                    </td>
+                </tr>
             </tbody>
-          </table>
-          
+        </table>
     </div>
-  </div>
-  
+</div>
