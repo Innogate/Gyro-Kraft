@@ -1,4 +1,4 @@
-@apiUrl = http://localhost:8000
+@apiUrl = http://localhost:8000/api
 @otp_id = {{login.response.body.body.otp_id}}
 # @token = {{otp.response.body.body.token}}
 

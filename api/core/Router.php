@@ -15,8 +15,8 @@ class Router {
     public function resolve($uri, $method) {
         $method = strtoupper($method);
 
-        // Strip the /control prefix if app is inside that folder
-        $uri = preg_replace('#^/control#', '', $uri);
+        // Strip the /api prefix if app is inside that folder
+        $uri = preg_replace('#^/api#', '', $uri);
 
         $logData = [
             'uri' => $uri,

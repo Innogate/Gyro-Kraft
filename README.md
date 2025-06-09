@@ -1,7 +1,8 @@
-# Gyro-Kraft
+# FOR BUILDING DOCKER IMAGE CHECK OUT
+[Docker Install](https://docs.docker.com/engine/install/)
+[Docker Images](https://github.com/tuhin-su/docker)
+
+# START CONTAINERS
 ```bash
-mkdir docker/containers
-mkdir docker/containers/php
-mkdir docker/containers/angular
-chmod 777 docker/containers/*
+docker compose up -d
 ```

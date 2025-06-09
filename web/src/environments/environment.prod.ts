@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    apiUrl: 'https://gkgroupweb.com/control'
+    apiUrl: 'https://gkgroupweb.com/api'
   };

@@ -3,7 +3,7 @@
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
-        "su-ng": {
+        "gyro_kraft ": {
             "projectType": "application",
             "schematics": {
                 "@schematics/angular:component": {
@@ -17,7 +17,7 @@
                 "build": {
                     "builder": "@angular-devkit/build-angular:application",
                     "options": {
-                        "outputPath": "dist/su-ng",
+                        "outputPath": "dist/gyro_kraft",
                         "index": "src/index.html",
                         "browser": "src/main.ts",
                         "polyfills": ["zone.js"],
@@ -66,10 +66,10 @@
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "configurations": {
                         "production": {
-                            "buildTarget": "su-ng:build:production"
+                            "buildTarget": "gyro_kraft :build:production"
                         },
                         "development": {
-                            "buildTarget": "su-ng:build:development"
+                            "buildTarget": "gyro_kraft :build:development"
                         }
                     },
                     "defaultConfiguration": "development"
