@@ -98,8 +98,7 @@ CREATE TABLE cutting_articles (
     cutting_id INT,
     age_group_id INT,
     qty INT,
-    FOREIGN KEY (cutting_id) REFERENCES cutting (id),
-    FOREIGN KEY (age_group_id) REFERENCES age_groups (id)
+    FOREIGN KEY (cutting_id) REFERENCES cutting (id) 
 );
 
 CREATE TABLE printing (
