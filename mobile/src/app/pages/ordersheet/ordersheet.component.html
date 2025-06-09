@@ -1,6 +1,7 @@
 <div>
   <div class="flex justify-end">
-    <button pButton type="button" label="{{ showForm ? 'Close' : 'Add Order' }}" icon="pi {{ showForm ? 'pi-minus' : 'pi-plus' }}" class="mb-3" (click)="toggleForm()"></button>
+    <button pButton type="button" label="{{ showForm ? 'Close' : 'Add Order' }}"
+      icon="pi {{ showForm ? 'pi-minus' : 'pi-plus' }}" class="mb-3" (click)="toggleForm()"></button>
   </div>
 
   <div *ngIf="showForm">
@@ -8,8 +9,8 @@
       <h2 class="text-2xl font-semibold mb-4">Order Sheet Form</h2>
 
       <!-- Main Fields Grid -->
-       <!-- Style No -->
-       <div>
+      <!-- Style No -->
+      <div>
         <label class="block font-medium mb-1" for="styleNo">Style No *</label>
         <input id="styleNo" pInputText formControlName="styleNo" placeholder="Style No" class="w-full" />
         <small *ngIf="f['styleNo'].invalid && f['styleNo'].touched" class="text-red-600">Style No is required.</small>
@@ -18,16 +19,11 @@
       <!-- description No -->
       <div>
         <label class="block font-medium mb-1" for="description">Description *</label>
-        <textarea 
-        id="description" 
-        pInputTextarea
-        rows="5"
-        cols="30" 
-        formControlName="description" 
-        placeholder="Description" class="w-full"
-        >
+        <textarea id="description" pInputTextarea rows="5" cols="30" formControlName="description"
+          placeholder="Description" class="w-full">
         </textarea>
-        <small *ngIf="f['styleNo'].invalid && f['styleNo'].touched" class="text-red-600">Description No is required.</small>
+        <small *ngIf="f['styleNo'].invalid && f['styleNo'].touched" class="text-red-600">Description No is
+          required.</small>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -63,8 +59,7 @@
         <!-- Age Group Dropdown -->
         <div>
           <label class="block font-medium mb-1" for="ageGroup">Age Group *</label>
-          <input id="ageGroup" pInputText formControlName="ageGroup"
-            placeholder="Select Age Group" class="w-full" />
+          <input id="ageGroup" pInputText formControlName="ageGroup" placeholder="Select Age Group" class="w-full" />
           <small *ngIf="f['ageGroup'].invalid && f['ageGroup'].touched" class="text-red-600">Age Group is
             required.</small>
         </div>
@@ -113,7 +108,6 @@
               <th>Combo</th>
               <th>Size</th>
               <th>Qty</th>
-              <th>Total Qty</th>
               <th>Actions</th>
             </tr>
           </ng-template>
@@ -131,18 +125,13 @@
               </td>
 
               <td>
-                <input pInputText formControlName="combo" placeholder="Combo" class="w-full"/>
+                <input pInputText formControlName="combo" placeholder="Combo" class="w-full" />
               </td>
               <td>
                 <input pInputText formControlName="size" placeholder="Size" class="w-full" />
               </td>
               <td>
-                <input  pInputText formControlName="qty" placeholder="Qty" class="w-full"
-                  min="0" />
-              </td>
-              <td>
-                <input type="number" pInputText formControlName="totalQty" placeholder="Total Qty" class="w-full"
-                  min="0" />
+                <input pInputText formControlName="qty" placeholder="Qty" class="w-full" min="0" />
               </td>
               <td>
                 <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-danger"
@@ -183,35 +172,38 @@
                 <input type="number" pInputText formControlName="consumption" placeholder="Consumption" class="w-full"
                   min="0" />
               </td>
-              
+
               <td>
                 <input pInputText formControlName="status" placeholder="Status" class="w-full" />
               </td>
+
               <td>
                 <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-danger"
                   (click)="removeAccessoryBOM(ri)" label="Remove"></button>
               </td>
+
             </tr>
           </ng-template>
         </p-table>
       </div>
+      <div class="flex justify-between items-center mt-6">
+        <button pButton type="submit" [disabled]="orderForm.invalid" class="p-button-primary">
+          {{ isEdit ? 'Update' : 'Submit' }}
+        </button>
+        <button pButton type="button" label="Next" (click)="goToNextStep()">
+        </button>
+      </div>
 
-      <button pButton type="submit" class="mt-6" [disabled]="orderForm.invalid"> {{ isEdit ? 'Update' : 'Submit' }}</button>
     </form>
   </div>
 
 
   <div *ngIf="!showForm && ordersList" class="p-6 bg-gray-50 min-h-screen">
-    <p-table
-      [value]="ordersList"
-      [paginator]="true"
-      [rows]="5"
-      [responsiveLayout]="'scroll'"
-      class="rounded-xl shadow-md border border-gray-200 bg-white"
-      styleClass="modern-table"
-    >
+    <p-table [value]="ordersList" [paginator]="true" [rows]="5" [responsiveLayout]="'scroll'"
+      class="rounded-xl shadow-md border border-gray-200 bg-white" styleClass="modern-table">
       <ng-template pTemplate="header">
-        <tr class="bg-gradient-to-r from-indigo-100 to-white text-gray-700 font-semibold text-sm uppercase tracking-wider">
+        <tr
+          class="bg-gradient-to-r from-indigo-100 to-white text-gray-700 font-semibold text-sm uppercase tracking-wider">
           <th><i class="pi pi-hashtag mr-1 text-indigo-400"></i>ID</th>
           <th><i class="pi pi-tag mr-1 text-indigo-400"></i>Style</th>
           <th><i class="pi pi-align-left mr-1 text-indigo-400"></i>Description</th>
@@ -226,7 +218,7 @@
           <th class="text-center"><i class="pi pi-cog text-indigo-400"></i></th>
         </tr>
       </ng-template>
-  
+
       <ng-template pTemplate="body" let-order>
         <tr class="hover:bg-indigo-50 transition duration-150">
           <td>{{ order.id }}</td>
@@ -242,28 +234,16 @@
           <td>{{ order.remark }}</td>
           <td class="text-center">
             <div class="flex justify-center gap-2">
-              <button
-                pButton
-                icon="pi pi-pencil"
-                class="p-button-sm p-button-text p-button-rounded p-button-info"
-                pTooltip="Edit"
-                tooltipPosition="top"
-                (click)="onEdit(order)"
-              ></button>
-              <button
-                pButton
-                icon="pi pi-trash"
-                class="p-button-sm p-button-text p-button-rounded p-button-danger"
-                pTooltip="Delete"
-                tooltipPosition="top"
-                (click)="onDelete(order)"
-              ></button>
+              <button pButton icon="pi pi-pencil" class="p-button-sm p-button-text p-button-rounded p-button-info"
+                pTooltip="Edit" tooltipPosition="top" (click)="onEdit(order)"></button>
+              <button pButton icon="pi pi-trash" class="p-button-sm p-button-text p-button-rounded p-button-danger"
+                pTooltip="Delete" tooltipPosition="top" (click)="onDelete(order)"></button>
             </div>
           </td>
         </tr>
       </ng-template>
     </p-table>
   </div>
-    
-  
+
+
 </div>

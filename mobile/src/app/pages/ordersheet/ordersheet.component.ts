@@ -48,7 +48,7 @@ export class OrdersheetComponent {
   ordersList?: any;
   articleDialogVisible = false;
   selectedPOIndex = -1;
-  updateId= 0;
+  updateId = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -78,8 +78,11 @@ export class OrdersheetComponent {
     this.showForm = !this.showForm;
     this.orderForm.reset();
     this.isEdit = false;
+    if(this.isEdit === false){
+    this.fetchOrderList()
+    }
   }
-  
+
   // ODER LIST
   async fetchOrderList() {
     await firstValueFrom(this.service.getOrderList({
@@ -99,44 +102,62 @@ export class OrdersheetComponent {
         }
       )
     ));
+
   }
+
 
   async onEdit(order: any) {
     this.isEdit = true;
     this.updateId = order.id;
-    await firstValueFrom(this.service.getById({
-      "orderId": order.id
-    }).pipe(
-      tap(
-        (response) => {
-          if (response.status == 200) {
-            console.log(response.body);
-            if (response.body.poQty) {
-              response.body.poQty.forEach((poQty: any) => {
-                this.addPOQty();
-                this.poQty.at(this.poQty.length - 1).patchValue(poQty);
-              });
-            }
 
+    await firstValueFrom(
+      this.service.getById({ orderId: order.id }).pipe(
+        tap(
+          (response) => {
+            if (response.status == 200) {
+              console.log(response.body);
 
-            if (response.body.accessoriesBOM) {
-              this.addAccessoryBOM();
-              response.body.accessoriesBOM.forEach((accessoriesBOM: any) => {
-                this.accessoriesBOM.at(this.accessoriesBOM.length - 1).patchValue(accessoriesBOM);
-              });
-              
+              // Clear the poQty form array
+              while (this.poQty.length !== 0) {
+                this.poQty.removeAt(0);
+              }
+
+              // Populate poQty if available
+              if (response.body.poQty) {
+                response.body.poQty.forEach((poQty: any) => {
+                  this.addPOQty();
+                  this.poQty.at(this.poQty.length - 1).patchValue(poQty);
+                });
+              }
+
+              // Clear the accessoriesBOM form array
+              while (this.accessoriesBOM.length !== 0) {
+                this.accessoriesBOM.removeAt(0);
+              }
+
+              // Populate accessoriesBOM if available
+              if (response.body.accessoriesBOM) {
+                response.body.accessoriesBOM.forEach((accessoriesBOM: any) => {
+                  this.addAccessoryBOM();
+                  this.accessoriesBOM.at(this.accessoriesBOM.length - 1).patchValue(accessoriesBOM);
+                });
+              }
+
+              // Patch other fields
+              this.orderForm.patchValue(response.body);
+              this.showForm = true;
             }
-            this.orderForm.patchValue(response.body);
-            this.showForm = true;
+          },
+          (error) => {
+            this.alert.errorAlert(error.error.message, error.error.body);
           }
-        },
-        (error) => {
-          this.alert.errorAlert(error.error.message, error.error.body);
-        }
+        )
       )
-    ))
+    );
+
     console.log('Edit:', order);
   }
+
 
   onDelete(order: any) {
     // TODO: Add confirmation and call delete API
@@ -168,7 +189,6 @@ export class OrdersheetComponent {
         combo: [''],
         size: [''],
         qty: [''],
-        totalQty: [0],
       })
     );
   }
@@ -263,14 +283,13 @@ export class OrdersheetComponent {
     })
 
     if (this.isEdit) {
-      
+
       const payload = { ...this.orderForm.value, id: this.updateId };
 
       await firstValueFrom(this.service.update(payload).pipe(
         tap(
           (response) => {
             if (response.status == 200) {
-              console.log(response);
               this.alert.successAlert('Success', 'Order updated successfully.');
             }
           },
@@ -286,7 +305,9 @@ export class OrdersheetComponent {
       tap(
         (response) => {
           if (response.status == 200) {
-            console.log(response);
+                console.log(response);
+                console.log('Setting orderId to localStorage:', response.body.orderId);
+                localStorage.setItem('orderId', response.body.orderId);
             this.alert.successAlert('Success', 'Order submitted successfully.');
           }
         },
@@ -295,5 +316,11 @@ export class OrdersheetComponent {
         }
       )
     ))
+  }
+
+
+  // go no next setp
+  goToNextStep(){
+localStorage.setItem('orderId', 'dfgf');
   }
 }

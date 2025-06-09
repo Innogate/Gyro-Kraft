@@ -91,9 +91,9 @@ $router->add('POST', '/orderList/create', function () {
     try {
         if (!empty($data['poQty']) && is_array($data['poQty'])) {
             $sql = "INSERT INTO order_po_qty (
-                order_id, combo, pro_color, fabric_quality, supplier, preemie, nb, total_qty
-            ) VALUES (
-                :order_id, :combo, :pro_color, :fabric_quality, :supplier, :preemie, :nb, :total_qty
+                order_id, combo, pro_color, fabric_quality, supplier, preemie, nb, size, qty
+            ) VALUES ( 
+                :order_id, :combo, :pro_color, :fabric_quality, :supplier, :preemie, :nb, :size, :qty
             )";
             $stmt = $conn->prepare($sql);
             foreach ($data['poQty'] as $po) {
@@ -104,7 +104,8 @@ $router->add('POST', '/orderList/create', function () {
                 $stmt->bindValue(':supplier', $po['item']);
                 $stmt->bindValue(':preemie', 0, PDO::PARAM_INT); // default
                 $stmt->bindValue(':nb', 0, PDO::PARAM_INT);       // default
-                $stmt->bindValue(':total_qty', $po['totalQty'], PDO::PARAM_INT);
+                $stmt->bindValue(':size', $po['size']);
+                $stmt->bindValue(':qty', $po['qty'], PDO::PARAM_INT);
                 $stmt->execute();
             }
         }
@@ -200,9 +201,8 @@ $router->add('POST', '/orderList/byId', function () {
                 "item" => $row['supplier'],
                 "color" => $row['pro_color'],
                 "combo" => $row['combo'],
-                "size" => "", // Not in schema, leave blank or add column
-                "qty" => "",  // Not in schema, leave blank or add column
-                "totalQty" => (int)$row['total_qty']
+                "size" => $row['size'], // Not in schema, leave blank or add column
+                "qty" => $row['qty'],  // Not in schema, leave blank or add column
             ];
         }, $poRows);
 
@@ -289,9 +289,9 @@ $router->add('POST', '/orderList/update', function () {
 
         if (!empty($data['poQty']) && is_array($data['poQty'])) {
             $sql = "INSERT INTO order_po_qty (
-                order_id, combo, pro_color, fabric_quality, supplier, preemie, nb, total_qty
+                order_id, combo, pro_color, fabric_quality, supplier, preemie, nb, size, qty
             ) VALUES (
-                :order_id, :combo, :pro_color, :fabric_quality, :supplier, :preemie, :nb, :total_qty
+                :order_id, :combo, :pro_color, :fabric_quality, :supplier, :preemie, :nb, :size, :qty
             )";
             $stmt = $conn->prepare($sql);
 
@@ -303,7 +303,8 @@ $router->add('POST', '/orderList/update', function () {
                 $stmt->bindValue(':supplier', $po['item']);
                 $stmt->bindValue(':preemie', 0);
                 $stmt->bindValue(':nb', 0);
-                $stmt->bindValue(':total_qty', $po['totalQty'], PDO::PARAM_INT);
+                     $stmt->bindValue(':size', $po['size']);
+                $stmt->bindValue(':qty', $po['qty'], PDO::PARAM_INT);
                 $stmt->execute();
             }
         }
