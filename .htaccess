@@ -1,4 +1,4 @@
-# Set PHP version
+# Set PHP version (already correct)
 <IfModule mime_module>
   AddHandler application/x-httpd-ea-php82 .php .php8 .phtml
 </IfModule>
@@ -7,26 +7,19 @@
   RewriteEngine On
   RewriteBase /
 
-  # Don't rewrite requests to /api
-  RewriteCond %{REQUEST_URI} ^/api [NC]
+  # Don't rewrite requests to /control
+  RewriteCond %{REQUEST_URI} ^/control [NC]
   RewriteRule ^ - [L]
 
-  # Don't rewrite if request is for an existing file or directory
-  RewriteCond %{REQUEST_FILENAME} -f [OR]
-  RewriteCond %{REQUEST_FILENAME} -d
-  RewriteRule ^ - [L]
-
-  # Check if the index.html file exists
-  RewriteCond %{DOCUMENT_ROOT}/web/dist/gyro_kraft/browserindex.html -f
+  # Don't rewrite existing files or folders
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
 
   # Rewrite all other requests to index.html
-  RewriteRule . /web/dist/gyro_kraft/browserindex.html [L]
-
-  # If we reach here and the file does not exist, show 404
-  RewriteRule ^ - [R=404,L]
+  RewriteRule . /index.html [L]
 </IfModule>
-
 # php -- BEGIN cPanel-generated handler, do not edit
+# Set the “ea-php82” package as the default “PHP” programming language.
 <IfModule mime_module>
   AddHandler application/x-httpd-ea-php82 .php .php8 .phtml
 </IfModule>
