@@ -71,7 +71,8 @@ CREATE TABLE order_po_qty (
     supplier VARCHAR(100),
     preemie INT,
     nb INT,
-    total_qty INT
+    size VARCHAR(10),
+    qty INT
 );
 
 CREATE TABLE bom (
@@ -88,10 +89,16 @@ CREATE TABLE cutting (
     order_id INT,
     date DATE,
     cutter_id INT,
+    po_qty_id INT,
     lot_no VARCHAR(100),
     total_qty INT,
+    created_by INT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (order_id) REFERENCES orders (id),
-    FOREIGN KEY (cutter_id) REFERENCES cutters (id)
+    FOREIGN KEY (cutter_id) REFERENCES cutters (id),
+    FOREIGN KEY (po_qty_id) REFERENCES order_po_qty (id),
+    FOREIGN KEY (created_by) REFERENCES users (id)
 );
 
 CREATE TABLE cutting_articles (

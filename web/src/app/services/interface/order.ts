@@ -58,6 +58,7 @@ export interface OrderCreateResponse {
   uniqueId: string;
   buyer: string;
   styleNo: string;
+  orderId: string;
   // etc... depending on what your backend returns
 }
 
