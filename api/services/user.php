@@ -271,9 +271,12 @@ $router->add('POST', '/master/users/enable', function () {
 
 // Update user
 $router->add('POST', '/master/users/update', function () {
+    $pageId=1;
     $jwt = new JwtHandler();
     $handler = new Handler();
     $_user = $jwt->validate();
+    $handler->validatePermission($pageId, $_user->id, "edit");
+    
     // Decode incoming JSON data
     $data = json_decode(file_get_contents("php://input"), true);
     
