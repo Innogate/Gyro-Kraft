@@ -39,4 +39,8 @@ export class CutterNameService {
     return this.apiService.post(`/master/cutterName/delete`, payload);
   }
 
+  getJobberByType(payload: any): Observable<ApiResponse<any>> {
+    return this.apiService.post(`/master/jobberType`, payload);
+  }
+
 }

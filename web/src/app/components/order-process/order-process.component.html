@@ -1,0 +1,185 @@
+<!-- <div class="card"> -->
+<!-- <div class="flex items-center justify-between w-full bg-white rounded-md">
+        <h3 class="card-title text-lg font-semibold text-gray-800">Order Process</h3>
+        <button (click)="toggleForm()"
+            class="px-4 py-2 font-medium text-white transition-all duration-200 rounded bg-emerald-600 hover:bg-emerald-500">
+            <i class="mr-2 pi pi-plus"></i> Add step
+        </button>
+    </div> -->
+<p-stepper [value]="1" class="basis-[50rem]">
+    <div class="card">
+        <p-step-list>
+            <p-step [value]="1">Cutting</p-step>
+            <p-step [value]="2">Print</p-step>
+            <p-step [value]="3">Stitch</p-step>
+            <p-step [value]="4">Finishing</p-step>
+            <p-step [value]="5">Packing</p-step>
+            <p-step [value]="6">Reports</p-step>
+        </p-step-list>
+    </div>
+    <p-step-panels>
+        <p-step-panel [value]="1">
+            <ng-template #content let-activateCallback="activateCallback">
+                <div class="flex flex-col relative p-4 bg-white rounded border border-dashed border-gray-300">
+                    <!-- Add Step button at top-right -->
+                    <button (click)="toggleForm()"
+                        class="absolute top-4 right-4 px-4 py-2 font-medium text-white rounded bg-emerald-600 hover:bg-emerald-500 transition-all">
+                        <i class="mr-2 pi pi-plus"></i> Add Cutter
+                    </button>
+
+                    <!-- Table centered in its container, full width -->
+                    <div class="mt-10">
+                        <app-dynamic-table [columns]="tableColumns" [data]="tableData" [actions]="['Edit', 'Delete']"
+                            (actionClicked)="handleAction($event)">
+                        </app-dynamic-table>
+                    </div>
+
+                    <!-- Next button bottom-right -->
+                    <div class="flex justify-end mt-6">
+                        <p-button label="Next" icon="pi pi-arrow-right" iconPos="right"
+                            (onClick)="activateCallback(2)" />
+                    </div>
+                </div>
+            </ng-template>
+        </p-step-panel>
+
+        <p-step-panel [value]="2">
+            <ng-template #content let-activateCallback="activateCallback">
+                <div class="flex flex-col relative p-4 bg-white rounded border border-dashed border-gray-300">
+                    <!-- Add Step button at top-right -->
+                    <button (click)="toggleForm()"
+                        class="absolute top-4 right-4 px-4 py-2 font-medium text-white rounded bg-emerald-600 hover:bg-emerald-500 transition-all">
+                        <i class="mr-2 pi pi-plus"></i> Add Cutter
+                    </button>
+
+                    <!-- Table centered in its container, full width -->
+                    <div class="mt-10">
+                        <app-dynamic-table [columns]="tableColumns" [data]="tableData" [actions]="['Edit', 'Delete']"
+                            (actionClicked)="handleAction($event)">
+                        </app-dynamic-table>
+                    </div>
+                    <div class="flex pt-6 justify-between">
+                        <p-button label="Back" severity="secondary" icon="pi pi-arrow-left"
+                            (onClick)="activateCallback(1)" />
+                        <p-button label="Next" icon="pi pi-arrow-right" iconPos="right"
+                            (onClick)="activateCallback(3)" />
+                    </div>
+                    <!-- Next button bottom-right -->
+                    <!-- <div class="flex justify-end mt-6">
+                        <p-button label="Next" icon="pi pi-arrow-right" iconPos="right"
+                            (onClick)="activateCallback(2)" />
+                    </div> -->
+                </div>
+
+            </ng-template>
+        </p-step-panel>
+
+        <p-step-panel [value]="3">
+            <ng-template #content let-activateCallback="activateCallback">
+                <div class="flex flex-col h-48">
+                    <div
+                        class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium">
+                        Content III
+                    </div>
+                </div>
+                <div class="flex pt-6 justify-start">
+                    <p-button label="Back" icon="pi pi-arrow-left" iconPos="right" (onClick)="activateCallback(2)" />
+                </div>
+            </ng-template>
+        </p-step-panel>
+    </p-step-panels>
+</p-stepper>
+
+<!-- </div> -->
+<p-dialog header="Add Cutting details" [(visible)]="showForm" [modal]="true" [style]="{ width: '90vw', maxWidth: '500px' }"
+    [closable]="true" [dismissableMask]="true" [breakpoints]="{ '960px': '75vw', '640px': '90vw' }"
+    [styleClass]="'p-0 overflow-hidden rounded-xl shadow-md'">
+    <form [formGroup]="cuttingForm">
+        <div class="space-y-4 bg-gray-50 sm:p-6 p-4 rounded-xl shadow-sm">
+            <!-- Date Field -->
+            <div class="flex flex-col sm:flex-row sm:items-end gap-4">
+                <!-- Date Field -->
+                <div class="w-full sm:w-1/2">
+                    <label class="block font-medium mb-1 text-gray-700" for="date">
+                        Date <span class="text-red-500">*</span>
+                    </label>
+                    <p-calendar formControlName="date" dateFormat="yy-mm-dd" [showIcon]="true" [showButtonBar]="true"
+                        class="w-full"
+                        inputStyleClass="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </p-calendar>
+
+                </div>
+
+                <!-- Lot Number Field -->
+                <div class="w-full sm:w-1/2">
+                    <label class="block font-medium mb-1 text-gray-700" for="lotno">Lot No</label>
+                    <input type="text" formControlName="lot_no" placeholder="Enter Lot Number"
+                        class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+            </div>
+
+
+            <!-- Cutter Name Dropdown -->
+            <div>
+                <label class="block font-medium mb-1 text-gray-700" for="cutterName">Select Cutter Name <span
+                        class="text-red-500">*</span></label>
+                <p-dropdown formControlName="cutter_id" [options]="CutterName" optionLabel="name" optionValue="id"
+                    placeholder="Select Cutter Name" class="w-full" [showClear]="true"></p-dropdown>
+            </div>
+
+            <!-- PO Quantity Dropdown -->
+            <div>
+                <label class="block font-medium mb-1 text-gray-700" for="poQuantity">
+                    Select PO Detilce <span class="text-red-500">*</span>
+                </label>
+
+                <div class="flex gap-2">
+                    <!-- <p-dropdown formControlName="po_qty_id" optionLabel="fabric_quality" optionValue="id"
+                        placeholder="Select PO Quantity" class="w-full flex-1" [showClear]="true">
+                    </p-dropdown> -->
+                    <input type="text" formControlName="po_qty_id" placeholder="Select PO Detilce" readonly="true"
+                        class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+
+                    <button type="button" (click)="gateAllpoQtyByOrderId()"
+                        class="px-4 py-2 font-medium text-white transition-all duration-200 rounded bg-blue-600 hover:bg-blue-500">
+                        <i class="pi pi-plus"></i>
+                    </button>
+                </div>
+            </div>
+
+
+
+
+            <!-- Total Quantity Input -->
+            <div>
+                <label class="block font-medium mb-1 text-gray-700" for="totalQuantity">Total Quantity</label>
+                <input type="number" formControlName="total_qty" placeholder="Enter Total Quantity"
+                    class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row sm:justify-end gap-4 mt-4">
+            <button type="submit" (click)="submitCuttingForm()"
+                class="w-full sm:w-auto px-4 py-2 font-medium text-white transition-all duration-200 rounded bg-emerald-600 hover:bg-emerald-500">
+                <i class="pi pi-check mr-2"></i> Save
+            </button>
+
+            <button type="button" (click)="showForm = false"
+                class="w-full sm:w-auto px-4 py-2 font-medium text-gray-700 transition-all duration-200 rounded bg-gray-200 hover:bg-gray-300">
+                <i class="pi pi-times mr-2"></i> Cancel
+            </button>
+        </div>
+
+    </form>
+
+</p-dialog>
+
+<p-dialog header="Po details" [(visible)]="showPoQty" [modal]="true" [style]="{ width: '90vw', maxWidth: '500px' }"
+    [closable]="true" [dismissableMask]="true" [breakpoints]="{ '960px': '75vw', '640px': '90vw' }"
+    [styleClass]="'p-0 overflow-hidden rounded-xl shadow-md'">
+    <div>
+        <app-dynamic-table [columns]="tableColumnsPoqt" [data]="tableDatapoqt" (actionClicked)="handleAction($event)"
+            (rowClicked)="handleRowClick($event)">
+        </app-dynamic-table>
+    </div>
+</p-dialog>

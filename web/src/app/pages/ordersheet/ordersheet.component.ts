@@ -21,6 +21,7 @@ import { firstValueFrom, tap } from 'rxjs';
 import { OrderService } from '../../services/order.service';
 import { allUsers } from '../../services/interface/user';
 import { SweetAlertService } from '../../utility/sweet-alert.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-ordersheet',
@@ -53,7 +54,8 @@ export class OrdersheetComponent {
   constructor(
     private fb: FormBuilder,
     private service: OrderService,
-    private alert: SweetAlertService
+    private alert: SweetAlertService,
+    private router: Router
   ) {
     this.orderForm = this.fb.group({
       styleNo: ['', Validators.required],
@@ -109,6 +111,7 @@ export class OrdersheetComponent {
   async onEdit(order: any) {
     this.isEdit = true;
     this.updateId = order.id;
+    localStorage.setItem('orderId', order.id);
 
     await firstValueFrom(
       this.service.getById({ orderId: order.id }).pipe(
@@ -154,8 +157,6 @@ export class OrdersheetComponent {
         )
       )
     );
-
-    console.log('Edit:', order);
   }
 
 
@@ -321,6 +322,6 @@ export class OrdersheetComponent {
 
   // go no next setp
   goToNextStep(){
-localStorage.setItem('orderId', 'dfgf');
-  }
+    this.router.navigate(['/pages/order-process']);
+    }
 }
