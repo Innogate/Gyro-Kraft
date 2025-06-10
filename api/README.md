@@ -36,3 +36,6 @@ RewriteRule ^ index.php [QSA,L]
 
 # PAGE IDS
 1. User Master
+2. OderSheet
+3. Permission
+4. Cutter Master

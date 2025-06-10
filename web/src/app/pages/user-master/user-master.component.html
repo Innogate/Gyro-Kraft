@@ -67,7 +67,7 @@
                         <button pButton type="button" (click)="updateUser(user)" label="Update" icon="pi pi-pencil"
                             class="p-button-sm" style="background-color: #10b981; border-radius: 6px; border: none;">
                         </button>
-                        <button pButton type="button" (click)="visibleSidebar = true" label="Rights" icon="pi pi-key"
+                        <button pButton type="button" (click)="permit(user)" label="Rights" icon="pi pi-key"
                             class="p-button-sm" style="background-color: #8b5cf6; border-radius: 6px; border: none;">
                         </button>
                     </div>
@@ -227,59 +227,98 @@
 
 <!-- This is for giving  permission  -->
 
-<p-sidebar [(visible)]="visibleSidebar" [modal]="false" position="right" [baseZIndex]="10" styleClass="custom-sidebar">
+<div *ngIf="permissions_sleeted_user">
+    <p-sidebar [(visible)]="visibleSidebar" [modal]="false" position="right" [baseZIndex]="10"
+        styleClass="custom-sidebar">
 
-  <div (click)="$event.stopPropagation()" 
-       class=" w-full max-w-xl  p-6 rounded-lg bg-gradient-to-br from-indigo-50 to-white shadow-xl ">
+        <div (click)="$event.stopPropagation()"
+            class=" w-full max-w-xl  p-6 rounded-lg bg-gradient-to-br from-indigo-50 to-white shadow-xl ">
 
-    <!-- Profile Section -->
-    <div class="flex items-center space-x-4 mb-6">
-      <img [src]="users.photo ? users.photo : '/img/profile.png'" alt="Profile"
-           class="w-12 h-12 rounded-full object-cover shadow-md ring-2 ring-indigo-300" />
-      <div class="space-y-1">
-        <h3 class="text-xl font-bold text-blue-500 leading-normal mb-0">Rana pratap singh</h3>
-        <p class="text-gray-500 text-sm leading-normal mt-0">rana&#64;gmail.com</p>
-        <a href="#" class="text-indigo-500 text-sm hover:underline leading-normal">View profile</a>
-      </div>
-    </div>
+            <!-- Profile Section -->
+            <div class="flex items-center space-x-4 mb-6">
+                <img [src]="permissions_sleeted_user.photo ? permissions_sleeted_user.photo : '/img/profile.png'"
+                    alt="Profile" class="w-12 h-12 rounded-full object-cover shadow-md ring-2 ring-indigo-300" />
+                <div class="space-y-1">
+                    <h3 class="text-xl font-bold text-blue-500 leading-normal mb-0">{{permissions_sleeted_user.name}}
+                    </h3>
+                    <p class="text-gray-500 text-sm leading-normal mt-0">{{permissions_sleeted_user.email}}</p>
+                    <a class="text-indigo-500 text-sm hover:underline leading-normal"
+                        (click)="updateUserByPermissions(permissions_sleeted_user)">View profile</a>
+                </div>
+            </div>
 
-    <!-- Info Banner -->
-    <div class="p-3 bg-indigo-100 text-blue-700 text-sm rounded-lg mb-5 shadow-sm">
-      ⚠️ Permission list will change when you select a user group.
-    </div>
+            <!-- Info Banner -->
+            <div class="p-3 bg-indigo-100 text-blue-700 text-sm rounded-lg mb-5 shadow-sm">
+                ⚠️ Permission list will change when you select a user group.
+            </div>
 
-    <!-- User Group Dropdown -->
-    <div class="mb-5">
-      <label for="userGroup" class="block mb-2 font-semibold text-gray-700">User Group</label>
-      <p-dropdown [options]="userGroups" optionLabel="label" optionValue="value" class="w-full"></p-dropdown>
-    </div>
+            <!-- User Group Dropdown -->
+            <div class="mb-5">
+                <label for="userGroup" class="block mb-2 font-semibold text-gray-700">User Group</label>
+                <p-dropdown [options]="userGroups" optionLabel="label" optionValue="value" class="w-full"></p-dropdown>
+            </div>
 
-    <!-- Permissions List -->
-    <div class="space-y-4">
-      <div *ngFor="let permission of permissions" 
-           class="flex justify-between items-start bg-white p-3 rounded shadow-sm border border-gray-200 hover:bg-indigo-50 transition-all duration-200">
-        <div>
-          <p class="font-semibold text-blue-800">{{ permission.name }}</p>
-          <p class="text-gray-500 text-xs">{{ permission.description }}</p>
+            <!-- Permissions List -->
+            <div class="space-y-4">
+                <div *ngFor="let permission of permissions"
+                    class="bg-white p-5 rounded-2xl shadow-md border border-gray-200 hover:shadow-lg transition-all duration-300 hover:border-indigo-400">
+
+                    <!-- Module Header -->
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <p class="text-lg font-bold text-indigo-700 flex items-center gap-2">
+                                <i class="pi pi-lock text-indigo-500"></i>
+                                {{ permission.module_name }}
+                            </p>
+                            <p class="text-xs text-gray-500">{{ permission.created_at | date: 'dd-MM-yyyy' }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Permission Toggles -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <!-- Add -->
+                        <div class="flex items-center gap-3">
+                            <p-inputSwitch [(ngModel)]="permission.can_add"
+                                inputId="add-{{permission.module_name}}"></p-inputSwitch>
+                            <label for="add-{{permission.module_name}}"
+                                class="flex items-center gap-1 text-sm font-medium text-green-700">
+                                <i class="pi pi-plus-circle text-green-500"></i> Add
+                            </label>
+                        </div>
+
+                        <!-- Edit -->
+                        <div class="flex items-center gap-3">
+                            <p-inputSwitch [(ngModel)]="permission.can_edit"
+                                inputId="edit-{{permission.module_name}}"></p-inputSwitch>
+                            <label for="edit-{{permission.module_name}}"
+                                class="flex items-center gap-1 text-sm font-medium text-yellow-700">
+                                <i class="pi pi-pencil text-yellow-500"></i> Edit
+                            </label>
+                        </div>
+
+                        <!-- Delete -->
+                        <div class="flex items-center gap-3">
+                            <p-inputSwitch [(ngModel)]="permission.can_delete"
+                                inputId="delete-{{permission.module_name}}"></p-inputSwitch>
+                            <label for="delete-{{permission.module_name}}"
+                                class="flex items-center gap-1 text-sm font-medium text-red-700">
+                                <i class="pi pi-trash text-red-500"></i> Delete
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Save Button -->
+            <div class="text-right mt-6">
+                <button pButton type="button" (click)="saveChanges()" label="Save Changes"
+                    class="p-button p-button-lg p-button-rounded p-button-success">
+                </button>
+            </div>
+
         </div>
-        <p-inputSwitch [(ngModel)]="permission.enabled"></p-inputSwitch>
-      </div>
-    </div>
 
-    <!-- Save Button -->
-    <div class="text-right mt-6">
-      <button pButton type="button" 
-              (click)="saveChanges()" 
-              label="Save Changes" 
-              class="p-button p-button-lg p-button-rounded p-button-success">
-      </button>
-    </div>
-
-  </div>
-
-</p-sidebar>
-
-
-
-
-
+    </p-sidebar>
+</div>

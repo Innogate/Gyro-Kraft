@@ -141,10 +141,51 @@ CREATE TABLE notifications (
     FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
+-- ! DELED
 CREATE TABLE otps (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
     otp VARCHAR(6),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id)
+);
+
+CREATE TABLE module (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    module_name VARCHAR(50),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    modified_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    modified_by INT,
+    FOREIGN KEY (created_by) REFERENCES users (id),
+    FOREIGN KEY (modified_by) REFERENCES users (id)
+);
+
+CREATE TABLE permissions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    module_id INT,
+    can_add BOOLEAN,
+    can_edit BOOLEAN,
+    can_delete BOOLEAN,
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (module_id) REFERENCES module (id)
+);
+
+
+CREATE TABLE groups (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    description TEXT
+);
+
+CREATE TABLE group_permissions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    group_id INT,
+    module_id INT,
+    can_add BOOLEAN,
+    can_edit BOOLEAN,
+    can_delete BOOLEAN,
+    FOREIGN KEY (group_id) REFERENCES groups (id),
+    FOREIGN KEY (module_id) REFERENCES module (id)
 );

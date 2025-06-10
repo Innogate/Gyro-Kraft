@@ -1,0 +1,86 @@
+@apiUrl = http://localhost:8000/api
+@otp_id = {{login.response.body.body.otp_id}}
+@token = {{otp.response.body.body.token}}
+### VERSION AND CHECK SERVER CONNECTION
+GET {{apiUrl}}/version
+Content-Type: application/json
+
+### ? Login with the created user
+# @name login
+POST {{ apiUrl }}/users/login
+Content-Type: application/json
+
+{
+    "mobile": "1234567890",
+    "password": "1234567890"
+}
+
+### GET OTP
+POST {{apiUrl}}/users/login/otp_get
+Content-Type: application/json
+
+{
+    "otp_id": 6
+}
+
+### OTP verify
+# @name otp
+POST {{apiUrl}}/users/login/otp_verify
+Content-Type: application/json
+
+{
+    "otp_id": 5,
+    "otp": 555865
+}
+
+### VERIFY
+GET {{apiUrl}}/verify
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+### GET MY PERMISSION
+GET {{apiUrl}}/users/permission
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+### GET MY PERMISSION BY USER ID
+POST {{apiUrl}}/users/permission/byUserId
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "user_id": 1
+}
+
+### CREATE NEW
+POST {{apiUrl}}/users/permission/create
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "user_id": 1,
+    "module_id": 2,
+    "can_add": true,
+    "can_edit": true,
+    "can_delete": true
+
+}
+
+
+#### DELETE permission
+POST {{apiUrl}}/users/permission/delete
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "permission_id": 1
+}
+
+
+### GET MODULE LIST
+GET {{apiUrl}}/users/permission/moduleList
+Content-Type: application/json
+Authorization: Bearer {{token}}
+

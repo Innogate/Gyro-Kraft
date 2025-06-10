@@ -2,44 +2,50 @@
 require_once __DIR__ . '/Database.php';
 
 class Handler {
-    public static function validatePermission($pageId, $user_id = 0, $permissionCheck = "r") {
+    public static function validatePermission($module_id, $user_id = 0, $permissionCheck = "add") {
         $db = new Database();
-        $stmt = $db->query("SELECT permission_code FROM permissions WHERE user_id = ? AND page_id = ?", [$user_id, $pageId]);
-        $permission = $stmt->fetch(PDO::FETCH_ASSOC);
+        $pdo = $db->pdo;
+        $sql = "SELECT * FROM permissions WHERE module_id = :module_id AND user_id = :user_id AND ";
 
-        if (!$permission || !isset($permission['permission_code'])) {
-            (new ApiResponse(401, "You don't have access to this page", $permission, 300))->toJson();
-            exit;
+        switch ($permissionCheck) {
+            case 'view':
+                return true;
+                break;
+
+            case 'add':
+                $sql.= "can_add = 1";
+                break;
+            
+            case 'edit':
+                $sql.= "can_edit = 1";
+                # code...
+                break;
+            
+            case 'delete':
+                $sql.= "can_delete = 1";
+                # code...
+                break;
+
+            default:
+                return false;
+                break;
         }
 
-        // Grant full access if permission code is '11111'
-        if ($permission['permission_code'] === "11111") {
-            return true;
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(":module_id", $module_id);
+            $stmt->bindParam(":user_id", $user_id);
+            $stmt->execute();
+            $res = $stmt->rowCount() > 0;
+            if ($res) {
+               return true;
+            }
+
+            (new ApiResponse(403, "Permission denied"))->toJson();
+
+        } catch (PDOException $e) {
+            (new ApiResponse(500, "Database error", $e->getMessage()))->toJson();
         }
-
-        $code = str_split($permission['permission_code']);
-
-        $permissionMap = [
-            'r' => 0,
-            'w' => 1,
-            'u' => 2,
-            'd' => 3
-        ];
-
-        if (!isset($permissionMap[$permissionCheck])) {
-            (new ApiResponse(401, "Invalid permission check type", "", 300))->toJson();
-            exit;
-        }
-
-        $index = $permissionMap[$permissionCheck];
-
-        // Check permission value, '1' means ALLOWED
-        if (isset($code[$index]) && $code[$index] === "1") {
-            return false;
-        }
-
-        (new ApiResponse(401, "Unauthorized access. Please contact admin.", "", 300))->toJson();
-        exit;
     }
 
     public static function validateInput($data, $requiredFields) {
