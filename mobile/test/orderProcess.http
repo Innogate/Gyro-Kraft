@@ -34,30 +34,16 @@ POST {{apiUrl}}/users/login/otp_verify
 Content-Type: application/json
 
 {
-    "otp_id": 3,
+    "otp_id": 5,
     "otp": 307630
 }
 
-### create cutting
-# @name createCutting
-POST {{apiUrl}}/cuttingSteps/add
+### Get po details by order id
+# @name getPoDetails
+POST {{apiUrl}}/order/poqtByorderId
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "order_id": 1,
-  "date": "2023-10-01",
-  "cutter_id": 1,
-  "po_qty_id": 2,
-  "lot_no": "LOT123",
-  "total_qty": 1000
-}
-#### get cutting by order id
-# @name getCuttingByOrderId
-POST {{apiUrl}}/cuttingSteps/gateAllByorderId
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-{
-  "order_id": 16
+  "order_id": 3
 }

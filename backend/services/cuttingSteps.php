@@ -45,4 +45,47 @@ $stmt->execute();
     }
 });
 
+
+// Get all cutting steps data
+$router->add('POST', '/cuttingSteps/gateAllByorderId', function () {
+    $jwt = new JwtHandler();
+    $handler = new Handler();  
+    $_user = $jwt->validate();
+    $dbInstance = new Database();
+    $conn = $dbInstance->pdo;
+
+      $data = json_decode(file_get_contents("php://input"));
+    if (!$data) {
+        (new ApiResponse(400, "Invalid input data"))->toJson();
+        return;
+    }
+
+    try {
+       $sql = "SELECT cutting.*, cutters.name 
+        FROM cutting 
+        LEFT JOIN cutters ON cutting.cutter_id = cutters.id 
+        WHERE cutting.order_id = :order_id";
+        $conn->beginTransaction();
+        if (!$conn) {
+            throw new Exception("Database connection failed");
+        }
+        if (!isset($data->order_id)) {
+            throw new Exception("Order Id is required");
+        }   
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':order_id', $data->order_id);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $conn->commit();
+
+        if ($result) {
+            (new ApiResponse(200, "Success", $result))->toJson();
+        } else {
+            (new ApiResponse(404, "No data found"))->toJson();
+    }
+    } catch (Exception $e) {
+        (new ApiResponse(500, "Error: " . $e->getMessage()))->toJson();
+    }
+});
+
 ?>

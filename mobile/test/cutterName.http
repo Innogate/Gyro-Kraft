@@ -84,3 +84,13 @@ Authorization: Bearer {{token}}
     "id": 2,
     "status": 0
 }
+
+### gate jobber name by type
+# @name get jobber name by type
+POST {{apiUrl}}/master/jobberType
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "jobber_type": "Cutter"
+}
