@@ -16,12 +16,16 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { DialogModule } from 'primeng/dialog';
+import { SidebarModule } from 'primeng/sidebar';
+import { InputSwitchModule } from 'primeng/inputswitch';
+
 
 
 @Component({
   selector: 'app-user-master',
   imports: [
     DialogModule,
+    InputSwitchModule,
     CardModule,
     ButtonModule,
     CommonModule,
@@ -35,6 +39,7 @@ import { DialogModule } from 'primeng/dialog';
     InputTextModule,
     InputGroupModule,
     CheckboxModule,
+    SidebarModule
 
   ],
   templateUrl: './user-master.component.html',
@@ -55,6 +60,8 @@ export class UserMasterComponent implements OnInit {
   update_mode = false;
   user_id = 0;
 
+  visibleSidebar: boolean = false;
+
   roleOptions = [
     { label: 'Manager', value: 'Manager' },
     { label: 'Super Admin', value: 'Super Admin' },
@@ -62,6 +69,22 @@ export class UserMasterComponent implements OnInit {
 
   ];
 
+  userGroups = [
+    { label: 'Consultant', value: 'Consultant' },
+    { label: 'Admin', value: 'Admin' },
+    { label: 'Manager', value: 'Manager' }
+  ];
+
+  selectedGroup = 'Consultant';
+
+  permissions = [
+    { name: 'Auditing', description: 'Allows full access to review and activate candidates', enabled: true },
+    { name: 'Allocate as job authority', description: 'Allows the user to gain full access to review', enabled: true },
+    { name: 'Candidate activation', description: 'Allows to activate candidates enabling them to work', enabled: true },
+    { name: 'Candidate documents', description: 'Allows the user to view all candidate documents', enabled: false },
+    { name: 'Financial information', description: 'Allows to view the financial information of candidates', enabled: false },
+    { name: 'Job posting', description: 'Allows bulk texts, posting jobs to paid job boards', enabled: false },
+  ];
 
   constructor(
     private service: UserService,
@@ -95,7 +118,11 @@ export class UserMasterComponent implements OnInit {
     });
   }
 
-
+saveChanges() {
+    console.log('Updated permissions:', this.permissions);
+    this.visibleSidebar = false;
+    
+  }
 
   async ngOnInit() {
     await firstValueFrom(this.service.getAllUsers({

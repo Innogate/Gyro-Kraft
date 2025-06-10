@@ -64,12 +64,11 @@
                 <td class="p-3" style="color: #6b7280;">{{ user.created_at | date: 'dd-MM-yyyy' }}</td>
                 <td class="p-3">
                     <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <button pButton type="button" (click)="updateUser(user)" label="Update"
-                            icon="pi pi-pencil" class="p-button-sm"
-                            style="background-color: #10b981; border-radius: 6px; border: none;">
+                        <button pButton type="button" (click)="updateUser(user)" label="Update" icon="pi pi-pencil"
+                            class="p-button-sm" style="background-color: #10b981; border-radius: 6px; border: none;">
                         </button>
-                        <button pButton type="button" label="Rights" icon="pi pi-key" class="p-button-sm"
-                            style="background-color: #8b5cf6; border-radius: 6px; border: none;">
+                        <button pButton type="button" (click)="visibleSidebar = true" label="Rights" icon="pi pi-key"
+                            class="p-button-sm" style="background-color: #8b5cf6; border-radius: 6px; border: none;">
                         </button>
                     </div>
                 </td>
@@ -118,16 +117,13 @@
 
                 <!-- Toggle Button Section -->
 
-                <div *ngIf="update_mode" class="max-w-xs px-4 py-2 rounded-lg bg-white shadow-sm border border-blue-200 flex justify-center">
-                    <p-toggleButton 
-                      [(ngModel)]="isEnabled"
-                      onLabel="Enabled" 
-                      offLabel="Disabled" 
-                      onIcon="pi pi-check" 
-                      offIcon="pi pi-times">
+                <div *ngIf="update_mode"
+                    class="max-w-xs px-4 py-2 rounded-lg bg-white shadow-sm border border-blue-200 flex justify-center">
+                    <p-toggleButton [(ngModel)]="isEnabled" onLabel="Enabled" offLabel="Disabled" onIcon="pipi-check"
+                        offIcon="pi pi-times">
                     </p-toggleButton>
-                  </div>
-                  
+                </div>
+
 
             </div>
 
@@ -210,7 +206,7 @@
 
                     <!-- Submit -->
 
-                    <div *ngIf="!update_mode"  class="col-span-2 pt-4">
+                    <div *ngIf="!update_mode" class="col-span-2 pt-4">
                         <button pButton type="submit" label="Submit" icon="pi pi-check"
                             class="w-full p-button-info p-button-rounded" [disabled]="userForm.invalid"></button>
                     </div>
@@ -224,3 +220,66 @@
         </div>
     </div>
 </p-dialog>
+
+
+
+
+
+<!-- This is for giving  permission  -->
+
+<p-sidebar [(visible)]="visibleSidebar" [modal]="false" position="right" [baseZIndex]="10" styleClass="custom-sidebar">
+
+  <div (click)="$event.stopPropagation()" 
+       class=" w-full max-w-xl  p-6 rounded-lg bg-gradient-to-br from-indigo-50 to-white shadow-xl ">
+
+    <!-- Profile Section -->
+    <div class="flex items-center space-x-4 mb-6">
+      <img [src]="users.photo ? users.photo : '/img/profile.png'" alt="Profile"
+           class="w-12 h-12 rounded-full object-cover shadow-md ring-2 ring-indigo-300" />
+      <div class="space-y-1">
+        <h3 class="text-xl font-bold text-blue-500 leading-normal mb-0">Rana pratap singh</h3>
+        <p class="text-gray-500 text-sm leading-normal mt-0">rana&#64;gmail.com</p>
+        <a href="#" class="text-indigo-500 text-sm hover:underline leading-normal">View profile</a>
+      </div>
+    </div>
+
+    <!-- Info Banner -->
+    <div class="p-3 bg-indigo-100 text-blue-700 text-sm rounded-lg mb-5 shadow-sm">
+      ⚠️ Permission list will change when you select a user group.
+    </div>
+
+    <!-- User Group Dropdown -->
+    <div class="mb-5">
+      <label for="userGroup" class="block mb-2 font-semibold text-gray-700">User Group</label>
+      <p-dropdown [options]="userGroups" optionLabel="label" optionValue="value" class="w-full"></p-dropdown>
+    </div>
+
+    <!-- Permissions List -->
+    <div class="space-y-4">
+      <div *ngFor="let permission of permissions" 
+           class="flex justify-between items-start bg-white p-3 rounded shadow-sm border border-gray-200 hover:bg-indigo-50 transition-all duration-200">
+        <div>
+          <p class="font-semibold text-blue-800">{{ permission.name }}</p>
+          <p class="text-gray-500 text-xs">{{ permission.description }}</p>
+        </div>
+        <p-inputSwitch [(ngModel)]="permission.enabled"></p-inputSwitch>
+      </div>
+    </div>
+
+    <!-- Save Button -->
+    <div class="text-right mt-6">
+      <button pButton type="button" 
+              (click)="saveChanges()" 
+              label="Save Changes" 
+              class="p-button p-button-lg p-button-rounded p-button-success">
+      </button>
+    </div>
+
+  </div>
+
+</p-sidebar>
+
+
+
+
+

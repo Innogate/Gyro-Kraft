@@ -3,7 +3,7 @@
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
-        "gyro_kraft ": {
+        "gyro_kraft": {
             "projectType": "application",
             "schematics": {
                 "@schematics/angular:component": {
@@ -66,10 +66,10 @@
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "configurations": {
                         "production": {
-                            "buildTarget": "gyro_kraft :build:production"
+                            "buildTarget": "gyro_kraft:build:production"
                         },
                         "development": {
-                            "buildTarget": "gyro_kraft :build:development"
+                            "buildTarget": "gyro_kraft:build:development"
                         }
                     },
                     "defaultConfiguration": "development"
