@@ -2,4 +2,4 @@
 if [ ! -d "./vendor" ]; then
     composer install
 fi
-php -S 0.0.0.0:8000 -t /app
+php -S 0.0.0.0:80 -t /app

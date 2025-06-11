@@ -7,17 +7,17 @@ services:
     volumes:
       - dotfiles:/home/vscode
       - ./web:/app
-    ports:
-      - "4200:4200"
+    # ports:
+    #   - "4200:4200"
     working_dir: /app
     # command:  bash start.sh
     
   db:
     image: mariadb:local
-    container_name: db-container
+    container_name: db
     restart: unless-stopped
-    ports:
-      - "3306:3306"
+    # ports:
+    #   - "3306:3306"
     environment:
       MARIADB_USER: ${DB_USER}
       MARIADB_PASSWORD: ${DB_PASSWORD}
@@ -31,13 +31,13 @@ services:
 
   php:
     image: php:local
-    container_name: php-container
+    container_name: api
     restart: unless-stopped
     command: "bash start.sh"
     working_dir: /app
     user: vscode
     ports:
-      - "8000:8000"
+      - "80:80"
     volumes:
       - dotfiles:/home/vscode
       - ./api:/app
