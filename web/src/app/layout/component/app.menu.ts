@@ -35,7 +35,7 @@ export class AppMenu {
                     {
                         label: 'Cutting',
                         icon: 'pi pi-fw pi-hammer',
-                        routerLink: ['/cutting']
+                        routerLink: ['/pages/cutting-page']
                     },
                     {
                         label: 'Print',

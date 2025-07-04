@@ -6,6 +6,7 @@ import { OrdersheetComponent } from './ordersheet/ordersheet.component';
 import { AuthGuard } from './auth/auth.guard';
 import { PrinterMasterComponent } from './master/printer-master/printer-master.component';
 import { OrderProcessComponent } from './order-process/order-process.component';
+import { CuttingPageComponent } from './cutting-page/cutting-page.component';
 
 export default [
     { path: 'cutter-name', component: CutterNameComponent, canActivate: [AuthGuard] },
@@ -14,5 +15,6 @@ export default [
     { path: 'order-sheet', component:OrdersheetComponent, canActivate: [AuthGuard]  },
     { path: 'printer-master', component:PrinterMasterComponent, canActivate: [AuthGuard]  },
     { path: 'order-process', component: OrderProcessComponent, canActivate: [AuthGuard]  },
+    { path: 'cutting-page', component: CuttingPageComponent, canActivate: [AuthGuard]  },
     { path: '**', redirectTo: '/notfound' }
 ] as Routes;

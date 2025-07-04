@@ -1,11 +1,3 @@
-<!-- <div class="card"> -->
-<!-- <div class="flex items-center justify-between w-full bg-white rounded-md">
-        <h3 class="card-title text-lg font-semibold text-gray-800">Order Process</h3>
-        <button (click)="toggleForm()"
-            class="px-4 py-2 font-medium text-white transition-all duration-200 rounded bg-emerald-600 hover:bg-emerald-500">
-            <i class="mr-2 pi pi-plus"></i> Add step
-        </button>
-    </div> -->
 <p-stepper [value]="1" class="basis-[50rem]">
     <div class="card">
         <p-step-list>
@@ -22,18 +14,39 @@
             <ng-template #content let-activateCallback="activateCallback">
                 <div class="flex flex-col relative p-4 bg-white rounded border border-dashed border-gray-300">
                     <!-- Add Step button at top-right -->
-                    <button (click)="toggleForm()"
-                        class="absolute top-4 right-4 px-4 py-2 font-medium text-white rounded bg-emerald-600 hover:bg-emerald-500 transition-all">
-                        <i class="mr-2 pi pi-plus"></i> Add Cutter
-                    </button>
+                    <div class="flex justify-end gap-4 absolute top-4 right-4">
+                        <button (click)="showAllPoQty()"
+                            class="px-4 py-2 font-medium text-white rounded bg-emerald-600 hover:bg-emerald-500 transition-all flex items-center">
+                            <i class="pi pi-serch mr-2"></i> Po Details
+                        </button>
+
+                        <button (click)="toggleForm()"
+                            class="px-4 py-2 font-medium text-white rounded bg-emerald-600 hover:bg-emerald-500 transition-all flex items-center">
+                            <i class="pi pi-plus mr-2"></i> Cutting Issue
+                        </button>
+                    </div>
 
                     <!-- Table centered in its container, full width -->
-                    <div class="mt-10">
-                        <app-dynamic-table [columns]="tableColumns" [data]="tableData" [actions]="['Edit', 'Delete']"
+                    <div class="mt-10" *ngIf="poData && poData.length > 0">
+                        <h1 class="text-2xl font-semibold text-gray-800 m-0 dark:text-white">PO Quantity Details</h1>
+                        <app-dynamic-table [columns]="tableColumnsPoqt" [data]="poData"
                             (actionClicked)="handleAction($event)">
                         </app-dynamic-table>
                     </div>
-
+                    <h1 class="text-2xl font-semibold text-gray-800 m-0 dark:text-white">Cutting Details</h1>
+                    <div class="mt-10">
+                        <app-dynamic-table [columns]="tableColumns" [data]="tableData"
+                            [actions]="['Edit', 'Delete', 'Receive', 'Print']" (actionClicked)="handleAction($event)">
+                        </app-dynamic-table>
+                    </div>
+                    <div *ngIf="tableDataReceive && tableDataReceive.length > 0">
+                        <h1 class="text-2xl font-semibold text-gray-800 m-0 dark:text-white">Cutting Recive Details</h1>
+                        <div class="mt-10">
+                            <app-dynamic-table [columns]="tableColumnsReceive" [data]="tableDataReceive"
+                                [actions]="['Edit']" (actionClicked)="handleAction($event)">
+                            </app-dynamic-table>
+                        </div>
+                    </div>
                     <!-- Next button bottom-right -->
                     <div class="flex justify-end mt-6">
                         <p-button label="Next" icon="pi pi-arrow-right" iconPos="right"
@@ -54,8 +67,8 @@
 
                     <!-- Table centered in its container, full width -->
                     <div class="mt-10">
-                        <app-dynamic-table [columns]="tableColumns" [data]="tableData" [actions]="['Edit', 'Delete']"
-                            (actionClicked)="handleAction($event)">
+                        <app-dynamic-table [columns]="tableColumns" [data]="tableData"
+                            [actions]="['Edit', 'Delete', 'Recive']" (actionClicked)="handleAction($event)">
                         </app-dynamic-table>
                     </div>
                     <div class="flex pt-6 justify-between">
@@ -91,7 +104,7 @@
 </p-stepper>
 
 <!-- </div> -->
-<p-dialog header="Add Cutting details" [(visible)]="showForm" [modal]="true" [style]="{ width: '90vw', maxWidth: '500px' }"
+<p-dialog [header]="hedding" [(visible)]="showForm" [modal]="true" [style]="{ width: '90vw', maxWidth: '500px' }"
     [closable]="true" [dismissableMask]="true" [breakpoints]="{ '960px': '75vw', '640px': '90vw' }"
     [styleClass]="'p-0 overflow-hidden rounded-xl shadow-md'">
     <form [formGroup]="cuttingForm">
@@ -103,18 +116,17 @@
                     <label class="block font-medium mb-1 text-gray-700" for="date">
                         Date <span class="text-red-500">*</span>
                     </label>
-                    <p-calendar formControlName="date" dateFormat="yy-mm-dd" [showIcon]="true" [showButtonBar]="true"
-                        class="w-full"
-                        inputStyleClass="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <p-calendar formControlName="issue_date" dateFormat="dd-mm-yy" [showIcon]="true" appendTo="body"
+                        [baseZIndex]="10000" [autoZIndex]="true">
                     </p-calendar>
-
                 </div>
 
                 <!-- Lot Number Field -->
                 <div class="w-full sm:w-1/2">
-                    <label class="block font-medium mb-1 text-gray-700" for="lotno">Lot No</label>
-                    <input type="text" formControlName="lot_no" placeholder="Enter Lot Number"
-                        class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    <label class="block font-medium mb-1 text-gray-700">Delevary Date</label>
+                    <p-calendar formControlName="delivery_date" dateFormat="dd-mm-yy" [showIcon]="true" appendTo="body"
+                        [baseZIndex]="10000" [autoZIndex]="true">
+                    </p-calendar>
                 </div>
             </div>
 
@@ -128,22 +140,27 @@
             </div>
 
             <!-- PO Quantity Dropdown -->
-            <div>
-                <label class="block font-medium mb-1 text-gray-700" for="poQuantity">
-                    Select PO Detilce <span class="text-red-500">*</span>
-                </label>
-
-                <div class="flex gap-2">
-                    <!-- <p-dropdown formControlName="po_qty_id" optionLabel="fabric_quality" optionValue="id"
-                        placeholder="Select PO Quantity" class="w-full flex-1" [showClear]="true">
-                    </p-dropdown> -->
-                    <input type="text" formControlName="po_qty_id" placeholder="Select PO Detilce" readonly="true"
+            <div class="flex gap-4">
+                <!-- Lot No Field -->
+                <div class="w-1/2">
+                    <label class="block font-medium mb-1 text-gray-700" for="lotno">Lot No</label>
+                    <input type="text" formControlName="lot_no" placeholder="Enter Lot Number"
                         class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
 
-                    <button type="button" (click)="gateAllpoQtyByOrderId()"
-                        class="px-4 py-2 font-medium text-white transition-all duration-200 rounded bg-blue-600 hover:bg-blue-500">
-                        <i class="pi pi-plus"></i>
-                    </button>
+                <!-- PO Detilce Field -->
+                <div class="w-1/2">
+                    <label class="block font-medium mb-1 text-gray-700" for="poQuantity">
+                        Select PO Detilce <span class="text-red-500">*</span>
+                    </label>
+                    <div class="flex gap-2">
+                        <input type="text" formControlName="po_qty_id" placeholder="Select PO Detilce" readonly
+                            class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        <button type="button" (click)="gateAllpoQty()"
+                            class="px-4 py-2 font-medium text-white transition-all duration-200 rounded bg-blue-600 hover:bg-blue-500">
+                            <i class="pi pi-plus"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -159,9 +176,14 @@
         </div>
 
         <div class="flex flex-col sm:flex-row sm:justify-end gap-4 mt-4">
-            <button type="submit" (click)="submitCuttingForm()"
+            <button type="submit" (click)="submitCuttingForm('Add')" *ngIf="hedding !== 'Edit Cutting Step'"
                 class="w-full sm:w-auto px-4 py-2 font-medium text-white transition-all duration-200 rounded bg-emerald-600 hover:bg-emerald-500">
                 <i class="pi pi-check mr-2"></i> Save
+            </button>
+
+            <button type="submit" (click)="submitCuttingForm('Update')" *ngIf="hedding === 'Edit Cutting Step'"
+                class="w-full sm:w-auto px-4 py-2 font-medium text-white transition-all duration-200 rounded bg-emerald-600 hover:bg-emerald-500">
+                <i class="pi pi-check mr-2"></i> Update
             </button>
 
             <button type="button" (click)="showForm = false"
@@ -182,4 +204,68 @@
             (rowClicked)="handleRowClick($event)">
         </app-dynamic-table>
     </div>
+</p-dialog>
+
+
+
+<p-dialog [header]="ReceiveHedding" [(visible)]="ReceiveShowForm" [modal]="true"
+    [style]="{ width: '90vw', maxWidth: '500px' }" [closable]="true" [dismissableMask]="true"
+    [breakpoints]="{ '960px': '75vw', '640px': '90vw' }" [styleClass]="'p-0 overflow-hidden rounded-xl shadow-md'">
+    <form [formGroup]="receiveForm">
+        <div class="flex flex-col sm:flex-row sm:items-end gap-4">
+            <!-- Date Field -->
+            <div class="w-full sm:w-1/2">
+                <label class="block font-medium mb-1 text-gray-700" for="cutterName">Received Date<span
+                        class="text-red-500">*</span></label>
+                <p-calendar formControlName="received_date" dateFormat="dd-mm-yy" [showIcon]="true" appendTo="body"
+                    [baseZIndex]="10000" [autoZIndex]="true" class="w-full">
+                </p-calendar>
+            </div>
+            <div class="w-full sm:w-1/2">
+
+                <label class="block font-medium mb-1 text-gray-700" for="cutterName">Received Quentity<span
+                        class="text-red-500">*</span></label>
+                <input type="number" formControlName="received_qty" placeholder="Enter Received Quantity"
+                    class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row sm:items-end gap-4">
+            <!-- Date Field -->
+            <div class="w-full sm:w-1/2">
+
+                <label class="block font-medium mb-1 text-gray-700" for="cutterName">Deffective Quentity<span
+                        class="text-red-500">*</span></label>
+                <input type="number" formControlName="deffective_qty" placeholder="Enter Deffective Quantity"
+                    class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+
+            <div class="w-full sm:w-1/2">
+                <label class="block font-medium mb-1 text-gray-700" for="cutterName">Remark<span
+                        class="text-red-500"></span></label>
+                <input formControlName="remark" placeholder="Enter Remark"
+                    class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    type="text" maxlength="1000" minlength="5" pattern="[a-zA-Z0-9\s.,-]*"
+                    title="Only alphanumeric characters, spaces, commas, periods, and hyphens are allowed." />
+            </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row sm:justify-end gap-4 mt-4">
+            <button type="submit" (click)="submitReceiveForm('Add')" *ngIf="hedding !== 'Receive Cutting'"
+                class="w-full sm:w-auto px-4 py-2 font-medium text-white transition-all duration-200 rounded bg-emerald-600 hover:bg-emerald-500">
+                <i class="pi pi-check mr-2"></i> Receive
+            </button>
+
+            <!-- <button type="submit" (click)="submitCuttingForm('Update')" *ngIf="hedding === 'Edit Cutting Step'"
+                class="w-full sm:w-auto px-4 py-2 font-medium text-white transition-all duration-200 rounded bg-emerald-600 hover:bg-emerald-500">
+                <i class="pi pi-check mr-2"></i> Update
+            </button> -->
+
+            <button type="button" (click)="ReceiveShowForm = false"
+                class="w-full sm:w-auto px-4 py-2 font-medium text-gray-700 transition-all duration-200 rounded bg-gray-200 hover:bg-gray-300">
+                <i class="pi pi-times mr-2"></i> Cancel
+            </button>
+        </div>
+    </form>
+
 </p-dialog>

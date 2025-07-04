@@ -37,54 +37,27 @@ Content-Type: application/json
     "otp_id": 3,
     "otp": 307630
 }
-
-### create cutting
-# @name createCutting
-POST {{apiUrl}}/cuttingSteps/add
+### Order Received
+# @name orderReceived
+POST {{apiUrl}}/orderReceived/add
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "order_id": 1,
-  "issue_date": "2023-10-01",
-  "delivery_date": "2023-10-10",
-  "cutter_id": 1,
-  "po_qty_id": 2,
-  "lot_no": "LOT123",
-  "total_qty": 1000
-}
-### update cutting
-# @name updateCutting
-POST {{apiUrl}}/cuttingSteps/update
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-{
-  "id": 17,
-  "issue_date": "2023-10-01",
-  "delivery_date": "2023-10-10",
-  "cutter_id": 3,
-  "po_qty_id": 2,
-  "lot_no": "LOT123",
-  "total_qty": 1000
+    "order_id": 1,
+    "cutting_id": 2,
+    "received_date": "2023-10-01",
+    "received_qty": 100,
+    "deffective_qty": 40,
+    "remarks": "Order received successfully"
 }
 
-### delete cutting
-# @name deleteCutting
-POST {{apiUrl}}/cuttingSteps/delete
+### Order Received List By order ID
+# @name orderReceivedListByOrderId
+post {{apiUrl}}/orderReceived/getByOrderId
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "id": 9
-}
-
-#### get cutting by order id
-# @name getCuttingByOrderId
-POST {{apiUrl}}/cuttingSteps/gateAllByorderId
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-{
-  "order_id": 16
+    "order_id": 21
 }
