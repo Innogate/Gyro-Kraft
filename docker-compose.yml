@@ -1,6 +1,6 @@
 services:
   angular:
-    image: angular:local
+    image: tuhinsu/angular:lts
     container_name: angular
     restart: unless-stopped
     user: vscode
@@ -13,7 +13,7 @@ services:
     # command:  bash start.sh
     
   db:
-    image: mariadb:local
+    image: mariadb
     container_name: db
     restart: unless-stopped
     # ports:
@@ -30,7 +30,7 @@ services:
       - ./database/template:/docker-entrypoint-initdb.d
 
   php:
-    image: php:local
+    image: tuhinsu/php
     container_name: api
     restart: unless-stopped
     command: "bash start.sh"
