@@ -58,7 +58,8 @@ CREATE TABLE orders (
     season VARCHAR(100),
     shipment_date DATE,
     documents TEXT,
-    remark TEXT
+    remark TEXT,
+    stage VARCHAR(100) NULL
 );
 
 CREATE TABLE order_po_qty (
