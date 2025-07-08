@@ -1,49 +1,135 @@
 <div class="p-6 bg-gray-50 min-h-screen">
-<p-table [value]="ordersList" [paginator]="true" [rows]="5" [responsiveLayout]="'scroll'"
-            class="rounded-xl shadow-md border border-gray-200 bg-white" styleClass="modern-table">
-            <ng-template pTemplate="header">
-                <tr
-                    class="bg-gradient-to-r from-indigo-100 to-white text-gray-700 font-semibold text-sm uppercase tracking-wider">
-                    <th><i class="pi pi-hashtag mr-1 text-indigo-400"></i>ID</th>
-                    <th><i class="pi pi-tag mr-1 text-indigo-400"></i>Style</th>
-                    <th><i class="pi pi-align-left mr-1 text-indigo-400"></i>Description</th>
-                    <th><i class="pi pi-user mr-1 text-indigo-400"></i>Age</th>
-                    <th><i class="pi pi-shapes mr-1 text-indigo-400"></i>Pattern</th>
-                    <th><i class="pi pi-calendar mr-1 text-indigo-400"></i>Order</th>
-                    <th><i class="pi pi-send mr-1 text-indigo-400"></i>Shipment</th>
-                    <th><i class="pi pi-user-plus mr-1 text-indigo-400"></i>Buyer</th>
-                    <th><i class="pi pi-star mr-1 text-indigo-400"></i>Brand</th>
-                    <th><i class="pi pi-cloud mr-1 text-indigo-400"></i>Season</th>
-                    <th><i class="pi pi-comment mr-1 text-indigo-400"></i>Remark</th>
-                    <th class="text-center"><i class="pi pi-cog text-indigo-400"></i></th>
-                </tr>
-            </ng-template>
+  <p-table [value]="ordersList" [paginator]="true" [rows]="5" [responsiveLayout]="'scroll'"
+    class="rounded-xl shadow-md border border-gray-200 bg-white" styleClass="modern-table">
+    <ng-template pTemplate="header">
+      <tr class="bg-gradient-to-r from-indigo-100 to-white text-gray-700 font-semibold text-sm uppercase tracking-wider">
+        <th><i class="pi pi-hashtag mr-1 text-indigo-400"></i>ID</th>
+        <th><i class="pi pi-tag mr-1 text-indigo-400"></i>Style</th>
+        <th><i class="pi pi-align-left mr-1 text-indigo-400"></i>Description</th>
+        <th><i class="pi pi-user mr-1 text-indigo-400"></i>Age</th>
+        <th><i class="pi pi-shapes mr-1 text-indigo-400"></i>Pattern</th>
+        <th><i class="pi pi-calendar mr-1 text-indigo-400"></i>Order</th>
+        <th><i class="pi pi-send mr-1 text-indigo-400"></i>Shipment</th>
+        <th><i class="pi pi-user-plus mr-1 text-indigo-400"></i>Buyer</th>
+        <th><i class="pi pi-star mr-1 text-indigo-400"></i>Brand</th>
+        <th><i class="pi pi-cloud mr-1 text-indigo-400"></i>Season</th>
+        <th><i class="pi pi-comment mr-1 text-indigo-400"></i>Remark</th>
+        <th class="text-center"><i class="pi pi-cog text-indigo-400"></i></th>
+      </tr>
+    </ng-template>
 
-            <ng-template pTemplate="body" let-order>
-                <tr class="hover:bg-indigo-50 transition duration-150">
-                    <td>{{ order.id }}</td>
-                    <td>{{ order.style_no }}</td>
-                    <td>{{ order.description }}</td>
-                    <td>{{ order.age_group }}</td>
-                    <td>{{ order.pattern }}</td>
-                    <td>{{ order.order_date }}</td>
-                    <td>{{ order.shipment_date }}</td>
-                    <td>{{ order.buyer }}</td>
-                    <td>{{ order.brand }}</td>
-                    <td>{{ order.season }}</td>
-                    <td>{{ order.remark }}</td>
-                    <td class="text-center">
-                        <div class="flex justify-center gap-2">
-                            <button pButton icon="pi pi-pencil"
-                                class="p-button-sm p-button-text p-button-rounded p-button-info" pTooltip="Edit"
-                                tooltipPosition="top" (click)="onEdit(order)"></button>
-                            <button pButton icon="pi pi-trash"
-                                class="p-button-sm p-button-text p-button-rounded p-button-danger" pTooltip="Delete"
-                                tooltipPosition="top" (click)="onDelete(order)"></button>
-                        </div>
-                    </td>
-                </tr>
-            </ng-template>
-        </p-table>
-
+    <ng-template pTemplate="body" let-order>
+      <tr class="hover:bg-indigo-50 transition duration-150">
+        <td>{{ order.id }}</td>
+        <td>{{ order.style_no }}</td>
+        <td>{{ order.description }}</td>
+        <td>{{ order.age_group }}</td>
+        <td>{{ order.pattern }}</td>
+        <td>{{ order.order_date }}</td>
+        <td>{{ order.shipment_date }}</td>
+        <td>{{ order.buyer }}</td>
+        <td>{{ order.brand }}</td>
+        <td>{{ order.season }}</td>
+        <td>{{ order.remark }}</td>
+        <td class="text-center">
+          <div class="flex justify-center gap-2">
+            <button pButton icon="pi pi-pencil"
+              class="p-button-sm p-button-text p-button-rounded p-button-info" pTooltip="Edit"
+              tooltipPosition="top" (click)="onEdit(order)"></button>
+            <button pButton icon="pi pi-trash"
+              class="p-button-sm p-button-text p-button-rounded p-button-danger" pTooltip="Delete"
+              tooltipPosition="top" (click)="onDelete(order)"></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
 </div>
+
+<!-- Cutting Form Dialog -->
+<p-dialog [header]="hedding" [(visible)]="showForm" [modal]="true" [style]="{ width: '90vw', maxWidth: '500px' }"
+  [closable]="true" [dismissableMask]="true" [breakpoints]="{ '960px': '75vw', '640px': '90vw' }"
+  [styleClass]="'p-0 overflow-hidden rounded-xl shadow-md'">
+  <form [formGroup]="cuttingForm">
+    <div class="space-y-4 bg-gray-50 sm:p-6 p-4 rounded-xl shadow-sm">
+      <div class="flex flex-col sm:flex-row sm:items-end gap-4">
+        <div class="w-full sm:w-1/2">
+          <label class="block font-medium mb-1 text-gray-700">Date</label>
+          <p-calendar formControlName="issue_date" dateFormat="dd-mm-yy" [showIcon]="true" appendTo="body"
+            [baseZIndex]="10000"></p-calendar>
+        </div>
+
+        <div class="w-full sm:w-1/2">
+          <label class="block font-medium mb-1 text-gray-700">Delivery Date</label>
+          <p-calendar formControlName="delivery_date" dateFormat="dd-mm-yy" [showIcon]="true" appendTo="body"
+            [baseZIndex]="10000"></p-calendar>
+        </div>
+      </div>
+
+      <div>
+        <label class="block font-medium mb-1 text-gray-700">Select Cutter Name</label>
+        <p-dropdown formControlName="cutter_id" [options]="[{ id: 1, name: 'Cutter A' }, { id: 2, name: 'Cutter B' }]"
+          optionLabel="name" optionValue="id" placeholder="Select Cutter" class="w-full"></p-dropdown>
+      </div>
+
+      <div class="flex gap-4">
+        <div class="w-1/2">
+          <label class="block font-medium mb-1 text-gray-700">Lot No</label>
+          <input type="text" formControlName="lot_no"
+            class="w-full p-2 border border-gray-300 rounded focus:outline-none" />
+        </div>
+
+        <div class="w-1/2">
+          <label class="block font-medium mb-1 text-gray-700">Select PO Detail</label>
+          <div class="flex gap-2">
+            <input type="text" formControlName="po_qty_id" readonly
+              class="w-full p-2 border border-gray-300 rounded" />
+            <button type="button" (click)="gateAllpoQty()"
+              class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500">
+              <i class="pi pi-plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label class="block font-medium mb-1 text-gray-700">Total Quantity</label>
+        <input type="number" formControlName="total_qty"
+          class="w-full p-2 border border-gray-300 rounded focus:outline-none" />
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-4 mt-4 p-4">
+      <button type="submit" (click)="submitCuttingForm('Add')" *ngIf="hedding !== 'Edit Cutting Step'"
+        class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded">Save</button>
+      <button type="submit" (click)="submitCuttingForm('Update')" *ngIf="hedding === 'Edit Cutting Step'"
+        class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded">Update</button>
+      <button type="button" (click)="showForm = false"
+        class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded">Cancel</button>
+    </div>
+  </form>
+</p-dialog>
+
+<!-- PO Selection Dialog -->
+<p-dialog header="Select PO Detail" [(visible)]="showPoDialog" [modal]="true" [style]="{ width: '500px' }"
+  [dismissableMask]="true">
+  <table class="min-w-full text-sm text-gray-800">
+    <thead>
+      <tr class="bg-gray-200 text-left">
+        <th class="px-4 py-2">PO No</th>
+        <th class="px-4 py-2">Quantity</th>
+        <th class="px-4 py-2">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let po of poData" class="hover:bg-gray-50">
+        <td class="px-4 py-2">{{ po.po_no }}</td>
+        <td class="px-4 py-2">{{ po.qty }}</td>
+        <td class="px-4 py-2">
+          <button class="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded"
+            (click)="selectPO(po)">Select</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</p-dialog>

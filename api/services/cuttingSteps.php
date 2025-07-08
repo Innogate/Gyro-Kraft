@@ -199,7 +199,7 @@
         $offset = $current * $max;
 
         $sql = "SELECT id,style_no,description,age_group,pattern,order_date,buyer,brand,season,shipment_date,documents,remark
-                FROM orders
+                FROM orders WHERE stage = '1'
                 ORDER BY id DESC
                 LIMIT :limit OFFSET :offset";
 
