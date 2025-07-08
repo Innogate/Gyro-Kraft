@@ -62,10 +62,10 @@
             // Insert into orders
             $sql = "INSERT INTO orders (
                 style_no, description, order_date, buyer, brand, season,
-                age_group, shipment_date, pattern, remark, documents
+                age_group, shipment_date, pattern, remark, documents, stage
             ) VALUES (
                 :style_no, :description, :order_date, :buyer, :brand, :season,
-                :age_group, :shipment_date, :pattern, :remark, :documents
+                :age_group, :shipment_date, :pattern, :remark, :documents, :stage
             )";
             $stmt = $conn->prepare($sql);
             $stmt->bindValue(':style_no', $data['styleNo']);
@@ -78,6 +78,7 @@
             $stmt->bindValue(':shipment_date', $data['shipmentDate']);
             $stmt->bindValue(':pattern', $data['pattern']);
             $stmt->bindValue(':remark', $data['remark']);
+            $stmt->bindValue(':stage', $data['stage']);
             $stmt->bindValue(':documents', json_encode($data['documents']));
             $stmt->execute();
             $order_id = $conn->lastInsertId();
@@ -186,6 +187,7 @@
                 "shipmentDate" => $order['shipment_date'],
                 "documents" => json_decode($order['documents'], true),
                 "remark" => $order['remark'],
+                "stage" => $order['stage'],
             ];
 
             // Get poQty
@@ -201,10 +203,11 @@
                     "item" => $row['supplier'],
                     "color" => $row['pro_color'],
                     "combo" => $row['combo'],
-                    "size" => $row['size'], // Not in schema, leave blank or add column
-                    "qty" => $row['qty'],  // Not in schema, leave blank or add column
+                    "size" => $row['size'] ?? null,
+                    "qty" => $row['qty'] ?? null,
                 ];
             }, $poRows);
+
 
             // Get accessoriesBOM from `bom` table
             $sql = "SELECT * FROM bom WHERE order_id = :order_id";
@@ -256,7 +259,8 @@
                 shipment_date = :shipment_date,
                 pattern = :pattern,
                 remark = :remark,
-                documents = :documents
+                documents = :documents,
+                stage = :stage
             WHERE id = :id";
             $stmt = $conn->prepare($sql);
             $stmt->bindValue(':style_no', $data['styleNo']);
@@ -271,6 +275,7 @@
             $stmt->bindValue(':remark', $data['remark']);
             $stmt->bindValue(':documents', json_encode($data['documents']));
             $stmt->bindValue(':id', $data['id'], PDO::PARAM_INT);
+            $stmt->bindValue(':stage', $data['stage']);
             $stmt->execute();
         } catch (Exception $e) {
             $conn->rollBack();

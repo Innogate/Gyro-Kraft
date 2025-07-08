@@ -7,7 +7,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { StepperModule } from 'primeng/stepper';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { DynamicTableComponent } from '../component/dynamic-table/dynamic-table.component';
+import { DynamicTableComponent } from '../dynamic-table/dynamic-table.component';
 import { CalendarModule } from 'primeng/calendar';
 import { CutterNameService } from '../../services/cutterName.service';
 import { firstValueFrom } from 'rxjs';
@@ -87,7 +87,7 @@ export class OrderProcessComponent {
     { field: 'issue_date', header: 'Issue Date' },
     { field: 'delivery_date', header: 'Delivery Date' },
     { field: 'lot_no', header: 'Lot No' },
-  
+
     { field: 'po_qty_id', header: 'PO Qty ID' },
     { field: 'total_qty', header: 'Total Qty' },
   ];
@@ -113,7 +113,7 @@ export class OrderProcessComponent {
     { field: 'deffective_qty', header: 'Deffective Qty' },
     { field: 'remark', header: 'Remark' },
   ]
-   
+
 
 
   toggleForm() {

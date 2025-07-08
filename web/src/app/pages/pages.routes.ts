@@ -5,7 +5,7 @@ import { CutterNameComponent } from './master/cutter-name/cutter-name.component'
 import { OrdersheetComponent } from './ordersheet/ordersheet.component';
 import { AuthGuard } from './auth/auth.guard';
 import { PrinterMasterComponent } from './master/printer-master/printer-master.component';
-import { OrderProcessComponent } from './order-process/order-process.component';
+import { OrderProcessComponent } from '../components/order-process/order-process.component';
 import { CuttingPageComponent } from './cutting-page/cutting-page.component';
 
 export default [
