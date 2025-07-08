@@ -1,20 +1,22 @@
 services:
   angular:
     image: tuhinsu/angular:lts
-    container_name: angular
+    container_name: angular.${PROJECT_NAME}
     restart: unless-stopped
     user: vscode
+    environment:
+      - PRODUCTION=${PRODUCTION}
     volumes:
       - dotfiles:/home/vscode
       - ./web:/app
     # ports:
     #   - "4200:4200"
     working_dir: /app
-    # command:  bash start.sh
+    command:  bash start.sh
     
   db:
     image: mariadb
-    container_name: db
+    container_name: db.${PROJECT_NAME}
     restart: unless-stopped
     # ports:
     #   - "3306:3306"
@@ -31,7 +33,7 @@ services:
 
   php:
     image: tuhinsu/php
-    container_name: api
+    container_name: api.${PROJECT_NAME}
     restart: unless-stopped
     command: "bash start.sh"
     working_dir: /app
@@ -50,3 +52,4 @@ services:
 
 volumes:
   dotfiles:
+    external: true
