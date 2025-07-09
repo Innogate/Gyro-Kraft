@@ -23,20 +23,32 @@ interface POData {
 }
 
 @Component({
-    selector: 'app-cutting-page',
-    imports: [ReactiveFormsModule, CommonModule, DialogModule, DropdownModule, FileUploadModule, InputTextModule, CalendarModule, ButtonModule, TableModule, InputNumberModule, TextareaModule, DynamicTableComponent],
-    templateUrl: './cutting-page.component.html',
-    styleUrl: './cutting-page.component.scss'
+    selector: 'app-print-page',
+    imports: [
+        DropdownModule,
+        TextareaModule,
+        InputNumberModule,
+        ButtonModule,
+        InputTextModule,
+        CalendarModule,
+        FileUploadModule,
+        DialogModule,
+        TableModule,
+        ReactiveFormsModule,
+        CommonModule
+    ],
+    templateUrl: './print-page.component.html',
+    styleUrl: './print-page.component.scss'
 })
-export class CuttingPageComponent implements OnInit {
+export class PrintPageComponent implements OnInit {
     ordersList: any[] = [];
     selectedOrder: any | null = null;
 
     showForm = false;
     showPoDialog = false;
-    hedding = 'Add Cutting Step';
+    hedding = 'Add Printing Step';
 
-    cuttingForm!: FormGroup;
+    printingForm!: FormGroup;
 
     CutterName = [
         { id: 1, name: 'John Doe' },
@@ -102,7 +114,7 @@ export class CuttingPageComponent implements OnInit {
     }
 
     initForm() {
-        this.cuttingForm = this.fb.group({
+        this.printingForm = this.fb.group({
             issue_date: [null, Validators.required],
             delivery_date: [null],
             cutter_id: [null, Validators.required],
@@ -113,12 +125,12 @@ export class CuttingPageComponent implements OnInit {
     }
 
     submitCuttingForm(action: 'Add' | 'Update') {
-        if (this.cuttingForm.invalid) {
-            this.cuttingForm.markAllAsTouched();
+        if (this.printingForm.invalid) {
+            this.printingForm.markAllAsTouched();
             return;
         }
 
-        const formData = this.cuttingForm.value;
+        const formData = this.printingForm.value;
         console.log('Submitted Data:', formData);
 
         if (action === 'Add') {
@@ -147,11 +159,9 @@ export class CuttingPageComponent implements OnInit {
         }
 
         // ✅ Reset & close form
-        this.cuttingForm.reset();
+        this.printingForm.reset();
         this.showForm = false;
     }
-
-
 
     getCutterNameById(id: number): string {
         const cutter = this.CutterName.find((c: any) => c.id === id);
@@ -213,7 +223,7 @@ export class CuttingPageComponent implements OnInit {
         this.hedding = 'Edit Cutting Step';
         this.showForm = true;
 
-        this.cuttingForm.patchValue({
+        this.printingForm.patchValue({
             issue_date: new Date(), // replace with order.issue_date if available
             delivery_date: new Date(),
             cutter_id: null,
@@ -237,17 +247,15 @@ export class CuttingPageComponent implements OnInit {
     }
 
     selectPO(po: POData) {
-        this.cuttingForm.patchValue({ po_qty_id: po.po_no });
+        this.printingForm.patchValue({ po_qty_id: po.po_no });
         this.showPoDialog = false;
     }
 
     toggleForm() {
         this.hedding = 'Add Cutting Step';
-        this.cuttingForm.reset();
+        this.printingForm.reset();
         this.showForm = true;
     }
-
-
 
     showAllPoQty() {
         // Optional section, if you want to show another block of PO data

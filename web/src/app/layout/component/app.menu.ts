@@ -40,7 +40,7 @@ export class AppMenu {
                     {
                         label: 'Print',
                         icon: 'pi pi-fw pi-print',
-                        routerLink: ['/print']
+                        routerLink: ['/pages/printing-page']
                     },
                     {
                         label: 'Stitch',
