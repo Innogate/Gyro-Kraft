@@ -20,6 +20,9 @@ import { CutterName } from './interface/cutter-name';
   providedIn: 'root'
 })
 export class CutterNameService {
+  getCutterList(arg0: { page: number; pageSize: number; }) {
+      throw new Error('Method not implemented.');
+  }
   constructor(private apiService: BaseService) {}
 
   // gate all data
