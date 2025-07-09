@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { TableModule } from 'primeng/table';
 import { firstValueFrom, tap } from 'rxjs';
 import { SweetAlertService } from '../../utility/sweet-alert.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
@@ -62,11 +62,13 @@ export class CuttingPageComponent implements OnInit {
     pageSize = 10;
     totalRecords = 0;
 
+    selectProduct: any = null;
+
     constructor(
         private fb: FormBuilder,
         private service: CutterNameService,
         private alert: SweetAlertService,
-        private router: Router
+        private router: Router,
     ) {}
 
     ngOnInit(): void {
@@ -210,8 +212,10 @@ export class CuttingPageComponent implements OnInit {
 
     onEdit(order: any) {
         this.selectedOrder = order;
+        this.selectProduct = order.id;
+        console.log(this.selectProduct)
         this.hedding = 'Edit Cutting Step';
-        this.showForm = true;
+
 
         this.cuttingForm.patchValue({
             issue_date: new Date(), // replace with order.issue_date if available

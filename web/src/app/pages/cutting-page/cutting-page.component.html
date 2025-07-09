@@ -32,7 +32,7 @@
                 <td>{{ order.remark }}</td>
                 <td class="text-center">
                     <div class="flex justify-center gap-2">
-                        <button pButton icon="pi pi-pencil" class="p-button-sm p-button-text p-button-rounded p-button-info" pTooltip="Edit" tooltipPosition="top" (click)="displayCuttingPopup = true"></button>
+                        <button pButton icon="pi pi-pencil" class="p-button-sm p-button-text p-button-rounded p-button-info" pTooltip="Edit" tooltipPosition="top" (click)="displayCuttingPopup = true; onEdit(order)"></button>
                         <button pButton icon="pi pi-trash" class="p-button-sm p-button-text p-button-rounded p-button-danger" pTooltip="Delete" tooltipPosition="top" (click)="onDelete(order)"></button>
                     </div>
                 </td>
