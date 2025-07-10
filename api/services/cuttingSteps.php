@@ -196,10 +196,38 @@
 
         $offset = $current * $max;
 
-        $sql = "SELECT id,style_no,description,age_group,pattern,order_date,buyer,brand,season,shipment_date,documents,remark
-                FROM orders WHERE stage = '1'
-                ORDER BY id DESC
-                LIMIT :limit OFFSET :offset";
+        // $sql = "SELECT id,style_no,description,age_group,pattern,order_date,buyer,brand,season,shipment_date,documents,remark
+        //         FROM orders WHERE stage = '1'
+        //         ORDER BY id DESC
+        //         LIMIT :limit OFFSET :offset";
+
+        $sql = "SELECT 
+    o.id,
+    o.style_no,
+    o.description,
+    o.age_group,
+    o.pattern,
+    o.order_date,
+    o.buyer,
+    o.brand,
+    o.season,
+    o.shipment_date,
+    o.documents,
+    o.remark,
+    COALESCE(SUM(q.qty), 0) AS total_qty
+FROM 
+    orders o
+LEFT JOIN 
+    order_po_qty q ON o.id = q.order_id
+WHERE 
+    o.stage = '1'
+GROUP BY 
+    o.id, o.style_no, o.description, o.age_group, o.pattern,
+    o.order_date, o.buyer, o.brand, o.season, o.shipment_date, o.documents, o.remark
+ORDER BY 
+    o.id DESC
+LIMIT :limit OFFSET :offset;
+";
 
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':limit', $max, PDO::PARAM_INT);

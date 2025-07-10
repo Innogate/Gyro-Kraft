@@ -74,7 +74,7 @@ export class CuttingPageComponent implements OnInit {
     togolData: { [key: number]: any[] } = {}; // key = index of row
     currentPage: number = 1;
     rowForm!: FormGroup;
-
+    totalQty: number = 0;
     constructor(
         private fb: FormBuilder,
         private service: CutterNameService,
@@ -443,7 +443,8 @@ export class CuttingPageComponent implements OnInit {
     onEdit(order: any) {
         this.selectedOrder = order;
         this.selectProduct = order.id;
-        this.hedding = 'Edit Cutting Step';
+        // console.log("value", order) 
+        this.totalQty = order.total_qty;       
         this.fetchAndPatchCuttingStep(this.selectProduct);
     }
 

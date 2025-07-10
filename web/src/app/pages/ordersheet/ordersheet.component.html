@@ -10,12 +10,29 @@
 
             <!-- Main Fields Grid -->
             <!-- Style No -->
-            <div>
-                <label class="block font-medium mb-1" for="styleNo">Style No *</label>
-                <input id="styleNo" pInputText formControlName="styleNo" placeholder="Style No" class="w-full" />
-                <small *ngIf="f['styleNo'].invalid && f['styleNo'].touched" class="text-red-600">Style No is
-                    required.</small>
+            <div class="flex gap-4">
+
+                <!-- Style No Field -->
+                <div class="w-1/2">
+                    <label class="block font-medium mb-1" for="styleNo">Style No *</label>
+                    <input id="styleNo" pInputText formControlName="styleNo" placeholder="Style No" class="w-full" />
+                    <small *ngIf="f['styleNo'].invalid && f['styleNo'].touched" class="text-red-600">
+                        Style No is required.
+                    </small>
+                </div>
+
+                <!-- Order ID Field -->
+                <div class="w-1/2">
+                    <label class="block font-medium mb-1" for="orderId">Order ID </label>
+                    <input id="orderId" pInputText formControlName="id" placeholder="Order ID" class="w-full"
+                        readonly />
+                    <!-- <small *ngIf="f['order_id'].invalid && f['order_id'].touched" class="text-red-600">
+                        Order ID is required.
+                    </small> -->
+                </div>
+
             </div>
+
 
             <!-- description No -->
             <div>
@@ -85,9 +102,8 @@
                 <!-- Process Step Dropdown -->
                 <div>
                     <label class="block font-medium mb-1" for="stage">Process Step</label>
-                    <p-dropdown id="stage" [options]="processSteps" formControlName="stage"
-                        optionLabel="label" optionValue="value" placeholder="Select Process Step"
-                        class="w-full"></p-dropdown>
+                    <p-dropdown id="stage" [options]="processSteps" formControlName="stage" optionLabel="label"
+                        optionValue="value" placeholder="Select Process Step" class="w-full"></p-dropdown>
                     <small *ngIf="f['stage'].invalid && f['stage'].touched" class="text-red-600">
                         Process Step is required.
                     </small>
@@ -111,106 +127,104 @@
             </div>
 
             <!-- PO Qty Section -->
-           <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-200">
-    <div class="flex justify-between items-center mb-4">
-        <h3 class="text-xl font-semibold text-gray-800 flex items-center gap-2">
-            <i class="pi pi-shopping-cart text-blue-500"></i>
-            PO Quantity
-        </h3>
-        <button pButton type="button" label="Add PO Qty" icon="pi pi-plus" 
-                class="p-button-sm p-button-outlined p-button-primary"
-                (click)="addPOQty()"></button>
-    </div>
+            <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-200">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-800 flex items-center gap-2">
+                        <i class="pi pi-shopping-cart text-blue-500"></i>
+                        PO Quantity
+                    </h3>
+                    <button pButton type="button" label="Add PO Qty" icon="pi pi-plus"
+                        class="p-button-sm p-button-outlined p-button-primary" (click)="addPOQty()"></button>
+                </div>
 
-    <!-- Total Quantity Display -->
-    <div class="bg-blue-50 p-3 rounded-md mb-4 flex justify-between items-center">
-        <span class="font-medium text-gray-700 flex items-center gap-2">
-            <i class="pi pi-chart-bar text-blue-500"></i>
-            Total Quantity:
-        </span>
-        <span class="text-xl font-bold text-blue-600">
-            {{ calculateTotalQty() | number }}
-        </span>
-    </div>
+                <!-- Total Quantity Display -->
+                <div class="bg-blue-50 p-3 rounded-md mb-4 flex justify-between items-center">
+                    <span class="font-medium text-gray-700 flex items-center gap-2">
+                        <i class="pi pi-chart-bar text-blue-500"></i>
+                        Total Quantity:
+                    </span>
+                    <span class="text-xl font-bold text-blue-600">
+                        {{ calculateTotalQty() | number }}
+                    </span>
+                </div>
 
-    <p-table [value]="poQty.controls" dataKey="combo" [scrollable]="true" scrollHeight="300px"
-        responsiveLayout="scroll" [showGridlines]="false" [style]="{ 'min-width': '100%' }"
-        class="custom-table">
-        
-        <ng-template pTemplate="header">
-            <tr class="bg-gray-50">
-                <th class="p-3 text-left">
-                    <i class="pi pi-box mr-2 text-blue-500"></i>Fabric
-                </th>
-                <th class="p-3 text-left">
-                    <i class="pi pi-tag mr-2 text-blue-500"></i>Item
-                </th>
-                <th class="p-3 text-left">
-                    <i class="pi pi-palette mr-2 text-blue-500"></i>Color
-                </th>
-                <th class="p-3 text-left">
-                    <i class="pi pi-th-large mr-2 text-blue-500"></i>Combo
-                </th>
-                <th class="p-3 text-left">
-                    <i class="pi pi-ruler mr-2 text-blue-500"></i>Size
-                </th>
-                <th class="p-3 text-left">
-                    <i class="pi pi-sort-numeric-up mr-2 text-blue-500"></i>Qty
-                </th>
-                <th class="p-3 text-center">
-                    <i class="pi pi-cog text-blue-500"></i>Actions
-                </th>
-            </tr>
-        </ng-template>
+                <p-table [value]="poQty.controls" dataKey="combo" [scrollable]="true" scrollHeight="300px"
+                    responsiveLayout="scroll" [showGridlines]="false" [style]="{ 'min-width': '100%' }"
+                    class="custom-table">
 
-        <ng-template pTemplate="body" let-poQtyGroup let-ri="rowIndex">
-            <tr [formGroup]="poQtyGroup" class="hover:bg-blue-50/50 transition-colors">
-                <td class="p-3">
-                    <input pInputText formControlName="fabric" placeholder="Enter fabric" 
-                           class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-200" />
-                </td>
-                <td class="p-3">
-                    <input pInputText formControlName="item" placeholder="Enter item" 
-                           class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-200" />
-                </td>
-                <td class="p-3">
-                    <input pInputText formControlName="color" placeholder="Enter color" 
-                           class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-200" />
-                </td>
-                <td class="p-3">
-                    <input pInputText formControlName="combo" placeholder="Enter combo" 
-                           class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-200" />
-                </td>
-                <td class="p-3">
-                    <input pInputText formControlName="size" placeholder="Enter size" 
-                           class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-200" />
-                </td>
-                <td class="p-3">
-                    <input type="number" pInputText formControlName="qty" placeholder="0" min="0"
-                           class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-200"
-                           (change)="updateTotalQty()" />
-                </td>
-                <td class="p-3 text-center">
-                    <button pButton type="button" icon="pi pi-trash" 
-                            class="p-button-sm p-button-rounded p-button-text p-button-danger hover:bg-red-100"
-                            pTooltip="Remove row" tooltipPosition="top"
-                            (click)="removePOQty(ri)"></button>
-                </td>
-            </tr>
-        </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr class="bg-gray-50">
+                            <th class="p-3 text-left">
+                                <i class="pi pi-box mr-2 text-blue-500"></i>Fabric
+                            </th>
+                            <th class="p-3 text-left">
+                                <i class="pi pi-tag mr-2 text-blue-500"></i>Item
+                            </th>
+                            <th class="p-3 text-left">
+                                <i class="pi pi-palette mr-2 text-blue-500"></i>Color
+                            </th>
+                            <th class="p-3 text-left">
+                                <i class="pi pi-th-large mr-2 text-blue-500"></i>Combo
+                            </th>
+                            <th class="p-3 text-left">
+                                <i class="pi pi-ruler mr-2 text-blue-500"></i>Size
+                            </th>
+                            <th class="p-3 text-left">
+                                <i class="pi pi-sort-numeric-up mr-2 text-blue-500"></i>Qty
+                            </th>
+                            <th class="p-3 text-center">
+                                <i class="pi pi-cog text-blue-500"></i>Actions
+                            </th>
+                        </tr>
+                    </ng-template>
 
-        <ng-template pTemplate="emptymessage">
-            <tr>
-                <td colspan="7" class="p-4 text-center text-gray-400">
-                    <div class="flex flex-col items-center justify-center py-4">
-                        <i class="pi pi-inbox text-3xl text-gray-300 mb-2"></i>
-                        <p>No PO quantities added yet</p>
-                    </div>
-                </td>
-            </tr>
-        </ng-template>
-    </p-table>
-</div>
+                    <ng-template pTemplate="body" let-poQtyGroup let-ri="rowIndex">
+                        <tr [formGroup]="poQtyGroup" class="hover:bg-blue-50/50 transition-colors">
+                            <td class="p-3">
+                                <input pInputText formControlName="fabric" placeholder="Enter fabric"
+                                    class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-200" />
+                            </td>
+                            <td class="p-3">
+                                <input pInputText formControlName="item" placeholder="Enter item"
+                                    class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-200" />
+                            </td>
+                            <td class="p-3">
+                                <input pInputText formControlName="color" placeholder="Enter color"
+                                    class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-200" />
+                            </td>
+                            <td class="p-3">
+                                <input pInputText formControlName="combo" placeholder="Enter combo"
+                                    class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-200" />
+                            </td>
+                            <td class="p-3">
+                                <input pInputText formControlName="size" placeholder="Enter size"
+                                    class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-200" />
+                            </td>
+                            <td class="p-3">
+                                <input type="number" pInputText formControlName="qty" placeholder="0" min="0"
+                                    class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-200"
+                                    (change)="updateTotalQty()" />
+                            </td>
+                            <td class="p-3 text-center">
+                                <button pButton type="button" icon="pi pi-trash"
+                                    class="p-button-sm p-button-rounded p-button-text p-button-danger hover:bg-red-100"
+                                    pTooltip="Remove row" tooltipPosition="top" (click)="removePOQty(ri)"></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="7" class="p-4 text-center text-gray-400">
+                                <div class="flex flex-col items-center justify-center py-4">
+                                    <i class="pi pi-inbox text-3xl text-gray-300 mb-2"></i>
+                                    <p>No PO quantities added yet</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
 
             <!-- BOM Accessories Section -->
             <div>
@@ -240,13 +254,16 @@
                                     class="w-full" />
                             </td>
                             <td>
-                                <input type="number" pInputText formControlName="consumption" placeholder="Consumption"
+                                <input type="test" pInputText formControlName="consumption" placeholder="Consumption"
                                     class="w-full" min="0" />
                             </td>
 
                             <td>
-                                <input pInputText formControlName="status" placeholder="Status" class="w-full" />
+                                <p-dropdown formControlName="status" [options]="statusOptions" optionLabel="label"
+                                    optionValue="value" appendTo="body" placeholder="Select Status" class="w-full">
+                                </p-dropdown>
                             </td>
+
 
                             <td>
                                 <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-danger"
@@ -262,19 +279,18 @@
                     {{ isEdit ? 'Update' : 'Submit' }}
                 </button>
             </div>
-
         </form>
     </div>
 
 
 
     <div *ngIf="!showForm && ordersList" class="p-6 bg-gray-50 min-h-screen">
-        <p-table [value]="ordersList" [paginator]="true" [rows]="5" [responsiveLayout]="'scroll'"
+        <p-table [value]="ordersList" [paginator]="true" [rows]="20" [responsiveLayout]="'scroll'"
             class="rounded-xl shadow-md border border-gray-200 bg-white" styleClass="modern-table">
             <ng-template pTemplate="header">
                 <tr
                     class="bg-gradient-to-r from-indigo-100 to-white text-gray-700 font-semibold text-sm uppercase tracking-wider">
-                    <th><i class="pi pi-hashtag mr-1 text-indigo-400"></i>ID</th>
+                    <th><i class="pi pi-hashtag mr-1 text-indigo-400"></i>Order ID</th>
                     <th><i class="pi pi-tag mr-1 text-indigo-400"></i>Style</th>
                     <th><i class="pi pi-align-left mr-1 text-indigo-400"></i>Description</th>
                     <th><i class="pi pi-user mr-1 text-indigo-400"></i>Age</th>
