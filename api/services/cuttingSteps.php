@@ -18,8 +18,8 @@
         $conn = $dbInstance->pdo;
         $conn->beginTransaction();
         try {
-        $sql = "INSERT INTO cutting (order_id, issue_date, delivery_date, cutter_id, po_qty_id, lot_no, total_qty, created_by, created_at) 
-            VALUES (:order_id, :issue_date,:delivery_date, :cutter_id, :po_qty_id, :lot_no, :total_qty, :created_by, NOW())";
+        $sql = "INSERT INTO cutting (order_id, issue_date, delivery_date, cutter_id, lot_no, total_qty, created_by, created_at) 
+            VALUES (:order_id, :issue_date,:delivery_date, :cutter_id, :lot_no, :total_qty, :created_by, NOW())";
 
             $data->created_by = $_user->id;
             // $data->date = date('d-m-y', strtotime($data->issue_date));
@@ -29,7 +29,6 @@
             $stmt->bindValue(':issue_date', $data->issue_date);
             $stmt->bindValue(':delivery_date', $data->delivery_date);
             $stmt->bindValue(':cutter_id', $data->cutter_id);
-            $stmt->bindValue(':po_qty_id', $data->po_qty_id);
             $stmt->bindValue(':lot_no', $data->lot_no);
             $stmt->bindValue(':total_qty', $data->total_qty);
             $stmt->bindValue(':created_by', $data->created_by);
@@ -58,7 +57,7 @@
         $conn->beginTransaction();
         try {
             $sql = "UPDATE cutting SET issue_date = :issue_date, delivery_date = :delivery_date, 
-                    cutter_id = :cutter_id, po_qty_id = :po_qty_id, lot_no = :lot_no, total_qty = :total_qty, 
+                    cutter_id = :cutter_id, lot_no = :lot_no, total_qty = :total_qty, 
                     updated_by = :updated_by, updated_at = NOW() WHERE id = :id";
 
             $data->updated_by = $_user->id;
@@ -68,7 +67,6 @@
             $stmt->bindValue(':issue_date', $data->issue_date);
             $stmt->bindValue(':delivery_date', $data->delivery_date);
             $stmt->bindValue(':cutter_id', $data->cutter_id);
-            $stmt->bindValue(':po_qty_id', $data->po_qty_id);
             $stmt->bindValue(':lot_no', $data->lot_no);
             $stmt->bindValue(':total_qty', $data->total_qty);
             $stmt->bindValue(':updated_by', $data->updated_by);
@@ -198,10 +196,38 @@
 
         $offset = $current * $max;
 
-        $sql = "SELECT id,style_no,description,age_group,pattern,order_date,buyer,brand,season,shipment_date,documents,remark
-                FROM orders WHERE stage = '1'
-                ORDER BY id DESC
-                LIMIT :limit OFFSET :offset";
+        // $sql = "SELECT id,style_no,description,age_group,pattern,order_date,buyer,brand,season,shipment_date,documents,remark
+        //         FROM orders WHERE stage = '1'
+        //         ORDER BY id DESC
+        //         LIMIT :limit OFFSET :offset";
+
+        $sql = "SELECT 
+    o.id,
+    o.style_no,
+    o.description,
+    o.age_group,
+    o.pattern,
+    o.order_date,
+    o.buyer,
+    o.brand,
+    o.season,
+    o.shipment_date,
+    o.documents,
+    o.remark,
+    COALESCE(SUM(q.qty), 0) AS total_qty
+FROM 
+    orders o
+LEFT JOIN 
+    order_po_qty q ON o.id = q.order_id
+WHERE 
+    o.stage = '1'
+GROUP BY 
+    o.id, o.style_no, o.description, o.age_group, o.pattern,
+    o.order_date, o.buyer, o.brand, o.season, o.shipment_date, o.documents, o.remark
+ORDER BY 
+    o.id DESC
+LIMIT :limit OFFSET :offset;
+";
 
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':limit', $max, PDO::PARAM_INT);

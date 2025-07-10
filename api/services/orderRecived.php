@@ -54,7 +54,7 @@ $router->add('POST', '/orderReceived/getByOrderId', function () {
     $handler = new Handler();  
     $_user = $jwt->validate();
     $data = json_decode(file_get_contents("php://input"));
-    if (!$data || !isset($data->order_id)) {
+    if (!$data || !isset($data->cutting_id)) {
         (new ApiResponse(400, "Invalid input data"))->toJson();
         return;
     }
@@ -73,11 +73,12 @@ $router->add('POST', '/orderReceived/getByOrderId', function () {
         FROM order_received
         LEFT JOIN cutting ON order_received.cutting_id = cutting.id
         LEFT JOIN cutters ON cutters.id = cutting.cutter_id
-        WHERE order_received.order_id = :order_id";
+        WHERE order_received.cutting_id = :cutting_id
+        ORDER BY order_received.received_date DESC";
 
 
         $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':order_id', $data->order_id);
+        $stmt->bindParam(':cutting_id', $data->cutting_id);
         $stmt->execute();
         
         if ($stmt->rowCount() > 0) {

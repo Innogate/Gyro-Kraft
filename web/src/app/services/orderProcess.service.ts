@@ -32,7 +32,7 @@ export class OrderProcessService {
         return this.apiService.post('/orderReceived/add', payload);
     }
 
-    GateAllOrderReceiveByOrderId(payload: any): Observable<ApiResponse<any>> {
+    GateAllOrderReceiveById(payload: any): Observable<ApiResponse<any>> {
         return this.apiService.post('/orderReceived/getByOrderId', payload);
     }
 

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import {
     FormArray,
     FormBuilder,
@@ -50,8 +50,14 @@ export class OrdersheetComponent {
     articleDialogVisible = false;
     selectedPOIndex = -1;
     updateId = 0;
+
+    statusOptions = [
+        { label: 'Pending', value: '0' },
+        { label: 'Complete', value: '1' }
+    ];
+
     processSteps = [
-        { label: 'Order', value: '0' },
+        // { label: 'Order', value: '0' },
         { label: 'Cutting', value: '1' },
         { label: 'Print', value: '2' },
         { label: 'Stitch', value: '3' },
@@ -65,9 +71,11 @@ export class OrdersheetComponent {
         private fb: FormBuilder,
         private service: OrderService,
         private alert: SweetAlertService,
-        private router: Router
+        private router: Router,
+        private cdRef: ChangeDetectorRef
     ) {
         this.orderForm = this.fb.group({
+            id: [],
             styleNo: ['', Validators.required],
             description: ['', Validators.required],
             date: [null, Validators.required],
@@ -86,6 +94,20 @@ export class OrdersheetComponent {
         });
 
         this.fetchOrderList();
+    }
+
+
+    // Calculate total quantity
+    calculateTotalQty(): number {
+        return this.poQty.controls.reduce((total, group) => {
+            return total + (+group.get('qty')?.value || 0);
+        }, 0);
+    }
+
+    // Update total when quantity changes
+    updateTotalQty(): void {
+        // This will trigger change detection
+        this.cdRef.detectChanges();
     }
 
     toggleForm() {
@@ -130,8 +152,6 @@ export class OrdersheetComponent {
                 tap(
                     (response) => {
                         if (response.status == 200) {
-                            console.log(response.body);
-
                             // Clear the poQty form array
                             while (this.poQty.length !== 0) {
                                 this.poQty.removeAt(0);
@@ -218,7 +238,7 @@ export class OrdersheetComponent {
                 item: [''],
                 description: [''],
                 consumption: [''],
-                status: [''],
+                status: ['0'],
             })
         );
     }
@@ -292,13 +312,11 @@ export class OrdersheetComponent {
         this.orderForm.patchValue({
             date: this.convertToMysqlDate(this.orderForm.value.date),
             shipmentDate: this.convertToMysqlDate(this.orderForm.value.shipmentDate),
-            deadlineDate: this.convertToMysqlDate(this.orderForm.value.deadlineDate)
+            deadlineDate: this.convertToMysqlDate(this.orderForm.value.deadlineDate),
         })
 
         if (this.isEdit) {
-
             const payload = { ...this.orderForm.value, id: this.updateId };
-
             await firstValueFrom(this.service.update(payload).pipe(
                 tap(
                     (response) => {
@@ -321,6 +339,9 @@ export class OrdersheetComponent {
                         console.log(response);
                         console.log('Setting orderId to localStorage:', response.body.orderId);
                         localStorage.setItem('orderId', response.body.orderId);
+                        this.orderForm.patchValue({
+                            id: response.body.orderId
+                        })
                         this.alert.successAlert('Success', 'Order submitted successfully.');
                     }
                 },

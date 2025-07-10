@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { firstValueFrom, tap } from 'rxjs';
 import { SweetAlertService } from '../../utility/sweet-alert.service';
@@ -15,6 +15,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { TextareaModule } from 'primeng/textarea';
 import { CutterNameService } from '../../services/cutterName.service';
 import { DynamicTableComponent } from '../../components/dynamic-table/dynamic-table.component';
+import { OrderProcessService } from '../../services/orderProcess.service';
+import dayjs from 'dayjs';
 
 interface POData {
     id: number;
@@ -22,11 +24,28 @@ interface POData {
     qty: number;
 }
 
+interface CuttingRow {
+    id: number;
+    order_id: number | null;
+    cutter_id: number;
+    issue_date: string;
+    delivery_date: string;
+    lot_no: string;
+    total_qty: number;
+}
+
+
 @Component({
     selector: 'app-cutting-page',
-    imports: [ReactiveFormsModule, CommonModule, DialogModule, DropdownModule, FileUploadModule, InputTextModule, CalendarModule, ButtonModule, TableModule, InputNumberModule, TextareaModule, DynamicTableComponent],
+    standalone: true,
+    imports: [
+        ReactiveFormsModule, FormsModule, CommonModule, DialogModule,
+        DropdownModule, FileUploadModule, InputTextModule, CalendarModule,
+        ButtonModule, TableModule, InputNumberModule, TextareaModule,
+        DynamicTableComponent
+    ],
     templateUrl: './cutting-page.component.html',
-    styleUrl: './cutting-page.component.scss'
+    styleUrls: ['./cutting-page.component.scss']
 })
 export class CuttingPageComponent implements OnInit {
     ordersList: any[] = [];
@@ -35,55 +54,292 @@ export class CuttingPageComponent implements OnInit {
     showForm = false;
     showPoDialog = false;
     hedding = 'Add Cutting Step';
-
-    cuttingForm!: FormGroup;
-
+    isSaving = false;
+    cutter: any = [];
     CutterName = [
-        { id: 1, name: 'John Doe' },
-        { id: 2, name: 'Jane Smith' },
-        { id: 3, name: 'Ali Khan' }
-    ];
-
+        { id: 0, name: '' },];
     poData: POData[] = [];
-    tableData: any[] = [];
+    tableData: CuttingRow[] = [];
     tableDataReceive: any[] = [];
-
     tableColumns: any[] = [];
     tableColumnsPoqt: any[] = [];
     tableColumnsReceive: any[] = [];
-
-    displayCuttingPopup: boolean = false;
-    sweetAlertService: any;
-    receiveForm: any;
-    orderID: any;
-    ReceiveHedding: string | undefined;
-    ReceiveShowForm: boolean | undefined;
-
+    displayCuttingPopup = false;
     pageSize = 10;
     totalRecords = 0;
-
     selectProduct: any = null;
-
+    form!: FormGroup;
+    recivePopup: boolean = false;
+    reciveForm!: FormGroup;
+    togolData: { [key: number]: any[] } = {}; // key = index of row
+    currentPage: number = 1;
+    rowForm!: FormGroup;
+    totalQty: number = 0;
     constructor(
         private fb: FormBuilder,
         private service: CutterNameService,
         private alert: SweetAlertService,
         private router: Router,
-    ) {}
+        private orderProcess: OrderProcessService
+    ) {
+
+        this.reciveForm = this.fb.group({
+            order_id: [],
+            cutting_id: [],
+            received_date: [],
+            received_qty: [],
+            deffective_qty: [],
+            remark: ['']
+        })
+    }
 
     ngOnInit(): void {
-        this.initForm();
         this.fetchOrderList();
         this.fetchCutterList();
-
-        // 🧠 Load saved table data from localStorage
+        this.getAllCutter();
         const savedData = localStorage.getItem('cuttingTableData');
         this.tableData = savedData ? JSON.parse(savedData) : [];
         this.totalRecords = this.tableData.length;
+        this.form = this.fb.group({
+            rows: this.fb.array([])
+        });
+        this.addRow();
+    }
+
+    get rows(): FormArray {
+        return this.form.get('rows') as FormArray;
+    }
+
+    addRow() {
+        if (!this.selectProduct) {
+            return;
+        }
+
+        const hasEmptyRow = this.rows.controls.some(ctrl => {
+            const val = ctrl.value;
+            return !val.cutter_id && !val.issue_date && !val.total_qty;
+        });
+
+        if (hasEmptyRow) return;
+        this.rowForm = this.fb.group({
+            id: [],
+            order_id: [this.selectProduct],
+            cutter_id: [null, Validators.required],
+            issue_date: [null, Validators.required],
+            delivery_date: [null],
+            lot_no: [''],
+            total_qty: [0, Validators.required],
+            expanded: [false]
+        });
+        this.rows.insert(0, this.rowForm);
+        this.totalRecords = this.rows.length;
+    }
+
+
+
+    saveRow(row: FormGroup) {
+        if (row.valid) {
+            this.alert.successAlert('Saved', 'Row data saved successfully.');
+        } else {
+            row.markAllAsTouched();
+            this.alert.warningAlert('Validation Error', 'Please fill in all required fields.');
+        }
+    }
+
+    removeRow(index: number) {
+        this.rows.removeAt(index);
+        this.totalRecords = this.rows.length;
+    }
+    convertToYyyyMmDd(dateInput: string | Date): string {
+        if (!dateInput) return '';
+
+        const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
+
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
+    }
+
+    convertToDdMmYyyy(dateInput: string | Date): string {
+        if (!dateInput) return '';
+
+        const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
+
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+
+        return `${day}-${month}-${year}`;
+    }
+
+
+    async saveAll() {
+        this.isSaving = true;
+
+        const invalidRows = this.rows.controls.filter(ctrl => ctrl.invalid);
+        if (invalidRows.length > 0) {
+            invalidRows.forEach(ctrl => ctrl.markAllAsTouched());
+            this.alert.warningAlert('Validation', 'Please fill all required fields.');
+            this.isSaving = false;
+            return;
+        }
+
+        const rows: CuttingRow[] = this.rows.controls.map(ctrl => ctrl.value as CuttingRow);
+        let successCount = 0;
+        let errorCount = 0;
+
+        for (const row of rows) {
+            const payload = {
+                id: row.id,
+                order_id: row.order_id,
+                issue_date: this.convertToYyyyMmDd(row.issue_date),
+                delivery_date: this.convertToYyyyMmDd(row.delivery_date),
+                cutter_id: row.cutter_id,
+                lot_no: row.lot_no,
+                total_qty: row.total_qty
+            };
+
+            try {
+                let response;
+                if (row.id) {
+                    response = await firstValueFrom(this.orderProcess.updateCuttingStep(payload));
+                } else {
+                    response = await firstValueFrom(this.orderProcess.addCuttingStep(payload));
+                }
+
+                if (response.status === 200 || response.status === 201) {
+                    successCount++;
+                } else {
+                    errorCount++;
+                }
+            } catch (error: any) {
+                errorCount++;
+                console.error(`Error processing row ID ${row.id}:`, error);
+            }
+        }
+
+
+        this.isSaving = false;
+
+        // Save to localStorage
+        localStorage.setItem('cuttingTableData', JSON.stringify(rows));
+        this.tableData = rows;
+        this.displayCuttingPopup = false;
+
+        // Show final status
+        if (successCount > 0 && errorCount === 0) {
+            this.alert.successAlert('Success', `${successCount} row(s) saved successfully.`);
+        } else if (successCount > 0 && errorCount > 0) {
+            this.alert.warningAlert('Partial Success', `${successCount} saved, ${errorCount} failed.`);
+        } else {
+            this.alert.errorAlert('Failed', 'No rows were saved.');
+        }
+    }
+
+    // updateCutting(cuttingid: any) {
+    //     firstValueFrom(this.orderProcess.updateCuttingStep())
+    // }
+
+    convertDdMmYyyyToDate(dateStr: string): Date | null {
+        if (!dateStr) return null;
+        const [day, month, year] = dateStr.split('-');
+        return new Date(+year, +month - 1, +day); // month is 0-indexed
+    }
+
+    async getAllCutter() {
+        const res = await firstValueFrom(this.service.getJobberByType({ jobber_type: 'Cutter' }));
+        this.cutter = res.body;
+    }
+
+    async fetchAndPatchCuttingStep(orderId: number) {
+        try {
+            this.rows.clear()
+            const res = await firstValueFrom(
+                this.orderProcess.gateCuttingStepsByOrderId({ order_id: orderId })
+            );
+
+            if (res?.status === 200 && Array.isArray(res.body) && res.body.length > 0) {
+                // ADD new rows
+                for (const item of res.body) {
+                    const rowForm = this.fb.group({
+                        id: [item.id],
+                        order_id: [item.order_id],
+                        cutter_id: [item.cutter_id, Validators.required],
+                        issue_date: [this.convertDdMmYyyyToDate(item.issue_date), Validators.required],
+                        delivery_date: [this.convertDdMmYyyyToDate(item.delivery_date)],
+                        lot_no: [item.lot_no],
+                        total_qty: [item.total_qty, Validators.required],
+                        expanded: [false]
+                    });
+
+                    this.rows.push(rowForm);
+                }
+
+                this.totalRecords = this.rows.length;
+            } else if (res.status === 404) {
+                this.alert.warningAlert('No Data', 'No cutting step data found for this order.');
+            }
+        } catch (error: any) {
+            // this.alert.errorAlert('Error', error?.message || 'Failed to load cutting step data.');
+        }
+    }
+
+
+    recive(value: any) {
+        this.recivePopup = !this.recivePopup;
+        this.reciveForm.patchValue({
+            order_id: value.order_id,
+            cutting_id: value.id,
+            received_date: dayjs().format('YYYY-MM-DD'),
+        })
+    }
+
+    async submitReciveForm() {
+        try {
+            const formValue = this.reciveForm.getRawValue();
+
+            const payload = {
+                ...formValue,
+            };
+            const res = await firstValueFrom(this.orderProcess.orderReceive(payload));
+            if (res.status === 200) {
+                this.alert.successAlert('Success', 'Receive Successful');
+                this.reciveForm.reset();
+                this.resetAllExpandedRows();
+                this.togolData = {}; this.recivePopup = !this.recivePopup;
+            } else {
+                this.alert.errorAlert('Error', 'Cannot Receive Order');
+            }
+        } catch (error: any) {
+            this.alert.errorAlert('Error', 'Something went wrong while receiving the order.');
+        }
+    }
+
+    async toggleRow(row: any, index: number) {
+        const isExpanded = row.value.expanded;
+        row.patchValue({ expanded: !isExpanded });
+        if (!isExpanded && !this.togolData[index]) {
+            try {
+                const response = await firstValueFrom(
+                    this.orderProcess.GateAllOrderReceiveById({
+                        cutting_id: row.value.id
+                    })
+                );
+                if (response?.status === 200) {
+                    this.togolData[index] = response.body || [];
+                } else {
+                    this.togolData[index] = [];
+                }
+            } catch (error) {
+                console.error('Error fetching toggle data:', error);
+                this.togolData[index] = [];
+            }
+        }
     }
 
     onNextStep() {
-        // Handle next step here
         this.displayCuttingPopup = false;
     }
 
@@ -91,72 +347,33 @@ export class CuttingPageComponent implements OnInit {
         console.log('Action:', action, 'Row:', row);
     }
 
-    prevPage() {
-        // implement logic to fetch or paginate previous records
-    }
-
-    nextPage() {
-        // implement logic to fetch or paginate next records
-    }
 
     deleteCuttingStep(id: any) {
         throw new Error('Method not implemented.');
     }
 
-    initForm() {
-        this.cuttingForm = this.fb.group({
-            issue_date: [null, Validators.required],
-            delivery_date: [null],
-            cutter_id: [null, Validators.required],
-            lot_no: [''],
-            po_qty_id: [null, Validators.required],
-            total_qty: [null]
-        });
+
+    prevPage(): void {
+        if (this.currentPage > 1) {
+            this.currentPage--;
+            // Add your data loading logic here
+        }
     }
 
-    submitCuttingForm(action: 'Add' | 'Update') {
-        if (this.cuttingForm.invalid) {
-            this.cuttingForm.markAllAsTouched();
-            return;
+    nextPage(): void {
+        if (this.currentPage * this.pageSize < this.totalRecords) {
+            this.currentPage++;
+            // Add your data loading logic here
         }
-
-        const formData = this.cuttingForm.value;
-        console.log('Submitted Data:', formData);
-
-        if (action === 'Add') {
-            // 🔁 Step 1: Load existing data from localStorage
-            const existingData = localStorage.getItem('cuttingTableData');
-            const tableData = existingData ? JSON.parse(existingData) : [];
-
-            // 🔁 Step 2: Create new row
-            const newRow = {
-                id: tableData.length + 1,
-                cutterName: this.getCutterNameById(formData.cutter_id),
-                issueDate: this.formatDate(formData.issue_date),
-                deliveryDate: this.formatDate(formData.delivery_date),
-                lotNo: formData.lot_no,
-                poQtyId: formData.po_qty_id,
-                totalQty: formData.total_qty
-            };
-
-            // 🔁 Step 3: Add new row and re-save everything
-            tableData.push(newRow);
-            localStorage.setItem('cuttingTableData', JSON.stringify(tableData));
-
-            // 🔁 Step 4: Reflect in the component
-            this.tableData = tableData;
-            this.totalRecords = this.tableData.length;
-        }
-
-        // ✅ Reset & close form
-        this.cuttingForm.reset();
-        this.showForm = false;
     }
 
-
+    onPageSizeChange(): void {
+        this.currentPage = 1; // Reset to first page when page size changes
+        // Add your data loading logic here
+    }
 
     getCutterNameById(id: number): string {
-        const cutter = this.CutterName.find((c: any) => c.id === id);
+        const cutter = this.CutterName.find(c => c.id === id);
         return cutter ? cutter.name : '';
     }
 
@@ -189,42 +406,46 @@ export class CuttingPageComponent implements OnInit {
 
     async fetchCutterList() {
         await firstValueFrom(
-            this.service
-                .getOrderList({
-                    page: 0,
-                    pageSize: 12,
-                    search: ''
-                })
-                .pipe(
-                    tap(
-                        (response) => {
-                            if (response.status == 200) {
-                                this.ordersList = response.body.orders;
-                            }
-                        },
-                        (error) => {
-                            this.alert.errorAlert(error.error.message, error.error.body);
+            this.service.getOrderList({
+                page: 0,
+                pageSize: 12,
+                search: ''
+            }).pipe(
+                tap(
+                    (response) => {
+                        if (response.status === 200) {
+                            this.ordersList = response.body.orders;
                         }
-                    )
+                    },
+                    (error) => {
+                        this.alert.errorAlert(error.error.message, error.error.body);
+                    }
                 )
+            )
         );
     }
+
+    resetAllExpandedRows() {
+        this.rows.controls.forEach((rowCtrl) => {
+            rowCtrl.patchValue({ expanded: false });
+        });
+    }
+
+
+
+    closePopou() {
+        this.displayCuttingPopup = false;
+        this.togolData = []
+
+    }
+
 
     onEdit(order: any) {
         this.selectedOrder = order;
         this.selectProduct = order.id;
-        console.log(this.selectProduct)
-        this.hedding = 'Edit Cutting Step';
-
-
-        this.cuttingForm.patchValue({
-            issue_date: new Date(), // replace with order.issue_date if available
-            delivery_date: new Date(),
-            cutter_id: null,
-            lot_no: '',
-            po_qty_id: null,
-            total_qty: null
-        });
+        // console.log("value", order) 
+        this.totalQty = order.total_qty;       
+        this.fetchAndPatchCuttingStep(this.selectProduct);
     }
 
     onDelete(order: any) {
@@ -232,7 +453,6 @@ export class CuttingPageComponent implements OnInit {
     }
 
     gateAllpoQty() {
-        // Ideally fetch from API using selectedOrder.id
         this.poData = [
             { id: 1, po_no: 'PO001', qty: 100 },
             { id: 2, po_no: 'PO002', qty: 150 }
@@ -240,21 +460,7 @@ export class CuttingPageComponent implements OnInit {
         this.showPoDialog = true;
     }
 
-    selectPO(po: POData) {
-        this.cuttingForm.patchValue({ po_qty_id: po.po_no });
-        this.showPoDialog = false;
-    }
-
-    toggleForm() {
-        this.hedding = 'Add Cutting Step';
-        this.cuttingForm.reset();
-        this.showForm = true;
-    }
-
-
-
     showAllPoQty() {
-        // Optional section, if you want to show another block of PO data
         this.poData = [
             { id: 1, po_no: 'PO001', qty: 100 },
             { id: 2, po_no: 'PO002', qty: 150 }

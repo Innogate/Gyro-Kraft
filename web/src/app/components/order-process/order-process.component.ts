@@ -77,7 +77,6 @@ export class OrderProcessComponent {
     this.gateJobberByType();
     this.gateCuttingStepsByOrderId();
     this.gateAllpoQtyByOrderId();
-    this.gateAllOrderReceiveByOrderId();
   }
 
 
@@ -360,7 +359,6 @@ export class OrderProcessComponent {
             order_id: this.orderID,
           });
           this.ReceiveShowForm = false;
-          this.gateAllOrderReceiveByOrderId();
         } else {
           this.sweetAlertService.errorAlert('Error', 'Failed to submit receive form. Please try again.');
         }
@@ -371,21 +369,21 @@ export class OrderProcessComponent {
     }
   }
 
-  async gateAllOrderReceiveByOrderId() {
-    if (!this.orderID) {
-      this.sweetAlertService.errorAlert('Error', 'Order ID not found in local storage.');
-      return;
-    }
-    try {
-      const response = await firstValueFrom(this.orderProcessService.GateAllOrderReceiveByOrderId({ order_id: this.orderID }));
-      if (response.status === 200) {
-        this.tableDataReceive =  response.body;
-      } else {
-        this.sweetAlertService.errorAlert('Error', 'No order receive data found for the given order ID.');
-      }
-    } catch (error) {
-      // console.error('Error fetching order receive data:', error);
-      // this.sweetAlertService.errorAlert('Error', 'Failed to fetch order receive data. Please try again later.');
-    }
-  }
+  // async gateAllOrderReceiveByOrderId() {
+  //   if (!this.orderID) {
+  //     this.sweetAlertService.errorAlert('Error', 'Order ID not found in local storage.');
+  //     return;
+  //   }
+  //   try {
+  //     const response = await firstValueFrom(this.orderProcessService.GateAllOrderReceiveByOrderId({ order_id: this.orderID }));
+  //     if (response.status === 200) {
+  //       this.tableDataReceive =  response.body;
+  //     } else {
+  //       this.sweetAlertService.errorAlert('Error', 'No order receive data found for the given order ID.');
+  //     }
+  //   } catch (error) {
+  //     // console.error('Error fetching order receive data:', error);
+  //     // this.sweetAlertService.errorAlert('Error', 'Failed to fetch order receive data. Please try again later.');
+  //   }
+  // }
 }
