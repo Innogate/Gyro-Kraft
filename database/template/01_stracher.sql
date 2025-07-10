@@ -90,7 +90,6 @@ CREATE TABLE cutting (
     issue_date DATE,
     delivery_date DATE,
     cutter_id INT,
-    po_qty_id INT,
     lot_no VARCHAR(100),
     total_qty INT,
     created_by INT,
@@ -99,7 +98,6 @@ CREATE TABLE cutting (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (order_id) REFERENCES orders (id),
     FOREIGN KEY (cutter_id) REFERENCES cutters (id),
-    FOREIGN KEY (po_qty_id) REFERENCES order_po_qty (id),
     FOREIGN KEY (created_by) REFERENCES users (id),
     FOREIGN KEY (updated_by) REFERENCES users (id)
     

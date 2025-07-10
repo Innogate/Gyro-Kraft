@@ -18,8 +18,8 @@
         $conn = $dbInstance->pdo;
         $conn->beginTransaction();
         try {
-        $sql = "INSERT INTO cutting (order_id, issue_date, delivery_date, cutter_id, po_qty_id, lot_no, total_qty, created_by, created_at) 
-            VALUES (:order_id, :issue_date,:delivery_date, :cutter_id, :po_qty_id, :lot_no, :total_qty, :created_by, NOW())";
+        $sql = "INSERT INTO cutting (order_id, issue_date, delivery_date, cutter_id, lot_no, total_qty, created_by, created_at) 
+            VALUES (:order_id, :issue_date,:delivery_date, :cutter_id, :lot_no, :total_qty, :created_by, NOW())";
 
             $data->created_by = $_user->id;
             // $data->date = date('d-m-y', strtotime($data->issue_date));
@@ -29,7 +29,6 @@
             $stmt->bindValue(':issue_date', $data->issue_date);
             $stmt->bindValue(':delivery_date', $data->delivery_date);
             $stmt->bindValue(':cutter_id', $data->cutter_id);
-            $stmt->bindValue(':po_qty_id', $data->po_qty_id);
             $stmt->bindValue(':lot_no', $data->lot_no);
             $stmt->bindValue(':total_qty', $data->total_qty);
             $stmt->bindValue(':created_by', $data->created_by);
@@ -58,7 +57,7 @@
         $conn->beginTransaction();
         try {
             $sql = "UPDATE cutting SET issue_date = :issue_date, delivery_date = :delivery_date, 
-                    cutter_id = :cutter_id, po_qty_id = :po_qty_id, lot_no = :lot_no, total_qty = :total_qty, 
+                    cutter_id = :cutter_id, lot_no = :lot_no, total_qty = :total_qty, 
                     updated_by = :updated_by, updated_at = NOW() WHERE id = :id";
 
             $data->updated_by = $_user->id;
@@ -68,7 +67,6 @@
             $stmt->bindValue(':issue_date', $data->issue_date);
             $stmt->bindValue(':delivery_date', $data->delivery_date);
             $stmt->bindValue(':cutter_id', $data->cutter_id);
-            $stmt->bindValue(':po_qty_id', $data->po_qty_id);
             $stmt->bindValue(':lot_no', $data->lot_no);
             $stmt->bindValue(':total_qty', $data->total_qty);
             $stmt->bindValue(':updated_by', $data->updated_by);

@@ -1,7 +1,9 @@
 <div class="p-6 bg-gray-50 min-h-screen">
-    <p-table [value]="ordersList" [paginator]="true" [rows]="5" [responsiveLayout]="'scroll'" class="rounded-xl shadow-md border border-gray-200 bg-white" styleClass="modern-table">
+    <p-table [value]="ordersList" [paginator]="true" [rows]="5" [responsiveLayout]="'scroll'"
+        class="rounded-xl shadow-md border border-gray-200 bg-white" styleClass="modern-table">
         <ng-template pTemplate="header">
-            <tr class="bg-gradient-to-r from-indigo-100 to-white text-gray-700 font-semibold text-sm uppercase tracking-wider">
+            <tr
+                class="bg-gradient-to-r from-indigo-100 to-white text-gray-700 font-semibold text-sm uppercase tracking-wider">
                 <th><i class="pi pi-hashtag mr-1 text-indigo-400"></i>ID</th>
                 <th><i class="pi pi-tag mr-1 text-indigo-400"></i>Style</th>
                 <th><i class="pi pi-align-left mr-1 text-indigo-400"></i>Description</th>
@@ -32,8 +34,12 @@
                 <td>{{ order.remark }}</td>
                 <td class="text-center">
                     <div class="flex justify-center gap-2">
-                        <button pButton icon="pi pi-pencil" class="p-button-sm p-button-text p-button-rounded p-button-info" pTooltip="Edit" tooltipPosition="top" (click)="displayCuttingPopup = true; onEdit(order)"></button>
-                        <button pButton icon="pi pi-trash" class="p-button-sm p-button-text p-button-rounded p-button-danger" pTooltip="Delete" tooltipPosition="top" (click)="onDelete(order)"></button>
+                        <button pButton icon="pi pi-pencil"
+                            class="p-button-sm p-button-text p-button-rounded p-button-info" pTooltip="Edit"
+                            tooltipPosition="top" (click)="displayCuttingPopup = true; onEdit(order)"></button>
+                        <button pButton icon="pi pi-trash"
+                            class="p-button-sm p-button-text p-button-rounded p-button-danger" pTooltip="Delete"
+                            tooltipPosition="top" (click)="onDelete(order)"></button>
                     </div>
                 </td>
             </tr>
@@ -42,191 +48,324 @@
 </div>
 
 <!-- Cutting Form Dialog -->
-<p-dialog [(visible)]="displayCuttingPopup" [modal]="true" [style]="{ width: '85vw' }" [closable]="true" [resizable]="false" [contentStyle]="{ padding: '0' }">
+<p-dialog [(visible)]="displayCuttingPopup" [modal]="true" [style]="{ width: '70vw' }" [closable]="false"
+    [resizable]="true" [contentStyle]="{ padding: '0', 'border-radius': '12px' }"
+    [breakpoints]="{ '960px': '75vw', '640px': '90vw' }">
     <ng-template pTemplate="header">
-        <div class="flex justify-between items-center w-full">
+        <div
+            class="flex justify-between items-center w-full bg-gradient-to-r from-emerald-50 to-blue-50 p-4 rounded-t-lg border-b border-gray-200">
             <!-- Left Side: Icon + Title -->
             <div class="flex items-center gap-3">
-                <i class="pi pi-sliders-h text-emerald-600 text-xl"></i>
-                <span class="text-xl font-semibold text-gray-800">Cutting Details</span>
+                <div class="p-2 bg-emerald-100 rounded-full">
+                    <i class="pi pi-sliders-h text-emerald-600 text-xl"></i>
+                </div>
+                <span class="text-xl font-bold text-gray-800">Cutting Details</span>
             </div>
-
-            <!-- Right Side: Buttons -->
-            <div class="flex gap-2">
-                <button (click)="showAllPoQty()" class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-emerald-600 rounded hover:bg-emerald-500 transition-all"><i class="pi pi-search"></i> PO Details</button>
-                <button (click)="toggleForm()" class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-emerald-600 rounded hover:bg-emerald-500 transition-all"><i class="pi pi-plus"></i> Cutting Issue</button>
-            </div>
+            <!-- Right Side: Close Button -->
+            <button class="p-2 hover:bg-gray-100 rounded-full transition-colors" (click)="closePopou()">
+                <i class="pi pi-times text-gray-500 hover:text-gray-700"></i>
+            </button>
         </div>
     </ng-template>
 
-    <div class="flex flex-col p-6 bg-white rounded-lg border border-dashed border-gray-300 shadow-md">
-        <!-- Table Wrapper -->
-        <div class="overflow-auto border border-gray-200 rounded-lg shadow-sm">
-            <table class="min-w-full text-sm text-left text-gray-700">
-                <thead class="bg-gray-100 text-gray-700 uppercase text-xs border-b">
-                    <tr>
-                        <th class="p-3"><i class="pi pi-hashtag text-purple-500 mr-1"></i> ID</th>
-                        <th class="p-3"><i class="pi pi-user text-indigo-500 mr-1"></i> Cutter Name</th>
-                        <th class="p-3"><i class="pi pi-calendar text-blue-500 mr-1"></i> Issue Date</th>
-                        <th class="p-3"><i class="pi pi-calendar-plus text-green-500 mr-1"></i> Delivery Date</th>
-                        <th class="p-3"><i class="pi pi-box text-yellow-500 mr-1"></i> Lot No</th>
-                        <th class="p-3"><i class="pi pi-list text-orange-500 mr-1"></i> PO Qty ID</th>
-                        <th class="p-3"><i class="pi pi-sort-numeric-down text-pink-500 mr-1"></i> Total Qty</th>
-                        <th class="p-3"><i class="pi pi-cog text-gray-600 mr-1"></i> Actions</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <tr *ngIf="tableData.length === 0">
-                        <td class="p-4 text-center text-gray-400 italic" colspan="8">No records found</td>
-                    </tr>
-                    <tr *ngFor="let row of tableData" class="hover:bg-gray-50">
-                        <td class="p-3">{{ row.id }}</td>
-                        <td class="p-3">{{ row.cutterName }}</td>
-                        <td class="p-3">{{ row.issueDate }}</td>
-                        <td class="p-3">{{ row.deliveryDate }}</td>
-                        <td class="p-3">{{ row.lotNo }}</td>
-                        <td class="p-3">{{ row.poQtyId }}</td>
-                        <td class="p-3">{{ row.totalQty }}</td>
-                        <td class="p-3">
-                            <div class="flex flex-wrap gap-2">
-                                <button class="text-blue-600 hover:text-blue-800" (click)="handleAction('Edit', row)">
-                                    <i class="pi pi-pencil"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800" (click)="handleAction('Delete', row)">
-                                    <i class="pi pi-trash"></i>
-                                </button>
-                                <button class="text-green-600 hover:text-green-800" (click)="handleAction('Receive', row)">
-                                    <i class="pi pi-download"></i>
-                                </button>
-                                <button class="text-indigo-600 hover:text-indigo-800" (click)="handleAction('Print', row)">
-                                    <i class="pi pi-print"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+    <div class="flex flex-col p-6 pt-0 bg-white rounded-b-lg shadow-lg">
+        <!-- Add Button -->
+        <div class="mb-4 flex justify-end">
+            <button
+                class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-md flex items-center gap-2"
+                (click)="addRow()">
+                <i class="pi pi-plus"></i>
+                <span>Add New Record</span>
+            </button>
         </div>
 
-        <!-- Pagination -->
-        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
-            <div class="text-gray-500 text-sm">Showing {{ tableData.length > 0 ? 1 : 0 }} to {{ tableData.length }} of {{ totalRecords }} entries</div>
+        <!-- Table Wrapper -->
+        <form [formGroup]="form">
+            <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
+                <table class="min-w-full text-sm text-left">
+                    <thead class="bg-gradient-to-r from-blue-50 to-purple-50 text-gray-700 uppercase text-xs">
+                        <tr class="border-b border-gray-200">
+                            <th class="p-4 font-semibold"><i class="pi pi-hashtag text-purple-500 mr-2"></i>#</th>
+                            <th class="p-4 font-semibold"><i class="pi pi-user text-indigo-500 mr-2"></i>Cutter Name
+                            </th>
+                            <th class="p-4 font-semibold"><i class="pi pi-calendar text-blue-500 mr-2"></i>Issue Date
+                            </th>
+                            <th class="p-4 font-semibold"><i
+                                    class="pi pi-calendar-plus text-green-500 mr-2"></i>Delivery Date</th>
+                            <th class="p-4 font-semibold"><i class="pi pi-box text-yellow-500 mr-2"></i>Lot No</th>
+                            <th class="p-4 font-semibold"><i
+                                    class="pi pi-sort-numeric-down text-pink-500 mr-2"></i>Total Qty</th>
+                            <th class="p-4 font-semibold"><i class="pi pi-cog text-gray-600 mr-2"></i>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody formArrayName="rows" class="divide-y divide-gray-100">
+                        <tr *ngIf="rows.length === 0" class="bg-white">
+                            <td colspan="7" class="p-4 text-center text-gray-400 italic">No records found</td>
+                        </tr>
+
+                        <ng-container *ngFor="let row of rows.controls; let i = index" [formGroupName]="i">
+                            <tr class="bg-white hover:bg-gray-50 transition-colors">
+                                <td class="p-4">
+                                    <button type="button" (click)="toggleRow(row, i)"
+                                        class="p-2 rounded-full hover:bg-gray-100 transition-colors">
+                                        <i class="pi text-indigo-500"
+                                            [ngClass]="row.value.expanded ? 'pi-minus' : 'pi-plus'"></i>
+                                    </button>
+                                </td>
+                                <td class="p-4">
+                                    <p-dropdown [options]="cutter" optionLabel="name" optionValue="id"
+                                        formControlName="cutter_id" appendTo="body" placeholder="Select Cutter"
+                                        class="w-full [&_.p-dropdown]:min-w-[150px]" [styleClass]="'p-dropdown-sm'">
+                                    </p-dropdown>
+                                </td>
+                                <td class="p-4">
+                                    <p-calendar appendTo="body" formControlName="issue_date" [dateFormat]="'dd/mm/yy'"
+                                        inputClass="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+                                        showIcon="true" iconDisplay="input" [styleClass]="'p-calendar-sm'"></p-calendar>
+                                </td>
+                                <td class="p-4">
+                                    <p-calendar appendTo="body" formControlName="delivery_date"
+                                        [dateFormat]="'dd/mm/yy'"
+                                        inputClass="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+                                        showIcon="true" iconDisplay="input" [styleClass]="'p-calendar-sm'"></p-calendar>
+                                </td>
+                                <td class="p-4">
+                                    <input type="text" formControlName="lot_no"
+                                        class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-200 focus:border-blue-500" />
+                                </td>
+                                <td class="p-4">
+                                    <input type="number" formControlName="total_qty"
+                                        class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-200 focus:border-blue-500" />
+                                </td>
+                                <td class="p-4">
+                                    <div class="flex gap-2">
+                                        <button type="button"
+                                            class="p-2 bg-green-100 text-green-600 rounded-full hover:bg-green-200 transition-colors"
+                                            (click)="recive(row.value)">
+                                            <i class="pi pi-check"></i>
+                                        </button>
+                                        <button type="button"
+                                            class="p-2 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition-colors"
+                                            (click)="removeRow(i)">
+                                            <i class="pi pi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr *ngIf="row.value.expanded" class="bg-blue-50/30">
+                                <td colspan="7" class="p-0 border-t">
+                                    <div
+                                        class="bg-white p-5 rounded-b-lg border border-t-0 border-gray-200 shadow-sm mx-4 mb-4">
+                                        <!-- Header with icon and title -->
+                                        <div
+                                            class="flex items-center gap-3 mb-4 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+                                            <div class="p-2 bg-blue-100 rounded-full">
+                                                <i class="pi pi-box text-blue-600"></i>
+                                            </div>
+                                            <h3 class="text-lg font-semibold text-gray-700">Received Items Details</h3>
+                                            <span
+                                                class="ml-auto px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+                                                {{ togolData && togolData[i] ? togolData[i].length : 0 }} records
+                                            </span>
+                                        </div>
+
+                                        <ng-container *ngIf="togolData && togolData[i] as data">
+                                            <!-- Data Table -->
+                                            <div *ngIf="data.length > 0"
+                                                class="overflow-x-auto rounded-lg border border-gray-200">
+                                                <table class="w-full text-sm">
+                                                    <thead class="bg-gray-50">
+                                                        <tr class="text-left text-gray-600 font-medium">
+                                                            <th class="p-3">
+                                                                <div class="flex items-center gap-2">
+                                                                    <i class="pi pi-calendar text-blue-500"></i>
+                                                                    <span>Date</span>
+                                                                </div>
+                                                            </th>
+                                                            <th class="p-3">
+                                                                <div class="flex items-center gap-2">
+                                                                    <i class="pi pi-sort-numeric-up text-green-500"></i>
+                                                                    <span>Quantity</span>
+                                                                </div>
+                                                            </th>
+                                                            <th class="p-3">
+                                                                <div class="flex items-center gap-2">
+                                                                    <i
+                                                                        class="pi pi-exclamation-triangle text-amber-500"></i>
+                                                                    <span>Defective</span>
+                                                                </div>
+                                                            </th>
+                                                            <th class="p-3">
+                                                                <div class="flex items-center gap-2">
+                                                                    <i class="pi pi-comment text-purple-500"></i>
+                                                                    <span>Remarks</span>
+                                                                </div>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="divide-y divide-gray-100">
+                                                        <tr *ngFor="let rec of data"
+                                                            class="hover:bg-gray-50/50 transition-colors">
+                                                            <td class="p-3 font-medium text-gray-700">
+                                                                <div class="flex items-center gap-2">
+                                                                    <i class="pi pi-clock text-gray-400"></i>
+                                                                    {{ rec.received_date | date:'shortDate' }}
+                                                                </div>
+                                                            </td>
+                                                            <td class="p-3">
+                                                                <span
+                                                                    class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+                                                                    <i class="pi pi-check-circle mr-1"></i>
+                                                                    {{ rec.received_qty }}
+                                                                </span>
+                                                            </td>
+                                                            <td class="p-3">
+                                                                <span *ngIf="rec.deffective_qty > 0"
+                                                                    class="px-2 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">
+                                                                    <i class="pi pi-exclamation-circle mr-1"></i>
+                                                                    {{ rec.deffective_qty }}
+                                                                </span>
+                                                                <span *ngIf="rec.deffective_qty <= 0"
+                                                                    class="text-gray-400">-</span>
+                                                            </td>
+                                                            <td class="p-3 text-gray-600">
+                                                                <div class="flex items-center gap-2">
+                                                                    <i *ngIf="rec.remark"
+                                                                        class="pi pi-align-left text-gray-400"></i>
+                                                                    {{ rec.remark || '-' }}
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            <!-- Empty State -->
+                                            <div *ngIf="data.length === 0" class="text-center py-8">
+                                                <div
+                                                    class="inline-flex items-center justify-center p-5 bg-blue-50 rounded-full mb-3">
+                                                    <i class="pi pi-inbox text-blue-400 text-3xl"></i>
+                                                </div>
+                                                <h4 class="text-gray-500 font-medium mb-1">No Received Items</h4>
+                                                <p class="text-gray-400 text-sm">This cutting order hasn't received any
+                                                    items yet</p>
+                                                <button
+                                                    class="mt-4 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium">
+                                                    <i class="pi pi-plus mr-2"></i>Add Received Items
+                                                </button>
+                                            </div>
+                                        </ng-container>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </tbody>
+                </table>
+            </div>
+        </form>
+
+        <!-- Action Buttons -->
+        <div class="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <!-- Pagination Info -->
+            <div class="text-gray-500 text-sm">
+                Showing <span class="font-medium">{{ tableData.length > 0 ? 1 : 0 }}</span> to
+                <span class="font-medium">{{ tableData.length }}</span> of
+                <span class="font-medium">{{ totalRecords }}</span> entries
+            </div>
+
+            <!-- Pagination Controls -->
             <div class="flex items-center gap-2">
-                <button class="px-2 py-1 text-gray-700 border rounded hover:bg-gray-100" (click)="prevPage()">
-                    <i class="pi pi-angle-double-left"></i>
+                <button class="p-2 text-gray-600 border rounded-lg hover:bg-gray-100 transition-colors"
+                    [disabled]="currentPage === 1" [class.opacity-50]="currentPage === 1" (click)="prevPage()">
+                    <i class="pi pi-chevron-left"></i>
                 </button>
-                <button class="px-2 py-1 text-gray-700 border rounded hover:bg-gray-100" (click)="nextPage()">
-                    <i class="pi pi-angle-double-right"></i>
+                <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-lg font-medium">{{ currentPage }}</span>
+                <button class="p-2 text-gray-600 border rounded-lg hover:bg-gray-100 transition-colors"
+                    [disabled]="currentPage * pageSize >= totalRecords"
+                    [class.opacity-50]="currentPage * pageSize >= totalRecords" (click)="nextPage()">
+                    <i class="pi pi-chevron-right"></i>
                 </button>
-                <select class="border p-1 rounded text-sm">
-                    <option *ngFor="let size of [5, 10, 20]" [value]="size">{{ size }}</option>
+                <select class="border p-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+                    [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+                    <option *ngFor="let size of [5, 10, 20]" [value]="size">{{ size }} per page</option>
                 </select>
             </div>
+
+            <!-- Save Button -->
+            <button class="px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:opacity-90 
+                          transition-opacity shadow-md flex items-center gap-2 mt-4 sm:mt-0" (click)="saveAll()">
+                <i class="pi pi-save"></i>
+                <span>Save All Changes</span>
+            </button>
         </div>
     </div>
 </p-dialog>
 
-<!-- Add cutting   -->
-
-<p-dialog
-    [header]="hedding"
-    [(visible)]="showForm"
-    [modal]="true"
-    [style]="{ width: '90vw', maxWidth: '500px' }"
-    [closable]="true"
-    [dismissableMask]="true"
-    [breakpoints]="{ '960px': '75vw', '640px': '90vw' }"
-    [styleClass]="'p-0 overflow-hidden rounded-xl shadow-md'"
->
-    <form [formGroup]="cuttingForm">
-        <div class="space-y-4 bg-gray-50 sm:p-6 p-4 rounded-xl shadow-sm">
-            <!-- Date Fields -->
-            <div class="flex flex-col sm:flex-row sm:items-end gap-4">
-                <div class="w-full sm:w-1/2">
-                    <label class="block font-medium mb-1 text-gray-700" for="date">
-                        <i class="pi pi-calendar text-blue-500 mr-1"></i> Date
-                        <span class="text-red-500">*</span>
-                    </label>
-                    <p-calendar formControlName="issue_date" dateFormat="dd-mm-yy" [showIcon]="true" appendTo="body" [baseZIndex]="10000" [autoZIndex]="true"></p-calendar>
-                </div>
-
-                <div class="w-full sm:w-1/2">
-                    <label class="block font-medium mb-1 text-gray-700"> <i class="pi pi-calendar-plus text-green-500 mr-1"></i> Delivery Date </label>
-                    <p-calendar formControlName="delivery_date" dateFormat="dd-mm-yy" [showIcon]="true" appendTo="body" [baseZIndex]="10000" [autoZIndex]="true"></p-calendar>
-                </div>
+<p-dialog [(visible)]="recivePopup" [modal]="true" [style]="{ width: '40vw' }" [closable]="true" [resizable]="true"
+    [contentStyle]="{ padding: '1.5rem', 'border-radius': '12px' }" [breakpoints]="{ '960px': '75vw', '640px': '90vw' }">
+    
+    <ng-template pTemplate="header">
+        <div class="flex items-center gap-3">
+            <div class="p-2 bg-green-100 rounded-full">
+                <i class="pi pi-check-circle text-green-600"></i>
             </div>
+            <h3 class="text-lg font-semibold text-gray-800">Receive Items</h3>
+        </div>
+    </ng-template>
 
-            <!-- Cutter Name -->
-            <div>
-                <label class="block font-medium mb-1 text-gray-700" for="cutterName">
-                    <i class="pi pi-user text-indigo-500 mr-1"></i> Select Cutter Name
-                    <span class="text-red-500">*</span>
-                </label>
-                <p-dropdown formControlName="cutter_id" [options]="CutterName" optionLabel="name" optionValue="id" placeholder="Select Cutter Name" class="w-full" [showClear]="true"></p-dropdown>
-            </div>
-
-            <!-- Lot No & PO Detail -->
-            <div class="flex gap-4">
-                <div class="w-1/2">
-                    <label class="block font-medium mb-1 text-gray-700" for="lotno"> <i class="pi pi-box text-yellow-500 mr-1"></i> Lot No </label>
-                    <input type="text" formControlName="lot_no" placeholder="Enter Lot Number" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                </div>
-
-                <div class="w-1/2">
-                    <label class="block font-medium mb-1 text-gray-700" for="poQuantity">
-                        <i class="pi pi-list text-orange-500 mr-1"></i> Select PO Detail
-                        <span class="text-red-500">*</span>
-                    </label>
-                    <div class="flex gap-2">
-                        <input type="text" formControlName="po_qty_id" placeholder="Select PO Detail" readonly class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                        <button type="button" (click)="gateAllpoQty()" class="px-4 py-2 font-medium text-white transition-all duration-200 rounded bg-blue-600 hover:bg-blue-500">
-                            <i class="pi pi-plus"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Total Quantity -->
-            <div>
-                <label class="block font-medium mb-1 text-gray-700" for="totalQuantity"> <i class="pi pi-sort-numeric-down text-pink-500 mr-1"></i> Total Quantity </label>
-                <input type="number" formControlName="total_qty" placeholder="Enter Total Quantity" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    <form [formGroup]="reciveForm" class="grid gap-5 sm:grid-cols-2">
+        <!-- Received Quantity -->
+        <div class="flex flex-col">
+            <label for="received_qty" class="mb-2 text-sm font-medium text-gray-700 flex items-center gap-2">
+                <i class="pi pi-shopping-bag text-blue-500"></i>
+                <span>Received Quantity</span>
+            </label>
+            <div class="p-inputgroup">
+                <input id="received_qty" type="number" formControlName="received_qty"
+                    class="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-500" 
+                    placeholder="Enter quantity"/>
             </div>
         </div>
 
-        <!-- Buttons -->
-        <div class="flex flex-col sm:flex-row sm:justify-end gap-4 mt-4">
-            <button type="submit" (click)="submitCuttingForm('Add')" *ngIf="hedding !== 'Edit Cutting Step'" class="w-full sm:w-auto px-4 py-2 font-medium text-white transition-all duration-200 rounded bg-emerald-600 hover:bg-emerald-500">
-                <i class="pi pi-check mr-2"></i> Save
-            </button>
+        <!-- Defective Quantity -->
+        <div class="flex flex-col">
+            <label for="deffective_qty" class="mb-2 text-sm font-medium text-gray-700 flex items-center gap-2">
+                <i class="pi pi-exclamation-triangle text-amber-500"></i>
+                <span>Defective Quantity</span>
+            </label>
+            <div class="p-inputgroup">
+                <input id="deffective_qty" type="number" formControlName="deffective_qty"
+                    class="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-200 focus:border-amber-500"
+                    placeholder="Enter defective count"/>
+            </div>
+        </div>
 
-            <button type="submit" (click)="submitCuttingForm('Update')" *ngIf="hedding === 'Edit Cutting Step'" class="w-full sm:w-auto px-4 py-2 font-medium text-white transition-all duration-200 rounded bg-emerald-600 hover:bg-emerald-500">
-                <i class="pi pi-check mr-2"></i> Update
-            </button>
-
-            <button type="button" (click)="showForm = false" class="w-full sm:w-auto px-4 py-2 font-medium text-gray-700 transition-all duration-200 rounded bg-gray-200 hover:bg-gray-300"><i class="pi pi-times mr-2"></i> Cancel</button>
+        <!-- Remarks (full width) -->
+        <div class="flex flex-col sm:col-span-2">
+            <label for="remarks" class="mb-2 text-sm font-medium text-gray-700 flex items-center gap-2">
+                <i class="pi pi-comment text-purple-500"></i>
+                <span>Remarks</span>
+            </label>
+            <div class="p-inputgroup">
+                <textarea id="remarks" formControlName="remark" rows="3"
+                    class="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-200 focus:border-purple-500 resize-none"
+                    placeholder="Any additional notes..."></textarea>
+            </div>
         </div>
     </form>
-</p-dialog>
 
-<!-- PO Selection Dialog -->
-<p-dialog header="Select PO Detail" [(visible)]="showPoDialog" [modal]="true" [style]="{ width: '500px' }" [dismissableMask]="true">
-    <table class="min-w-full text-sm text-gray-800">
-        <thead>
-            <tr class="bg-gray-200 text-left">
-                <th class="px-4 py-2">PO No</th>
-                <th class="px-4 py-2">Quantity</th>
-                <th class="px-4 py-2">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let po of poData" class="hover:bg-gray-50">
-                <td class="px-4 py-2">{{ po.po_no }}</td>
-                <td class="px-4 py-2">{{ po.qty }}</td>
-                <td class="px-4 py-2">
-                    <button class="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded" (click)="selectPO(po)">Select</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <!-- Action Buttons -->
+    <ng-template pTemplate="footer">
+        <div class="flex justify-end gap-3">
+            <button pButton type="button" label="Cancel" icon="pi pi-times" 
+                    class="p-button-outlined p-button-secondary"
+                    (click)="recivePopup = false"></button>
+            <button pButton type="button" label="Submit" icon="pi pi-check" 
+                    class="p-button-success" 
+                    [disabled]="reciveForm.invalid"
+                    (click)="submitReciveForm()">
+            </button>
+        </div>
+    </ng-template>
 </p-dialog>

@@ -83,8 +83,8 @@ export class PrintPageComponent implements OnInit {
 
     ngOnInit(): void {
         this.initForm();
-        this.fetchOrderList();
-        this.fetchCutterList();
+        // this.fetchOrderList();
+        // this.fetchCutterList();
 
         // 🧠 Load saved table data from localStorage
         const savedData = localStorage.getItem('cuttingTableData');

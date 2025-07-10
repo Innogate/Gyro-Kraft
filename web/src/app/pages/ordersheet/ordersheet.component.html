@@ -111,54 +111,106 @@
             </div>
 
             <!-- PO Qty Section -->
-            <div>
-                <h3 class="text-xl font-semibold mt-6 mb-3">PO Quantity</h3>
-                <button pButton type="button" label="Add PO Qty" icon="pi pi-plus" class="mb-3"
-                    (click)="addPOQty()"></button>
+           <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-200">
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-semibold text-gray-800 flex items-center gap-2">
+            <i class="pi pi-shopping-cart text-blue-500"></i>
+            PO Quantity
+        </h3>
+        <button pButton type="button" label="Add PO Qty" icon="pi pi-plus" 
+                class="p-button-sm p-button-outlined p-button-primary"
+                (click)="addPOQty()"></button>
+    </div>
 
-                <p-table [value]="poQty.controls" dataKey="combo" [scrollable]="true" scrollHeight="300px"
-                    responsiveLayout="scroll" [showGridlines]="true" [style]="{ 'min-width': '100%' }">
-                    <ng-template pTemplate="header">
-                        <tr>
-                            <th>Fabric</th>
-                            <th>Item</th>
-                            <th>Color</th>
-                            <th>Combo</th>
-                            <th>Size</th>
-                            <th>Qty</th>
-                            <th>Actions</th>
-                        </tr>
-                    </ng-template>
+    <!-- Total Quantity Display -->
+    <div class="bg-blue-50 p-3 rounded-md mb-4 flex justify-between items-center">
+        <span class="font-medium text-gray-700 flex items-center gap-2">
+            <i class="pi pi-chart-bar text-blue-500"></i>
+            Total Quantity:
+        </span>
+        <span class="text-xl font-bold text-blue-600">
+            {{ calculateTotalQty() | number }}
+        </span>
+    </div>
 
-                    <ng-template pTemplate="body" let-poQtyGroup let-ri="rowIndex">
-                        <tr [formGroup]="poQtyGroup">
-                            <td>
-                                <input pInputText formControlName="fabric" placeholder="Fabric" class="w-full" />
-                            </td>
-                            <td>
-                                <input pInputText formControlName="item" placeholder="Item" class="w-full" />
-                            </td>
-                            <td>
-                                <input pInputText formControlName="color" placeholder="Color" class="w-full" />
-                            </td>
+    <p-table [value]="poQty.controls" dataKey="combo" [scrollable]="true" scrollHeight="300px"
+        responsiveLayout="scroll" [showGridlines]="false" [style]="{ 'min-width': '100%' }"
+        class="custom-table">
+        
+        <ng-template pTemplate="header">
+            <tr class="bg-gray-50">
+                <th class="p-3 text-left">
+                    <i class="pi pi-box mr-2 text-blue-500"></i>Fabric
+                </th>
+                <th class="p-3 text-left">
+                    <i class="pi pi-tag mr-2 text-blue-500"></i>Item
+                </th>
+                <th class="p-3 text-left">
+                    <i class="pi pi-palette mr-2 text-blue-500"></i>Color
+                </th>
+                <th class="p-3 text-left">
+                    <i class="pi pi-th-large mr-2 text-blue-500"></i>Combo
+                </th>
+                <th class="p-3 text-left">
+                    <i class="pi pi-ruler mr-2 text-blue-500"></i>Size
+                </th>
+                <th class="p-3 text-left">
+                    <i class="pi pi-sort-numeric-up mr-2 text-blue-500"></i>Qty
+                </th>
+                <th class="p-3 text-center">
+                    <i class="pi pi-cog text-blue-500"></i>Actions
+                </th>
+            </tr>
+        </ng-template>
 
-                            <td>
-                                <input pInputText formControlName="combo" placeholder="Combo" class="w-full" />
-                            </td>
-                            <td>
-                                <input pInputText formControlName="size" placeholder="Size" class="w-full" />
-                            </td>
-                            <td>
-                                <input pInputText formControlName="qty" placeholder="Qty" class="w-full" min="0" />
-                            </td>
-                            <td>
-                                <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-danger"
-                                    (click)="removePOQty(ri)" label="Remove"></button>
-                            </td>
-                        </tr>
-                    </ng-template>
-                </p-table>
-            </div>
+        <ng-template pTemplate="body" let-poQtyGroup let-ri="rowIndex">
+            <tr [formGroup]="poQtyGroup" class="hover:bg-blue-50/50 transition-colors">
+                <td class="p-3">
+                    <input pInputText formControlName="fabric" placeholder="Enter fabric" 
+                           class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-200" />
+                </td>
+                <td class="p-3">
+                    <input pInputText formControlName="item" placeholder="Enter item" 
+                           class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-200" />
+                </td>
+                <td class="p-3">
+                    <input pInputText formControlName="color" placeholder="Enter color" 
+                           class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-200" />
+                </td>
+                <td class="p-3">
+                    <input pInputText formControlName="combo" placeholder="Enter combo" 
+                           class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-200" />
+                </td>
+                <td class="p-3">
+                    <input pInputText formControlName="size" placeholder="Enter size" 
+                           class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-200" />
+                </td>
+                <td class="p-3">
+                    <input type="number" pInputText formControlName="qty" placeholder="0" min="0"
+                           class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-200"
+                           (change)="updateTotalQty()" />
+                </td>
+                <td class="p-3 text-center">
+                    <button pButton type="button" icon="pi pi-trash" 
+                            class="p-button-sm p-button-rounded p-button-text p-button-danger hover:bg-red-100"
+                            pTooltip="Remove row" tooltipPosition="top"
+                            (click)="removePOQty(ri)"></button>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="7" class="p-4 text-center text-gray-400">
+                    <div class="flex flex-col items-center justify-center py-4">
+                        <i class="pi pi-inbox text-3xl text-gray-300 mb-2"></i>
+                        <p>No PO quantities added yet</p>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
 
             <!-- BOM Accessories Section -->
             <div>

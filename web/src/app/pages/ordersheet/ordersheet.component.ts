@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import {
     FormArray,
     FormBuilder,
@@ -65,7 +65,8 @@ export class OrdersheetComponent {
         private fb: FormBuilder,
         private service: OrderService,
         private alert: SweetAlertService,
-        private router: Router
+        private router: Router,
+        private cdRef: ChangeDetectorRef
     ) {
         this.orderForm = this.fb.group({
             styleNo: ['', Validators.required],
@@ -86,6 +87,20 @@ export class OrdersheetComponent {
         });
 
         this.fetchOrderList();
+    }
+
+
+    // Calculate total quantity
+    calculateTotalQty(): number {
+        return this.poQty.controls.reduce((total, group) => {
+            return total + (+group.get('qty')?.value || 0);
+        }, 0);
+    }
+
+    // Update total when quantity changes
+    updateTotalQty(): void {
+        // This will trigger change detection
+        this.cdRef.detectChanges();
     }
 
     toggleForm() {
