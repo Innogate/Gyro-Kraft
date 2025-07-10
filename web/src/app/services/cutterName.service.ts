@@ -7,12 +7,12 @@ import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
 import { Observable } from 'rxjs';
 import { ApiResponse } from './interface/apiResponce';
-import { 
-  OrderListPayload, 
-  OrderListResponse, 
-  OrderCreatePayload, 
+import {
+  OrderListPayload,
+  OrderListResponse,
+  OrderCreatePayload,
   OrderCreateResponse,
-  OrderResponse 
+  OrderResponse
 } from './interface/order';
 
 import { CutterName } from './interface/cutter-name';
@@ -20,6 +20,9 @@ import { CutterName } from './interface/cutter-name';
   providedIn: 'root'
 })
 export class CutterNameService {
+  getCutterList(arg0: { page: number; pageSize: number; }) {
+      throw new Error('Method not implemented.');
+  }
   constructor(private apiService: BaseService) {}
 
   // gate all data
@@ -37,6 +40,14 @@ export class CutterNameService {
 
   deleteCutter(payload: CutterName): Observable<ApiResponse<CutterName>> {
     return this.apiService.post(`/master/cutterName/delete`, payload);
+  }
+
+  getJobberByType(payload: any): Observable<ApiResponse<any>> {
+    return this.apiService.post(`/master/jobberType`, payload);
+  }
+
+  getOrderList(payload: OrderListPayload): Observable<ApiResponse<OrderListResponse>> {
+    return this.apiService.post('/cutting/oder/list', payload);
   }
 
 }

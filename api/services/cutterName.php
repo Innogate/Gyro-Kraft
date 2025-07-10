@@ -145,3 +145,42 @@ $router->add('POST', '/master/cutterName/delete', function () {
         (new ApiResponse(500, "Error: " . $e->getMessage()))->toJson();
     }
 });
+
+// gate cutter name jobber type
+$router->add('POST', '/master/jobberType', function () {
+    $jwt = new JwtHandler();
+    $handler = new Handler();  
+    $_user = $jwt->validate();
+    $dbInstance = new Database();
+    $conn = $dbInstance->pdo;
+
+      $data = json_decode(file_get_contents("php://input"));
+    if (!$data) {
+        (new ApiResponse(400, "Invalid input data"))->toJson();
+        return;
+    }
+
+    try {
+        $sql = "SELECT id,name FROM cutters WHERE jobber_type = :jobber_type AND status = 1";
+        $conn->beginTransaction();
+        if (!$conn) {
+            throw new Exception("Database connection failed");
+        }
+        if (!isset($data->jobber_type)) {
+            throw new Exception("Jobber type is required");
+        }   
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':jobber_type', $data->jobber_type);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $conn->commit();
+
+        if ($result) {
+            (new ApiResponse(200, "Success", $result))->toJson();
+        } else {
+            (new ApiResponse(404, "No data found"))->toJson();
+    }
+    } catch (Exception $e) {
+        (new ApiResponse(500, "Error: " . $e->getMessage()))->toJson();
+    }
+});

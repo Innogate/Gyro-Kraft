@@ -1,4 +1,4 @@
 export const environment = {
     production: false,
-    apiUrl: 'http://api.test/api',
+    apiUrl: 'http://api.gr.test/api',
   };

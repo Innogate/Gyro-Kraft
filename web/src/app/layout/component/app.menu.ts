@@ -35,12 +35,12 @@ export class AppMenu {
                     {
                         label: 'Cutting',
                         icon: 'pi pi-fw pi-hammer',
-                        routerLink: ['/cutting']
+                        routerLink: ['/pages/cutting-page']
                     },
                     {
                         label: 'Print',
                         icon: 'pi pi-fw pi-print',
-                        routerLink: ['/print']
+                        routerLink: ['/pages/printing-page']
                     },
                     {
                         label: 'Stitch',

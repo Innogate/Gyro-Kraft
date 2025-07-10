@@ -1,0 +1,40 @@
+<p-table [value]="data" styleClass="p-datatable-striped p-datatable-gridlines" [paginator]="true" [rows]="10"
+  [rowsPerPageOptions]="[5,10,25]" [responsive]="true" [resizableColumns]="true">
+  <ng-template pTemplate="header">
+    <tr>
+      <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+        {{ col.header }}
+        <p-sortIcon [field]="col.field"></p-sortIcon>
+      </th>
+   <th *ngIf="actions.length" 
+    class="sticky right-0 z-10 min-w-[150px] text-center">
+    <span class="inline-block py-3 px-4">
+        Actions
+    </span>
+</th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-row>
+    <tr (click)="onRowClick(row)" class="hover:bg-blue-50 cursor-pointer">
+      <td *ngFor="let col of columns">
+        <span class="font-medium text-gray-800">{{ row[col.field] }}</span>
+      </td>
+      <td *ngIf="actions.length" (click)="$event.stopPropagation()" class="sticky right-0 bg-white dark:bg-gray-800 z-10 min-w-[150px] text-center">
+        <div class="flex gap-2 justify-center">
+          <button *ngFor="let action of actions" type="button" pButton [icon]="getActionIcon(action)" [label]="action"
+            class="p-button-sm" [ngClass]="getActionButtonClass(action)" (click)="onAction(action, row)">
+          </button>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td [attr.colspan]="columns.length + (actions.length ? 1 : 0)" class="text-center py-6">
+        <span class="text-gray-500">No records found</span>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
